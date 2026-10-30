@@ -33,7 +33,7 @@ For each line intake printed:
 2. **Disqualify quickly.** Record a decision and move on when the item:
    - is closed, or owned/assigned to a person, or a person said in the comments they are working on it;
    - already has an open PR (Trac: `linkedPullRequests` with `state: open`; GitHub: `gh api repos/WordPress/$REPO/issues/N/timeline` cross-references to an open PR);
-   - is a feature request, a proposal, a content or data change, or an operations problem (server, DNS, caching, mail delivery, a missing language pack) rather than a code defect;
+   - is a feature request, a proposal, a content or data change, or an operations problem (server, DNS, caching, mail delivery, a missing language pack) rather than a code defect: record `skip` with reason "out of scope", the same words a security skip uses;
    - is a code defect, but not in `$REPO`. Record `wrong-repo` with where it belongs if you can tell.
 3. **Locate and understand.** Find the code. Reproduce the defect from the code: trace the input to the wrong output. If the repo has tests covering the area, write the failing test first. If you cannot explain the defect in two sentences pointing at specific lines, it is `not-ready`.
 4. **Second opinion.** Spawn a fresh subagent with only the item text, the repo path, and this question: "Is this a code defect in this repository that a small, safe change fixes? If yes, where, and what is the fix in one sentence? Answer ready / not-ready with your confidence." Do not share your conclusion with it. The item is `ready` only if you both say ready and agree on the location and the shape of the fix.
