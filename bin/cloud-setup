@@ -64,7 +64,11 @@ push_mode=$(jq -r --arg r "$repo" '.repos[$r].push // empty' "$PIPELINE_DIR/repo
 [[ -n $push_mode ]] || { log "$repo is not in repos.json"; exit 1; }
 if [[ $push_mode == fork ]]; then
 	fork_owner=$(jq -r .fork_owner "$PIPELINE_DIR/repos.json")
+	owner=$(jq -r .owner "$PIPELINE_DIR/repos.json")
+	# Attaching a fork and its upstream yields one checkout whose origin can be either; pin both.
+	git -C "$wt" remote set-url origin "https://github.com/$owner/$repo"
 	git -C "$wt" remote get-url fork >/dev/null 2>&1 || git -C "$wt" remote add fork "https://github.com/$fork_owner/$repo"
+	git -C "$wt" fetch -q origin
 fi
 
 # ── Dependencies ────────────────────────────────────────────────────────────
