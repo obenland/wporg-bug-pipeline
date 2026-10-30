@@ -12,6 +12,7 @@ import re
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 
 BIN = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BIN)
@@ -29,8 +30,16 @@ def state(*args):
 	return subprocess.run([os.path.join(BIN, 'state'), *args], capture_output=True, text=True, check=True).stdout
 
 
+def read_route(ticket):
+	try:
+		with open(os.path.join(STATE_DIR, f'items/trac-{ticket}/route.json')) as f:
+			return json.load(f)
+	except (FileNotFoundError, json.JSONDecodeError):
+		return None
+
+
 def routed(ticket):
-	return os.path.exists(os.path.join(STATE_DIR, f'items/trac-{ticket}/route.json'))
+	return read_route(ticket) is not None
 
 
 def main():
@@ -46,8 +55,15 @@ def main():
 		timeline = trac('getTimeline', {'from': since.strftime('%Y-%m-%d')})
 		for e in timeline.get('results', []):
 			m = re.search(r'/ticket/(\d+)', e.get('url', ''))
-			if m and int(m.group(1)) not in changed:
-				changed.append(int(m.group(1)))
+			if not m or int(m.group(1)) in changed:
+				continue
+			t = int(m.group(1))
+			# Placed after this event already: the overlap window would otherwise bring it back every run.
+			route = read_route(t)
+			when = parsedate_to_datetime(e['metadata']['date']) if e.get('metadata', {}).get('date') else None
+			if route and when and datetime.fromisoformat(route['updated'].replace('Z', '+00:00')) >= when:
+				continue
+			changed.append(t)
 
 	picked = []
 	# Changed tickets come back even when placed before: a new comment can move or unblock them.

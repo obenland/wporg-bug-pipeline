@@ -75,11 +75,11 @@ cmd_put() {
 claim_held() {
 	local f=$STATE_DIR/items/$1/claim.json status since age
 	[[ -f $f ]] || return 1
-	status=$(jq -r '.status // empty' "$f"); since=$(jq -r '.updated // empty' "$f")
+	status=$(jq -r '.status // empty' "$f")
 	case $status in
 		pr-open|done) return 0 ;;
 		working)
-			age=$(( $(date -u +%s) - $(date -u -d "$since" +%s 2>/dev/null || echo 0) ))
+			age=$(( $(date -u +%s) - $(jq -r '.updated | fromdateiso8601' "$f") ))
 			(( age < CLAIM_TTL )) ;;
 		*) return 1 ;;
 	esac

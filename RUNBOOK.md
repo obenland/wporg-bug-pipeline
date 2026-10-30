@@ -10,7 +10,7 @@ Paths: the pipeline repo is at `~/wporg-bug-pipeline` (`$P` below), the target r
 - **Push only `claude/*` branches.** A pre-push hook enforces it; never bypass hooks (`--no-verify` is forbidden).
 - **Never merge, close, or approve anything.** Never comment on, label, or edit issues or PRs other than the PR you opened this run. Never request reviewers or mention people.
 - **Never touch the dotorg sandbox** or any production site. Nothing you run writes to a wordpress.org site; the only reads are Trac through `$P/bin/trac` and the public downloads the test environments fetch.
-- **Security issues stay out.** An item that describes a vulnerability, an exploit, private data, or an account takeover is recorded `skip` with reason "security", with no detail, and is never fixed in public. Never write HackerOne report numbers anywhere.
+- **Security issues stay out.** An item that describes a vulnerability, an exploit, private data, or an account takeover is recorded `skip` with reason "out of scope" and nothing else, so the public state never marks which tickets are security-sensitive. It is never fixed in public. Never write HackerOne report numbers anywhere.
 - **No product or design decisions.** If the right fix depends on what the product should do, it is `not-ready`.
 - **American English** in code, comments, commits, and PR text. WordPress coding standards. Follow each repo's `.editorconfig`, `CLAUDE.md`, and `AGENTS.md`.
 - **Smallest fix that resolves the item.** No refactors, no features, no unrelated cleanups, no new test infrastructure.
