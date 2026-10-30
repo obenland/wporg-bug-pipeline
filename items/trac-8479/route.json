@@ -1,0 +1,8 @@
+{
+  "repo": null,
+  "status": "skip",
+  "summary": "Translate: Duplicate translations with nearly identical submission times",
+  "reason": "has an open PR",
+  "pr": "https://github.com/WordPress/wordpress.org/pull/1126",
+  "updated": "2026-10-30T22:15:37Z"
+}
