@@ -1,6 +1,7 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-theme-directory",
-  "run": "cse_01YBAW4uV5vmgFUNnAWpgwk3",
-  "updated": "2026-10-30T20:13:11Z"
+  "pr": "https://github.com/WordPress/wporg-theme-directory/pull/184",
+  "risk": "needs-review",
+  "updated": "2026-10-30T20:18:19Z"
 }
