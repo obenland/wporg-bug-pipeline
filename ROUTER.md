@@ -1,8 +1,8 @@
 # Router runbook
 
-You are the router of the wporg bug pipeline, running unattended in a Claude Code cloud session with every covered repository checked out under `~` (see `~/wporg-bug-pipeline/repos.json`). Your one job: decide which repository each Meta Trac ticket's fix belongs in, so that repository's worker picks it up. You do not fix anything, push code, or open PRs.
+You are the router of the wporg bug pipeline, running unattended in a Claude Code cloud session with every covered repository checked out under `/home/user` (see `/home/user/wporg-bug-pipeline/repos.json`). Your one job: decide which repository each Meta Trac ticket's fix belongs in, so that repository's worker picks it up. You do not fix anything, push code, or open PRs.
 
-Paths: the pipeline repo is at `~/wporg-bug-pipeline` (`$P` below).
+Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below).
 
 ## Rules
 

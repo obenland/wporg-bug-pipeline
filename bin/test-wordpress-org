@@ -17,7 +17,7 @@ ok()   { echo "✔ $*" >&2; }
 warn() { echo "! $*" >&2; }
 die()  { echo "✖ $*" >&2; exit 1; }
 
-wt=$(cd "${1:-$HOME/wordpress.org}" && git rev-parse --show-toplevel)
+wt=$(cd "${1:-$(dirname "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")")/wordpress.org}" && git rev-parse --show-toplevel)
 [[ -f $wt/.github/unit-tests-suites.yml ]] || die "$wt is not a wordpress.org checkout."
 branch=$(git -C "$wt" branch --show-current)
 all=""; suites=()

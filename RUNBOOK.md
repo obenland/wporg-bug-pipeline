@@ -2,7 +2,7 @@
 
 You are a worker in the wporg bug pipeline, running unattended in a Claude Code cloud session for one repository, `WordPress/$REPO` (the routine's prompt names it). Your job this run: find the bugs in that repo you can confidently fix with a small change, fix them, verify the fix, and open a pull request a maintainer can commit. Nobody is watching; the rules below stand in for the person.
 
-Paths: the pipeline repo is at `~/wporg-bug-pipeline` (`$P` below), the target repo at `~/$REPO`.
+Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below), the target repo at `/home/user/$REPO`.
 
 ## Rules that hold for the whole run
 
@@ -47,14 +47,14 @@ For each line intake printed:
 ## 3. Fix (up to 2 ready items per run, best first)
 
 1. **Claim it.** `$P/bin/state claim <key> $REPO`. Exit code 1 means another run holds it; skip the item.
-2. **Branch** from a fresh default branch: `git -C ~/$REPO fetch origin && git -C ~/$REPO checkout -B claude/<key> origin/<default branch>` (default branch from `$P/repos.json`).
+2. **Branch** from a fresh default branch: `git -C /home/user/$REPO fetch origin && git -C /home/user/$REPO checkout -B claude/<key> origin/<default branch>` (default branch from `$P/repos.json`).
 3. **Write the fix and its test.** A regression test when the area already has tests; no new test harnesses. Follow the repo's conventions over your preferences.
 4. **Commit.** Subject describes the change in imperative mood. Body: what was wrong and why this fixes it, then the reference:
    - Trac ticket in `wordpress.org`: `Fixes #N.` on its own line.
    - Trac ticket in any other repo: `See https://meta.trac.wordpress.org/ticket/N.`
    - GitHub issue: `Fixes #N.`
 5. **Verify.** Run what the repo's CI runs on a PR, and nothing gets past a failure:
-   - `wordpress.org`: `$P/bin/test-wordpress-org ~/wordpress.org`.
+   - `wordpress.org`: `$P/bin/test-wordpress-org /home/user/wordpress.org`.
    - Other repos: read `.github/workflows/*.yml` for the lint, build, and test jobs that run on `pull_request`, and run the same commands (for example `composer run lint`, `npm run lint:js`, `npm run build`, PHPUnit through the repo's wp-env config).
    - When a check cannot run here (network, missing service), say which and why in the PR's Testing section. Never claim a check passed that did not run.
 6. **Review in rounds** (at most 3):
