@@ -4,8 +4,9 @@
 #
 # Sources: open GitHub issues on WordPress/<repo> filed after the pipeline started on it, and Meta
 # Trac tickets the router sent to <repo>. The first run records the start time as the baseline.
-# An item is left out when another run holds its claim, when it already has a PR, when someone is
-# assigned to it, or when this repo already decided on it and nothing changed on the item since.
+# An item is left out when another run holds its claim, when someone is assigned to it, or when this
+# repo already decided on it and nothing changed on the item since. One that someone else already has
+# an open PR or patch for is recorded as skipped, and comes back if that PR closes unmerged.
 # Prints nothing when there is nothing to do; the run can stop there.
 #
 import json
@@ -13,6 +14,8 @@ import os
 import subprocess
 import sys
 from datetime import datetime, timezone
+
+import existing_pr
 
 BIN = os.path.dirname(os.path.abspath(__file__))
 STATE_DIR = os.environ.get('WPORG_STATE_DIR', os.path.expanduser('~/.wporg-state'))
@@ -50,6 +53,8 @@ def decided_since(key, repo, item_updated):
 	d = read(f'items/{key}/{repo}.json')
 	# A ready item that did not fit in an earlier run's fix budget comes back until it is claimed.
 	if not d or d.get('status') == 'ready':
+		return False
+	if d.get('pr') and existing_pr.pr_state(d['pr']) == 'closed':
 		return False
 	return parse_ts(d['updated']) >= parse_ts(item_updated)
 
@@ -114,8 +119,16 @@ def main():
 			continue
 		found.append(item)
 	found.sort(key=lambda i: i['updated_at'], reverse=True)
-	for item in found[:limit]:
+	listed = 0
+	for item in found:
+		if listed == limit:
+			break
+		other = existing_pr.for_key(item['key'])
+		if other:
+			subprocess.run([os.path.join(BIN, 'state'), 'put', f"items/{item['key']}/{repo}.json", json.dumps({'status': 'skip', 'reason': other[0], 'pr': other[1]})], capture_output=True, check=True)
+			continue
 		print(json.dumps(item))
+		listed += 1
 
 
 main()

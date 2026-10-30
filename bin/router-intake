@@ -5,8 +5,9 @@
 # Only tickets filed after the pipeline started count: the first run records the newest ticket
 # number as a baseline and places nothing. After that, each run picks up open defect tickets above
 # the baseline it has not placed yet, and baseline tickets that changed since they were placed (a
-# new comment can move or unblock them). Tickets in a skipped component are recorded as skipped
-# here, with no model involved. Prints nothing when there is nothing to do.
+# new comment can move or unblock them). Tickets in a skipped component, and tickets someone already
+# has an open PR or patch for, are recorded as skipped here, with no model involved. Prints nothing
+# when there is nothing to do.
 #
 import json
 import os
@@ -15,6 +16,8 @@ import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
+
+import existing_pr
 
 BIN = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BIN)
@@ -44,6 +47,14 @@ def routed(ticket):
 	return read_route(ticket) is not None
 
 
+def has_own_pr(ticket):
+	try:
+		with open(os.path.join(STATE_DIR, f'items/trac-{ticket}/claim.json')) as f:
+			return json.load(f).get('status') in ('pr-open', 'done')
+	except (FileNotFoundError, json.JSONDecodeError):
+		return False
+
+
 def main():
 	limit = int(sys.argv[sys.argv.index('--limit') + 1]) if '--limit' in sys.argv else 15
 	with open(os.path.join(ROOT, 'routing.json')) as f:
@@ -69,7 +80,7 @@ def main():
 				'repo': None, 'status': 'skip', 'summary': r['title'], 'reason': 'out of scope',
 			}))
 			continue
-		picked.append({'ticket': t, 'reason': 'new'})
+		picked.append({'ticket': t, 'reason': 'new', 'summary': r['title']})
 
 	if run.get('last_run'):
 		since = datetime.fromisoformat(run['last_run'].replace('Z', '+00:00')) - timedelta(days=1)
@@ -79,17 +90,27 @@ def main():
 				continue
 			t = int(m.group(1))
 			route = read_route(t)
-			if t <= baseline or not route or any(p['ticket'] == t for p in picked):
+			if t <= baseline or not route or has_own_pr(t) or any(p['ticket'] == t for p in picked):
 				continue
 			# Placed after this event already: the overlap window would otherwise bring it back every run.
 			when = parsedate_to_datetime(e['metadata']['date']) if e.get('metadata', {}).get('date') else None
 			if when and datetime.fromisoformat(route['updated'].replace('Z', '+00:00')) >= when:
 				continue
-			picked.append({'ticket': t, 'reason': 'changed'})
+			picked.append({'ticket': t, 'reason': 'changed', 'summary': route.get('summary', '')})
 
+	placed = 0
+	for p in picked:
+		if placed == limit:
+			break
+		found = existing_pr.for_ticket(p['ticket'])
+		if found:
+			state('put', f"items/trac-{p['ticket']}/route.json", json.dumps({
+				'repo': None, 'status': 'skip', 'summary': p['summary'], 'reason': found[0], 'pr': found[1],
+			}))
+			continue
+		print(json.dumps({'ticket': p['ticket'], 'reason': p['reason']}))
+		placed += 1
 	state('put', 'runs/router.json', json.dumps({'last_run': started}))
-	for p in picked[:limit]:
-		print(json.dumps(p))
 
 
 main()

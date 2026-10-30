@@ -31,7 +31,7 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
 1. **Read the whole item.** Trac: `$P/bin/trac getTicket '{"id": N, "commentLimit": 50}'`. GitHub: `gh api repos/WordPress/$REPO/issues/N` and `.../issues/N/comments`.
 2. **Disqualify quickly.** Record a decision and move on when the item:
    - is closed, or owned/assigned to a person, or a person said in the comments they are working on it;
-   - already has an open PR (Trac: `linkedPullRequests` with `state: open`; GitHub: `gh api repos/WordPress/$REPO/issues/N/timeline` cross-references to an open PR);
+   - already has someone's open PR or patch. Preflight already left those out; this catches one posted since. Run `$P/bin/existing_pr.py <key>`, and also read the comments for a PR or patch it could not recognize. Record `skip` with the reason and add `"pr":"<url>"`;
    - is a feature request, a proposal, a change to content or data stored on the site (not in this repo), or an operations problem (server, DNS, caching, mail delivery, a missing language pack) rather than a code defect: record `skip` with reason "out of scope", the same words a security skip uses;
    - is a code defect, but not in `$REPO`. Record `wrong-repo` with where it belongs if you can tell.
 3. **Locate and understand.** Find the code. Reproduce the defect from the code: trace the input to the wrong output. If the repo has tests covering the area, write the failing test first. If you cannot explain the defect in two sentences pointing at specific lines, it is `not-ready`.
@@ -64,6 +64,7 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
    - Re-run step 5 after the last change.
 7. **Decide the risk tier.** Ask: could this change do something a revert cannot undo, or change what happens rather than what people see? Copy, docs, tests, and display fixes are `low`. Anything that touches sign-in, permissions, user data, email, payments, caching of shared data, or code many sites load is `needs-review`. A PR with anything under `## Decisions` is `needs-review`.
 8. **Push and open the PR.**
+   - First run `$P/bin/existing_pr.py <key>` once more. If it prints a PR or patch, someone got there first: do not push. Record the item's decision as `skip` with `"pr":"<url>"`, release the claim with `"status":"failed"`, and say so in the report.
    - Push: `fork` repos (`wordpress.org`) push to `fork`; all others push to `origin`. Always `git push -u <remote> claude/<key>`.
    - Write the body to a file and run `$P/bin/open-pr $REPO claude/<key> "<title>" <file>`. The title is the commit subject. The body:
 

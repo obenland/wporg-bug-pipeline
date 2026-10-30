@@ -16,7 +16,7 @@ Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below).
 2. Place them in the order given.
 3. For each ticket:
    1. `$P/bin/trac getTicket '{"id": N, "commentLimit": 20}'`.
-   2. If it is closed, or already has an open linked PR, record `status: "skip"` with that reason.
+   2. If it is closed, or someone already has an open PR or patch for it, record `status: "skip"` with that reason. Preflight has already skipped the ones `$P/bin/existing_pr.py` recognizes (linked PRs, PR links in comments, `has-patch`, open PRs that cite the ticket). Still read the comments for one it missed.
    3. If it is not a code defect (feature request, proposal, content or data change, operations problem such as servers, DNS, caching, mail delivery, missing language packs), record `status: "skip"` with reason "out of scope", the same words a security skip uses.
    4. Otherwise find the code. Start from `$P/routing.json`'s hints for its component, then confirm by searching the checkouts (`grep -rn` for the page's markup, a string from the UI, a function or block name, the URL path). Routing hints are often wrong for `General` and `WordPress.org Site`; the code decides. Code synced into `wordpress.org` from another repository (its git log shows "Sync with git" commits for that path) belongs to the source repository.
    5. Record the route:
