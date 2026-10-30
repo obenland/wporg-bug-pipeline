@@ -1,0 +1,9 @@
+{
+  "repo": "wordpress.org",
+  "status": "routed",
+  "summary": "Theme Directory: listing thumbnails download at full 1200x900 because w=post-thumbnail is not a numeric Photon width",
+  "path": "wordpress.org/public_html/wp-content/plugins/theme-directory/admin-edit.php",
+  "reason": "routed by hand for the first end-to-end test",
+  "ticket_updated": "2026-10-30T19:40:53Z",
+  "updated": "2026-10-30T19:40:54Z"
+}
