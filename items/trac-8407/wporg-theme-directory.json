@@ -1,5 +1,5 @@
 {
-  "status": "not-ready",
-  "reason": "Defect confirmed at functions.php:142 (and inc/embed.php:78) passing the size name as Photon w, but the same filter serves 351px grid cards, ~500px 2-column cards and the ~1000px single-theme screenshot, so the fix needs a maintainer choice of widths or srcset/sizes (sharpness vs payload) rather than one obvious number.",
-  "updated": "2026-10-30T19:55:43Z"
+  "status": "ready",
+  "reason": "Re-queued after the runbook started favoring PRs: the width question is a technical trade-off to make and list under Decisions. Defect at wporg-themes-2024/functions.php:142 and inc/embed.php:78.",
+  "updated": "2026-10-30T20:09:21Z"
 }
