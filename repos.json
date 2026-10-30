@@ -5,22 +5,22 @@
 		"wordpress.org": {
 			"branch": "trunk",
 			"push": "fork",
-			"cadence": 2
+			"cadence": 6
 		},
 		"wporg-mu-plugins": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 6
+			"cadence": 24
 		},
 		"wporg-main-2022": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 6
+			"cadence": 24
 		},
 		"wporg-developer": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 6
+			"cadence": 24
 		},
 		"wporg-theme-directory": {
 			"branch": "trunk",
