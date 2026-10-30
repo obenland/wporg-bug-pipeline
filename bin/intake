@@ -2,7 +2,8 @@
 #
 # intake <repo> [--limit N] — the items a worker should look at this run, newest first, one JSON object per line.
 #
-# Sources: open GitHub issues on WordPress/<repo>, and Meta Trac tickets the router sent to <repo>.
+# Sources: open GitHub issues on WordPress/<repo> filed after the pipeline started on it, and Meta
+# Trac tickets the router sent to <repo>. The first run records the start time as the baseline.
 # An item is left out when another run holds its claim, when it already has a PR, when someone is
 # assigned to it, or when this repo already decided on it and nothing changed on the item since.
 # Prints nothing when there is nothing to do; the run can stop there.
@@ -50,7 +51,7 @@ def decided_since(key, repo, item_updated):
 	return parse_ts(d['updated']) >= parse_ts(item_updated)
 
 
-def github_issues(repo):
+def github_issues(repo, since):
 	out = subprocess.run(
 		['gh', 'api', f'repos/WordPress/{repo}/issues?state=open&sort=updated&direction=desc&per_page=100'],
 		capture_output=True, text=True,
@@ -59,7 +60,7 @@ def github_issues(repo):
 		print(f'intake: GitHub issues for {repo} unavailable: {out.stderr.strip()}', file=sys.stderr)
 		return []
 	for i in json.loads(out.stdout):
-		if 'pull_request' in i or i.get('assignees'):
+		if 'pull_request' in i or i.get('assignees') or i['created_at'] <= since:
 			continue
 		yield {
 			'key': f"gh-{repo}-{i['number']}",
@@ -98,8 +99,14 @@ def main():
 	limit = int(sys.argv[sys.argv.index('--limit') + 1]) if '--limit' in sys.argv else 10
 	subprocess.run([os.path.join(BIN, 'state'), 'ls', 'items'], capture_output=True, check=True)
 
+	baseline = read(f'baselines/{repo}.json')
+	if not baseline:
+		since = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+		subprocess.run([os.path.join(BIN, 'state'), 'put', f'baselines/{repo}.json', json.dumps({'since': since})], capture_output=True, check=True)
+		baseline = {'since': since}
+
 	found = []
-	for item in list(routed_tickets(repo)) + list(github_issues(repo)):
+	for item in list(routed_tickets(repo)) + list(github_issues(repo, baseline['since'])):
 		if claim_held(item['key']) or decided_since(item['key'], repo, item['updated_at']):
 			continue
 		found.append(item)

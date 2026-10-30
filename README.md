@@ -2,8 +2,9 @@
 
 Unattended bug fixing for the WordPress.org repositories, run as Claude Code cloud routines.
 
-- **Router** (hourly): reads Meta Trac through the Trac MCP server, decides which repository each ticket's fix belongs in by finding the code, and records the route. See [ROUTER.md](ROUTER.md).
-- **Workers** (one per repository, every 1–6 hours per `repos.json`): pick up GitHub issues on their repo and the Trac tickets routed to it, triage each with a second, independent opinion, fix the ones that are ready with the smallest change, run what CI runs, review the fix in rounds under [review-policy.md](review-policy.md), and open a PR. See [RUNBOOK.md](RUNBOOK.md).
+- **Router** (every 2 hours): reads new Meta Trac bug tickets through the Trac MCP server, decides which repository each ticket's fix belongs in by finding the code, and records the route. See [ROUTER.md](ROUTER.md).
+- **Workers** (one per repository, every 2–24 hours per `repos.json`): pick up new GitHub issues on their repo and the Trac tickets routed to it, triage each with a second, independent opinion, fix the ones that are ready with the smallest change, run what CI runs, review the fix in rounds under [review-policy.md](review-policy.md), and open a PR. See [RUNBOOK.md](RUNBOOK.md).
+- **New bugs only.** The first run of the router records the newest ticket number, and the first run of each worker records the time; nothing filed before that is considered.
 - **State** lives on the `claude/state` branch, one JSON file per fact, written only through `bin/state`.
 
 Nothing here merges, commits to SVN, comments on tickets, or touches the dotorg sandbox. `wordpress.org` PRs come from the fork and are committed to SVN by a maintainer with `wporgpr`; PRs on the GitHub-native repos are merged by a maintainer.

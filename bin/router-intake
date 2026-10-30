@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 #
-# router-intake [--limit N] — Meta Trac tickets the router should place this run, one JSON object per line.
+# router-intake [--limit N] — new Meta Trac bug tickets the router should place this run, one JSON object per line.
 #
-# First the open tickets that changed since the router's last run (from the timeline), then the
-# open backlog it has never placed, most recently changed first. Tickets in a skipped component are
-# recorded as skipped here, with no model involved. Prints nothing when there is nothing to do.
+# Only tickets filed after the pipeline started count: the first run records the newest ticket
+# number as a baseline and places nothing. After that, each run picks up open defect tickets above
+# the baseline it has not placed yet, and baseline tickets that changed since they were placed (a
+# new comment can move or unblock them). Tickets in a skipped component are recorded as skipped
+# here, with no model involved. Prints nothing when there is nothing to do.
 #
 import json
 import os
@@ -46,47 +48,44 @@ def main():
 	limit = int(sys.argv[sys.argv.index('--limit') + 1]) if '--limit' in sys.argv else 15
 	with open(os.path.join(ROOT, 'routing.json')) as f:
 		skip = set(json.load(f)['skip'])
-	run = json.loads(state('get', 'runs/router.json') or '{}')
 	started = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-	changed = []
-	if run.get('last_run'):
-		since = datetime.fromisoformat(run['last_run'].replace('Z', '+00:00')) - timedelta(days=1)
-		timeline = trac('getTimeline', {'from': since.strftime('%Y-%m-%d')})
-		for e in timeline.get('results', []):
-			m = re.search(r'/ticket/(\d+)', e.get('url', ''))
-			if not m or int(m.group(1)) in changed:
-				continue
-			t = int(m.group(1))
-			# Placed after this event already: the overlap window would otherwise bring it back every run.
-			route = read_route(t)
-			when = parsedate_to_datetime(e['metadata']['date']) if e.get('metadata', {}).get('date') else None
-			if route and when and datetime.fromisoformat(route['updated'].replace('Z', '+00:00')) >= when:
-				continue
-			changed.append(t)
+	baseline = json.loads(state('get', 'baselines/router.json') or '{}').get('ticket')
+	if baseline is None:
+		newest = trac('searchTickets', {'query': 'order=id&desc=1', 'limit': 1})['results']
+		state('put', 'baselines/router.json', json.dumps({'ticket': newest[0]['id'] if newest else 0, 'since': started}))
+		state('put', 'runs/router.json', json.dumps({'last_run': started}))
+		return
+	run = json.loads(state('get', 'runs/router.json') or '{}')
 
 	picked = []
-	# Changed tickets come back even when placed before: a new comment can move or unblock them.
-	for t in changed:
-		picked.append({'ticket': t, 'reason': 'changed'})
+	res = trac('searchTickets', {'query': 'status!=closed&type=defect (bug)&order=id&desc=1', 'limit': 50})
+	for r in res.get('results', []):
+		t = r['id']
+		if t <= baseline or routed(t):
+			continue
+		if r['metadata'].get('component') in skip:
+			state('put', f'items/trac-{t}/route.json', json.dumps({
+				'repo': None, 'status': 'skip', 'summary': r['title'], 'reason': 'out of scope',
+			}))
+			continue
+		picked.append({'ticket': t, 'reason': 'new'})
 
-	page = 1
-	while len(picked) < limit and page <= 10:
-		res = trac('searchTickets', {'query': 'status!=closed&order=changetime&desc=1', 'limit': 50, 'page': page})
-		for r in res.get('results', []):
-			t = r['id']
-			if routed(t) or any(p['ticket'] == t for p in picked):
+	if run.get('last_run'):
+		since = datetime.fromisoformat(run['last_run'].replace('Z', '+00:00')) - timedelta(days=1)
+		for e in trac('getTimeline', {'from': since.strftime('%Y-%m-%d')}).get('results', []):
+			m = re.search(r'/ticket/(\d+)', e.get('url', ''))
+			if not m:
 				continue
-			if r['metadata'].get('component') in skip:
-				state('put', f'items/trac-{t}/route.json', json.dumps({
-					'repo': None, 'status': 'skip', 'summary': r['metadata'].get('summary', r['title']),
-					'reason': f"component {r['metadata']['component']} has no code the pipeline covers",
-				}))
+			t = int(m.group(1))
+			route = read_route(t)
+			if t <= baseline or not route or any(p['ticket'] == t for p in picked):
 				continue
-			picked.append({'ticket': t, 'reason': 'backlog'})
-		if not res.get('hasMore'):
-			break
-		page += 1
+			# Placed after this event already: the overlap window would otherwise bring it back every run.
+			when = parsedate_to_datetime(e['metadata']['date']) if e.get('metadata', {}).get('date') else None
+			if when and datetime.fromisoformat(route['updated'].replace('Z', '+00:00')) >= when:
+				continue
+			picked.append({'ticket': t, 'reason': 'changed'})
 
 	state('put', 'runs/router.json', json.dumps({'last_run': started}))
 	for p in picked[:limit]:
