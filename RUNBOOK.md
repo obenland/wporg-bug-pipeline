@@ -11,7 +11,7 @@ Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below), the
 - **Never merge, close, or approve anything.** Never comment on, label, or edit issues or PRs other than the PR you opened this run. Never request reviewers or mention people.
 - **Never touch the dotorg sandbox** or any production site. Nothing you run writes to a wordpress.org site; the only reads are Trac through `$P/bin/trac` and the public downloads the test environments fetch.
 - **Security issues stay out.** An item that describes a vulnerability, an exploit, private data, or an account takeover is recorded `skip` with reason "out of scope" and nothing else, so the public state never marks which tickets are security-sensitive. It is never fixed in public. Never write HackerOne report numbers anywhere.
-- **No product or design decisions.** If the right fix depends on what the product should do, it is `not-ready`.
+- **Bias toward a PR.** A maintainer would rather rework a PR than get none. When a fix involves a judgment call, make the most conventional choice, keep it easy to change, and list it under `## Decisions` in the PR. That covers technical trade-offs (image sizes, `srcset`, cache lifetimes, limits, timeouts) and wording (labels, messages, help text, link text in code). Only a product decision is `not-ready`: whether something should exist, who may do what, or a policy question.
 - **American English** in code, comments, commits, and PR text. WordPress coding standards. Follow each repo's `.editorconfig`, `CLAUDE.md`, and `AGENTS.md`.
 - **Smallest fix that resolves the item.** No refactors, no features, no unrelated cleanups, no new test infrastructure.
 - Read `$P/LESSONS.md` before you start; it is what earlier runs learned.
@@ -32,10 +32,10 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
 2. **Disqualify quickly.** Record a decision and move on when the item:
    - is closed, or owned/assigned to a person, or a person said in the comments they are working on it;
    - already has an open PR (Trac: `linkedPullRequests` with `state: open`; GitHub: `gh api repos/WordPress/$REPO/issues/N/timeline` cross-references to an open PR);
-   - is a feature request, a proposal, a content or data change, or an operations problem (server, DNS, caching, mail delivery, a missing language pack) rather than a code defect: record `skip` with reason "out of scope", the same words a security skip uses;
+   - is a feature request, a proposal, a change to content or data stored on the site (not in this repo), or an operations problem (server, DNS, caching, mail delivery, a missing language pack) rather than a code defect: record `skip` with reason "out of scope", the same words a security skip uses;
    - is a code defect, but not in `$REPO`. Record `wrong-repo` with where it belongs if you can tell.
 3. **Locate and understand.** Find the code. Reproduce the defect from the code: trace the input to the wrong output. If the repo has tests covering the area, write the failing test first. If you cannot explain the defect in two sentences pointing at specific lines, it is `not-ready`.
-4. **Second opinion.** Spawn a fresh subagent with only the item text, the repo path, and this question: "Is this a code defect in this repository that a small, safe change fixes? If yes, where, and what is the fix in one sentence? Answer ready / not-ready with your confidence." Do not share your conclusion with it. The item is `ready` only if you both say ready and agree on the location and the shape of the fix.
+4. **Second opinion.** Spawn a fresh subagent with only the item text, the repo path, and this question: "Is this a code defect in this repository that a reviewable change fixes? Technical trade-offs and wording choices do not make it not-ready; name them. If yes, where, and what is the fix in one sentence? Answer ready / not-ready with your confidence." Do not share your conclusion with it. The item is `ready` when you both say ready and agree on the location. If you differ on the shape of the fix, take the more conventional one and list the other under `## Decisions`.
 5. **Record the decision** for every item you looked at:
 
    ```
@@ -62,7 +62,7 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
    - Triage the findings under `$P/review-policy.md`. Must-fixes go in one separate commit on top of the fix; everything else gets a one-line disposition in your notes.
    - Later rounds review only that fix commit's diff, at medium effort, and fold any further must-fix into the same commit. Stop when a round changes nothing.
    - Re-run step 5 after the last change.
-7. **Decide the risk tier.** Ask: could this change do something a revert cannot undo, or change what happens rather than what people see? Copy, docs, tests, and display fixes are `low`. Anything that touches sign-in, permissions, user data, email, payments, caching of shared data, or code many sites load is `needs-review`.
+7. **Decide the risk tier.** Ask: could this change do something a revert cannot undo, or change what happens rather than what people see? Copy, docs, tests, and display fixes are `low`. Anything that touches sign-in, permissions, user data, email, payments, caching of shared data, or code many sites load is `needs-review`. A PR with anything under `## Decisions` is `needs-review`.
 8. **Push and open the PR.**
    - Push: `fork` repos (`wordpress.org`) push to `fork`; all others push to `origin`. Always `git push -u <remote> claude/<key>`.
    - Write the body to a file and run `$P/bin/open-pr $REPO claude/<key> "<title>" <file>`. The title is the commit subject. The body:
@@ -78,6 +78,9 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
 
      ## Testing
      <the exact checks run and their results; steps a reviewer can follow to see the fix>
+
+     ## Decisions
+     <each judgment call: the option taken, the alternatives, and why; or "None.">
 
      ## Pipeline
      Risk: low | needs-review — <one sentence>
