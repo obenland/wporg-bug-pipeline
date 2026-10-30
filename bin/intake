@@ -31,7 +31,7 @@ def read(path):
 		return None
 
 
-def claim_held(key):
+def claim_held(key, item_updated):
 	c = read(f'items/{key}/claim.json')
 	if not c:
 		return False
@@ -40,14 +40,17 @@ def claim_held(key):
 	if c.get('status') == 'working':
 		age = (datetime.now(timezone.utc) - parse_ts(c['updated'])).total_seconds()
 		return age < CLAIM_TTL
+	# A failed fix is retried only once the item changes, not on every run.
+	if c.get('status') == 'failed':
+		return parse_ts(c['updated']) >= parse_ts(item_updated)
 	return False
 
 
 def decided_since(key, repo, item_updated):
 	d = read(f'items/{key}/{repo}.json')
-	if not d:
+	# A ready item that did not fit in an earlier run's fix budget comes back until it is claimed.
+	if not d or d.get('status') == 'ready':
 		return False
-	# A not-ready or wrong-repo decision stands until the item changes.
 	return parse_ts(d['updated']) >= parse_ts(item_updated)
 
 
@@ -107,7 +110,7 @@ def main():
 
 	found = []
 	for item in list(routed_tickets(repo)) + list(github_issues(repo, baseline['since'])):
-		if claim_held(item['key']) or decided_since(item['key'], repo, item['updated_at']):
+		if claim_held(item['key'], item['updated_at']) or decided_since(item['key'], repo, item['updated_at']):
 			continue
 		found.append(item)
 	found.sort(key=lambda i: i['updated_at'], reverse=True)

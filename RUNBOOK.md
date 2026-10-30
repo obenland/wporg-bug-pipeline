@@ -26,7 +26,7 @@ $P/bin/cloud-setup $REPO
 
 ## 2. Triage each candidate (up to 8)
 
-For each line intake printed:
+For each line preflight printed. An item whose `items/<key>/$REPO.json` already says `ready` was triaged by an earlier run that ran out of fix budget: skip straight to step 3 for it.
 
 1. **Read the whole item.** Trac: `$P/bin/trac getTicket '{"id": N, "commentLimit": 50}'`. GitHub: `gh api repos/WordPress/$REPO/issues/N` and `.../issues/N/comments`.
 2. **Disqualify quickly.** Record a decision and move on when the item:
@@ -44,7 +44,7 @@ For each line intake printed:
 
    For a `wrong-repo` Trac ticket whose home you identified, also update its route so the right worker sees it: `$P/bin/state put items/<key>/route.json '{"repo":"<repo>","status":"routed","summary":"...","reason":"rerouted by $REPO worker: <why>"}'`.
 
-## 3. Fix (up to 2 ready items per run, best first)
+## 3. Fix (up to 2 ready items per run, best first; the rest stay ready for the next run)
 
 1. **Claim it.** `$P/bin/state claim <key> $REPO`. Exit code 1 means another run holds it; skip the item.
 2. **Branch** from a fresh default branch: `git -C /home/user/$REPO fetch origin && git -C /home/user/$REPO checkout -B claude/<key> origin/<default branch>` (default branch from `$P/repos.json`).
