@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+#
+# trac — call a tool on the Meta Trac MCP server and print its JSON result.
+#
+#   trac getTicket '{"id": 8445, "commentLimit": 20}'
+#   trac searchTickets '{"query": "status!=closed&type=defect (bug)", "limit": 50}'
+#   trac getTimeline '{"from": "2026-10-29"}'
+#
+# Trac itself sits behind a browser challenge, so plain HTTP to meta.trac.wordpress.org fails;
+# the MCP server is the one way in from a cloud session. It answers stateless JSON-RPC.
+#
+import json
+import sys
+import time
+import urllib.error
+import urllib.request
+
+URL = 'https://wordpress-trac-mcp-server-prod.a8c-aiops.workers.dev/mcp/meta'
+
+
+def call(tool, args):
+	body = json.dumps({
+		'jsonrpc': '2.0',
+		'id': 1,
+		'method': 'tools/call',
+		'params': {'name': tool, 'arguments': args},
+	}).encode()
+	req = urllib.request.Request(URL, data=body, headers={
+		'Content-Type': 'application/json',
+		'Accept': 'application/json, text/event-stream',
+		# Cloudflare in front of the server refuses urllib's default user agent.
+		'User-Agent': 'wporg-bug-pipeline/1.0',
+	})
+	for attempt in range(4):
+		try:
+			with urllib.request.urlopen(req, timeout=60) as res:
+				payload = json.load(res)
+			break
+		except (urllib.error.URLError, TimeoutError) as e:
+			if attempt == 3:
+				sys.exit(f'trac: {tool} failed: {e}')
+			time.sleep(2 ** attempt)
+	if 'error' in payload:
+		sys.exit(f"trac: {tool} error: {payload['error'].get('message')}")
+	result = payload['result']
+	text = result['content'][0]['text']
+	if result.get('isError'):
+		sys.exit(f'trac: {tool} error: {text}')
+	return json.loads(text)
+
+
+if __name__ == '__main__':
+	if len(sys.argv) < 2:
+		sys.exit(__doc__ or 'Usage: trac <tool> [json-args]')
+	args = json.loads(sys.argv[2]) if len(sys.argv) > 2 else {}
+	json.dump(call(sys.argv[1], args), sys.stdout, indent=1)
+	print()

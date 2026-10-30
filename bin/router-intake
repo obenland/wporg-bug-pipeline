@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+#
+# router-intake [--limit N] — Meta Trac tickets the router should place this run, one JSON object per line.
+#
+# First the open tickets that changed since the router's last run (from the timeline), then the
+# open backlog it has never placed, most recently changed first. Tickets in a skipped component are
+# recorded as skipped here, with no model involved. Prints nothing when there is nothing to do.
+#
+import json
+import os
+import re
+import subprocess
+import sys
+from datetime import datetime, timedelta, timezone
+
+BIN = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(BIN)
+STATE_DIR = os.environ.get('WPORG_STATE_DIR', os.path.expanduser('~/.wporg-state'))
+
+
+def trac(tool, args):
+	out = subprocess.run([os.path.join(BIN, 'trac'), tool, json.dumps(args)], capture_output=True, text=True)
+	if out.returncode != 0:
+		sys.exit(out.stderr.strip())
+	return json.loads(out.stdout)
+
+
+def state(*args):
+	return subprocess.run([os.path.join(BIN, 'state'), *args], capture_output=True, text=True, check=True).stdout
+
+
+def routed(ticket):
+	return os.path.exists(os.path.join(STATE_DIR, f'items/trac-{ticket}/route.json'))
+
+
+def main():
+	limit = int(sys.argv[sys.argv.index('--limit') + 1]) if '--limit' in sys.argv else 15
+	with open(os.path.join(ROOT, 'routing.json')) as f:
+		skip = set(json.load(f)['skip'])
+	run = json.loads(state('get', 'runs/router.json') or '{}')
+	started = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+	changed = []
+	if run.get('last_run'):
+		since = datetime.fromisoformat(run['last_run'].replace('Z', '+00:00')) - timedelta(days=1)
+		timeline = trac('getTimeline', {'from': since.strftime('%Y-%m-%d')})
+		for e in timeline.get('results', []):
+			m = re.search(r'/ticket/(\d+)', e.get('url', ''))
+			if m and int(m.group(1)) not in changed:
+				changed.append(int(m.group(1)))
+
+	picked = []
+	# Changed tickets come back even when placed before: a new comment can move or unblock them.
+	for t in changed:
+		picked.append({'ticket': t, 'reason': 'changed'})
+
+	page = 1
+	while len(picked) < limit and page <= 10:
+		res = trac('searchTickets', {'query': 'status!=closed&order=changetime&desc=1', 'limit': 50, 'page': page})
+		for r in res.get('results', []):
+			t = r['id']
+			if routed(t) or any(p['ticket'] == t for p in picked):
+				continue
+			if r['metadata'].get('component') in skip:
+				state('put', f'items/trac-{t}/route.json', json.dumps({
+					'repo': None, 'status': 'skip', 'summary': r['metadata'].get('summary', r['title']),
+					'reason': f"component {r['metadata']['component']} has no code the pipeline covers",
+				}))
+				continue
+			picked.append({'ticket': t, 'reason': 'backlog'})
+		if not res.get('hasMore'):
+			break
+		page += 1
+
+	state('put', 'runs/router.json', json.dumps({'last_run': started}))
+	for p in picked[:limit]:
+		print(json.dumps(p))
+
+
+main()

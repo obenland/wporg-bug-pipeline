@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+#
+# cloud-setup [<repo>] — per-session setup inside a Claude Code cloud VM, run first by every routine.
+#
+# - Guards every checkout with a pre-push hook that refuses any ref outside claude/*.
+# - Starts dockerd (the environment's snapshot keeps files, not processes).
+# - For <repo>: adds the fork remote where the repo pushes to a fork, and installs dependencies.
+#
+# Safe to run more than once.
+#
+set -euo pipefail
+
+PIPELINE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+HOME_DIR="$(dirname "$PIPELINE_DIR")"
+repo=${1:-}
+
+log() { echo "▸ $*" >&2; }
+
+# ── Push guard ──────────────────────────────────────────────────────────────
+for git_dir in "$HOME_DIR"/*/.git; do
+	[[ -d $git_dir ]] || continue
+	cat > "$git_dir/hooks/pre-push" <<'HOOK'
+#!/usr/bin/env bash
+# Installed by wporg-bug-pipeline: the pipeline only ever pushes claude/* branches.
+while read -r local_ref local_sha remote_ref remote_sha; do
+	if [[ $remote_ref != refs/heads/claude/* ]]; then
+		echo "pre-push: refusing to push $remote_ref; only claude/* branches." >&2
+		exit 1
+	fi
+	if [[ $local_sha =~ ^0+$ ]]; then
+		echo "pre-push: refusing to delete $remote_ref." >&2
+		exit 1
+	fi
+done
+HOOK
+	chmod +x "$git_dir/hooks/pre-push"
+done
+log "pre-push guard installed in $(ls -d "$HOME_DIR"/*/.git 2>/dev/null | wc -l | tr -d ' ') checkouts"
+
+# ── Docker ──────────────────────────────────────────────────────────────────
+if ! docker info >/dev/null 2>&1; then
+	# Anonymous Docker Hub pulls from the shared egress hit 429; the setup script points dockerd at a mirror.
+	if [[ ! -f /etc/docker/daemon.json ]]; then
+		mkdir -p /etc/docker
+		echo '{"registry-mirrors":["https://mirror.gcr.io"]}' > /etc/docker/daemon.json
+	fi
+	(dockerd > /tmp/dockerd.log 2>&1 &)
+	for _ in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 2; done
+	docker info >/dev/null 2>&1 && log "dockerd started" || log "dockerd did not start; see /tmp/dockerd.log"
+fi
+
+# ── Toolchain checks ────────────────────────────────────────────────────────
+node_major=$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)
+php_minor=$(php -r 'echo PHP_MAJOR_VERSION * 100 + PHP_MINOR_VERSION;' 2>/dev/null || echo 0)
+(( node_major >= 24 )) || log "Node $(node -v 2>/dev/null) is older than 24; the environment setup script should install it"
+(( php_minor >= 804 )) || log "PHP $(php -r 'echo PHP_VERSION;' 2>/dev/null) is older than 8.4; the environment setup script should install it"
+
+[[ -n $repo ]] || exit 0
+wt="$HOME_DIR/$repo"
+[[ -d $wt/.git ]] || { log "no checkout at $wt"; exit 1; }
+
+# ── Remotes ─────────────────────────────────────────────────────────────────
+push_mode=$(jq -r --arg r "$repo" '.repos[$r].push // empty' "$PIPELINE_DIR/repos.json")
+[[ -n $push_mode ]] || { log "$repo is not in repos.json"; exit 1; }
+if [[ $push_mode == fork ]]; then
+	fork_owner=$(jq -r .fork_owner "$PIPELINE_DIR/repos.json")
+	git -C "$wt" remote get-url fork >/dev/null 2>&1 || git -C "$wt" remote add fork "https://github.com/$fork_owner/$repo"
+fi
+
+# ── Dependencies ────────────────────────────────────────────────────────────
+platform_args=()
+(( php_minor >= 804 )) || platform_args=(--ignore-platform-req=php)
+if [[ -f $wt/composer.lock ]]; then
+	log "composer install in $repo"
+	(cd "$wt" && composer install -q --no-interaction --no-progress "${platform_args[@]+"${platform_args[@]}"}") || log "composer install failed"
+fi
+for lock in "$wt/package-lock.json" "$wt/environments/package-lock.json"; do
+	[[ -f $lock ]] || continue
+	log "npm ci in ${lock%/package-lock.json}"
+	(cd "$(dirname "$lock")" && npm ci --no-audit --no-fund --loglevel=error) || log "npm ci failed in $(dirname "$lock")"
+done
+log "setup done for $repo"

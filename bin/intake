@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+#
+# intake <repo> [--limit N] — the items a worker should look at this run, newest first, one JSON object per line.
+#
+# Sources: open GitHub issues on WordPress/<repo>, and Meta Trac tickets the router sent to <repo>.
+# An item is left out when another run holds its claim, when it already has a PR, when someone is
+# assigned to it, or when this repo already decided on it and nothing changed on the item since.
+# Prints nothing when there is nothing to do; the run can stop there.
+#
+import json
+import os
+import subprocess
+import sys
+from datetime import datetime, timezone
+
+BIN = os.path.dirname(os.path.abspath(__file__))
+STATE_DIR = os.environ.get('WPORG_STATE_DIR', os.path.expanduser('~/.wporg-state'))
+CLAIM_TTL = 4 * 3600
+
+
+def parse_ts(s):
+	return datetime.fromisoformat(s.replace('Z', '+00:00')) if s else None
+
+
+def read(path):
+	try:
+		with open(os.path.join(STATE_DIR, path)) as f:
+			return json.load(f)
+	except (FileNotFoundError, json.JSONDecodeError):
+		return None
+
+
+def claim_held(key):
+	c = read(f'items/{key}/claim.json')
+	if not c:
+		return False
+	if c.get('status') in ('pr-open', 'done'):
+		return True
+	if c.get('status') == 'working':
+		age = (datetime.now(timezone.utc) - parse_ts(c['updated'])).total_seconds()
+		return age < CLAIM_TTL
+	return False
+
+
+def decided_since(key, repo, item_updated):
+	d = read(f'items/{key}/{repo}.json')
+	if not d:
+		return False
+	# A not-ready or wrong-repo decision stands until the item changes.
+	return parse_ts(d['updated']) >= parse_ts(item_updated)
+
+
+def github_issues(repo):
+	out = subprocess.run(
+		['gh', 'api', f'repos/WordPress/{repo}/issues?state=open&sort=updated&direction=desc&per_page=100'],
+		capture_output=True, text=True,
+	)
+	if out.returncode != 0:
+		print(f'intake: GitHub issues for {repo} unavailable: {out.stderr.strip()}', file=sys.stderr)
+		return []
+	for i in json.loads(out.stdout):
+		if 'pull_request' in i or i.get('assignees'):
+			continue
+		yield {
+			'key': f"gh-{repo}-{i['number']}",
+			'source': 'github',
+			'number': i['number'],
+			'title': i['title'],
+			'updated_at': i['updated_at'],
+			'url': i['html_url'],
+		}
+
+
+def routed_tickets(repo):
+	items = os.path.join(STATE_DIR, 'items')
+	if not os.path.isdir(items):
+		return
+	for key in os.listdir(items):
+		if not key.startswith('trac-'):
+			continue
+		r = read(f'items/{key}/route.json')
+		if not r or r.get('repo') != repo:
+			continue
+		yield {
+			'key': key,
+			'source': 'trac',
+			'number': int(key[5:]),
+			'title': r.get('summary', ''),
+			'updated_at': r.get('ticket_updated') or r['updated'],
+			'url': f'https://meta.trac.wordpress.org/ticket/{key[5:]}',
+		}
+
+
+def main():
+	if len(sys.argv) < 2:
+		sys.exit('Usage: intake <repo> [--limit N]')
+	repo = sys.argv[1]
+	limit = int(sys.argv[sys.argv.index('--limit') + 1]) if '--limit' in sys.argv else 10
+	subprocess.run([os.path.join(BIN, 'state'), 'ls', 'items'], capture_output=True, check=True)
+
+	found = []
+	for item in list(routed_tickets(repo)) + list(github_issues(repo)):
+		if claim_held(item['key']) or decided_since(item['key'], repo, item['updated_at']):
+			continue
+		found.append(item)
+	found.sort(key=lambda i: i['updated_at'], reverse=True)
+	for item in found[:limit]:
+		print(json.dumps(item))
+
+
+main()

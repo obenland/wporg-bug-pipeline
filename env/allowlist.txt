@@ -1,0 +1,10 @@
+wordpress-trac-mcp-server-prod.a8c-aiops.workers.dev
+wordpress.org
+api.wordpress.org
+downloads.wordpress.org
+ppa.launchpadcontent.net
+keyserver.ubuntu.com
+api.launchpad.net
+mirror.gcr.io
+nodejs.org
+storage.googleapis.com

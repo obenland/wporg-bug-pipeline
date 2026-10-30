@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+#
+# test-wordpress-org [<checkout>] — the checks CI runs on a WordPress/wordpress.org PR, inside a cloud VM.
+#
+# A cloud port of the dotorg skill's wporg-test, without its worktree and merge handling: the
+# pipeline's branch is cut from a fresh origin/trunk, so it is tested as is.
+# 1. phpcs on the branch, with the same script the PHPCS workflow uses.
+# 2. The PHPUnit suites whose paths the branch touches, chosen from
+#    .github/unit-tests-suites.yml exactly as the Unit Tests workflow does:
+#    standalone suites through vendor/bin/phpunit, WordPress suites through wp-env.
+# 3. A smoke request against each started environment's front page.
+#
+set -euo pipefail
+
+log()  { echo "▸ $*" >&2; }
+ok()   { echo "✔ $*" >&2; }
+warn() { echo "! $*" >&2; }
+die()  { echo "✖ $*" >&2; exit 1; }
+
+wt=$(cd "${1:-$HOME/wordpress.org}" && git rev-parse --show-toplevel)
+[[ -f $wt/.github/unit-tests-suites.yml ]] || die "$wt is not a wordpress.org checkout."
+branch=$(git -C "$wt" branch --show-current)
+all=""; suites=()
+log "Checkout: $wt ($branch)"
+
+git -C "$wt" fetch -q origin trunk
+git -C "$wt" merge-tree --write-tree origin/trunk HEAD >/dev/null 2>&1 || die "$branch does not merge cleanly into origin/trunk; rebase it."
+rc=0
+changed=$(git -C "$wt" diff --name-only origin/trunk...HEAD)
+[[ -n $changed ]] || warn "No files differ from origin/trunk."
+
+# ── phpcs ───────────────────────────────────────────────────────────────────
+log "phpcs on changed PHP files…"
+base_ref="wporg-test-base-$$"
+git -C "$wt" update-ref "refs/remotes/origin/$base_ref" "$(git -C "$wt" merge-base origin/trunk HEAD)"
+trap 'git -C "$wt" update-ref -d "refs/remotes/origin/$base_ref" 2>/dev/null' EXIT
+if (cd "$wt" && BASE_REF=$base_ref php .github/bin/phpcs-branch.php < /dev/null); then
+	ok "phpcs clean"
+else
+	warn "phpcs reported violations"; rc=1
+fi
+git -C "$wt" update-ref -d "refs/remotes/origin/$base_ref"
+
+# ── Suite selection ─────────────────────────────────────────────────────────
+# Mirrors the workflow's `changes` job: suite paths + shared paths for the type +
+# the plugins a WordPress suite's environment activates.
+select_suites() {
+	CHANGED="$changed" python3 -I - "$wt" "$all" "${suites[@]+"${suites[@]}"}" <<'PY'
+import sys, json, re, fnmatch, os
+wt, all_flag, *only = sys.argv[1:]
+changed = [l for l in os.environ.get('CHANGED', '').splitlines() if l]
+
+# A dedicated parser for this file's shape: two map levels, lists of quoted scalars, comments.
+def parse_suites_file(text):
+    shared = {}; suites = {}; section = None; cur = None; curkey = None; listkey = None
+    for raw in text.splitlines():
+        if raw.lstrip().startswith('#') or not raw.strip(): continue
+        line = re.sub(r'\s+#.*$', '', raw.rstrip())
+        indent = len(line) - len(line.lstrip()); body = line.strip()
+        if indent == 0:
+            section = body.rstrip(':'); continue
+        if section == 'shared-paths':
+            if indent == 2: curkey = body.rstrip(':'); shared[curkey] = []
+            elif body.startswith('- '): shared[curkey].append(body[2:].strip("'\""))
+        elif section == 'suites':
+            if indent == 2: curkey = body.rstrip(':'); suites[curkey] = {}; listkey = None
+            elif indent == 4:
+                k, _, v = body.partition(':'); v = v.strip().strip("'\"")
+                if v == '': suites[curkey][k] = []; listkey = k
+                else: suites[curkey][k] = v
+            elif body.startswith('- ') and listkey: suites[curkey][listkey].append(body[2:].strip("'\""))
+    return shared, suites
+
+# CI tests the branch merged with trunk, so a branch older than the suite definitions still gets trunk's.
+import subprocess
+suites_path = os.path.join(wt, '.github/unit-tests-suites.yml')
+if os.path.exists(suites_path):
+    suites_text = open(suites_path).read()
+else:
+    suites_text = subprocess.run(['git', '-C', wt, 'show', 'origin/trunk:.github/unit-tests-suites.yml'], capture_output=True, text=True, check=True).stdout
+shared, suites = parse_suites_file(suites_text)
+
+def matches(path, pattern):
+    # dorny/paths-filter globs: ** spans directories; fnmatch's * also spans '/', which is what we want for '**'.
+    return fnmatch.fnmatch(path, pattern.replace('**', '*'))
+
+for key, s in suites.items():
+    if only and key not in only: continue
+    paths = list(shared.get(s['type'], [])) + list(s.get('paths', []))
+    if s['type'] == 'wordpress':
+        cfg = os.path.join(wt, 'environments', key, '.wp-env.test.json')
+        try:
+            cfg_text = open(cfg).read()
+        except FileNotFoundError:
+            r = subprocess.run(['git', '-C', wt, 'show', f'origin/trunk:environments/{key}/.wp-env.test.json'], capture_output=True, text=True)
+            cfg_text = r.stdout if r.returncode == 0 else '{}'
+        for p in json.loads(cfg_text or '{}').get('plugins', []):
+            if p.startswith('../'): paths.append(p[3:] + '/**')
+    hit = all_flag or bool(only) or any(matches(c, p) for c in changed for p in paths)
+    if hit:
+        # Unit separator: bash collapses runs of tabs, which would shift empty fields.
+        print('\x1f'.join([s['type'], key, s.get('name', key), s.get('script', ''), s.get('working-directory', ''), s.get('phpunit-args', ''), s.get('bootstrap', '')]))
+PY
+}
+
+run_standalone() {
+	local key=$1 name=$2 wd=$3 args=$4 bootstrap=$5 stub=""
+	if [[ $bootstrap == "wpdb-stub" ]]; then
+		stub=$(mktemp).php
+		cat > "$stub" <<'PHP'
+<?php
+class wpdbStub {
+	public function prepare( $query, ...$args ) { return $query; }
+	public function get_results( $query, $output = 'OBJECT' ) { return []; }
+}
+PHP
+		args=${args//\/tmp\/phpunit-bootstrap.php/$stub}
+	fi
+	local -a argv=()
+	[[ -n $args ]] && read -ra argv <<< "$args"
+	log "PHP: $name"
+	if (cd "$wt/$wd" && "$wt/vendor/bin/phpunit" "${argv[@]+"${argv[@]}"}" < /dev/null); then
+		ok "$name passed"
+	else
+		warn "$name failed"; rc=1
+	fi
+	if [[ -n $stub ]]; then rm -f "$stub"; fi
+	return 0
+}
+
+started_envs=()
+skipped=0
+run_wordpress() {
+	local key=$1 name=$2 script=$3
+	if [[ ! -f $wt/environments/$key/.wp-env.test.json ]]; then
+		warn "WP: $name skipped: environments/$key is not on this branch."
+		skipped=$(( skipped + 1 ))
+		return 0
+	fi
+	log "WP: $name (npm run $script)"
+	if (cd "$wt/environments" && npm run --silent "$script" < /dev/null); then
+		ok "$name passed"
+	else
+		warn "$name failed"; rc=1
+	fi
+	started_envs+=("$key")
+
+	local code body
+	body=$(mktemp)
+	code=$(curl -sS --max-time 30 -o "$body" -w '%{http_code}' "http://localhost:8888/" || echo 000)
+	if [[ $code =~ ^(2|3)[0-9][0-9]$ ]] && ! grep -qE 'Fatal error|Parse error|Uncaught ' "$body"; then
+		ok "smoke $code http://localhost:8888/"
+	else
+		warn "smoke $code http://localhost:8888/ $(grep -m1 -oE '(Fatal error|Parse error|Uncaught )[^<]{0,120}' "$body" || true)"
+		rc=1
+	fi
+	rm -f "$body"
+	# One environment at a time: they share the default ports.
+	(cd "$wt/environments" && npx wp-env --config "$key/.wp-env.test.json" stop >/dev/null 2>&1) || true
+	return 0
+}
+
+selected=$(select_suites)
+if [[ -z $selected ]]; then
+	log "No test suite covers the changed files."
+else
+	while IFS=$'\x1f' read -r type key name script wd args bootstrap; do
+		case $type in
+			standalone) run_standalone "$key" "$name" "$wd" "$args" "$bootstrap" ;;
+			wordpress)  run_wordpress "$key" "$name" "$script" ;;
+		esac
+	done <<< "$selected"
+fi
+
+if [[ $rc == 0 && $skipped == 0 ]]; then ok "All checks passed for $branch."
+elif [[ $rc == 0 ]]; then warn "Checks passed for $branch, but $skipped suite(s) could not run."
+else warn "Checks failed for $branch; see above."; fi
+exit $rc

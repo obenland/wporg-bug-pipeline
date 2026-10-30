@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# open-pr <repo> <branch> <title> <body-file> — open the PR for a pushed claude/* branch and print its URL.
+#
+# Uses REST: the cloud's GitHub proxy blocks GraphQL, so `gh pr create` does not work there.
+# A fork repo's PR comes from <fork_owner>:<branch>. Refuses when the branch already has an open PR.
+#
+set -euo pipefail
+
+PIPELINE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+repo=$1 branch=$2 title=$3 body_file=$4
+
+[[ $branch == claude/* ]] || { echo "open-pr: $branch is not a claude/* branch" >&2; exit 1; }
+[[ -s $body_file ]] || { echo "open-pr: empty body file" >&2; exit 1; }
+
+owner=$(jq -r .owner "$PIPELINE_DIR/repos.json")
+base=$(jq -r --arg r "$repo" '.repos[$r].branch' "$PIPELINE_DIR/repos.json")
+push_mode=$(jq -r --arg r "$repo" '.repos[$r].push' "$PIPELINE_DIR/repos.json")
+head=$branch
+[[ $push_mode == fork ]] && head="$(jq -r .fork_owner "$PIPELINE_DIR/repos.json"):$branch"
+head_owner=${head%%:*}; [[ $head == *:* ]] || head_owner=$owner
+
+existing=$(gh api "repos/$owner/$repo/pulls?state=open&head=$head_owner:$branch" --jq '.[0].html_url // empty')
+[[ -z $existing ]] || { echo "open-pr: already open: $existing" >&2; echo "$existing"; exit 0; }
+
+gh api -X POST "repos/$owner/$repo/pulls" \
+	-f title="$title" -f head="$head" -f base="$base" -F body=@"$body_file" -F maintainer_can_modify=true \
+	--jq .html_url
