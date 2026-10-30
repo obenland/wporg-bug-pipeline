@@ -1,9 +1,8 @@
 {
-  "repo": "wordpress.org",
+  "repo": "wporg-theme-directory",
   "status": "routed",
   "summary": "Theme Directory: listing thumbnails download at full 1200x900 because w=post-thumbnail is not a numeric Photon width",
-  "path": "wordpress.org/public_html/wp-content/plugins/theme-directory/admin-edit.php",
-  "reason": "routed by hand for the first end-to-end test",
-  "ticket_updated": "2026-10-30T19:40:53Z",
-  "updated": "2026-10-30T19:40:54Z"
+  "path": "source/wp-content/themes/wporg-themes-2024/functions.php",
+  "reason": "rerouted by wordpress.org worker: post_thumbnail_html() in the 2024 theme passes the size name as w and replaces the plugin filter",
+  "updated": "2026-10-30T19:51:16Z"
 }
