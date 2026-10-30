@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "Listing thumbnails come from post_thumbnail_html() in wporg-themes-2024/functions.php (wporg-theme-directory), which removes the plugin filter; a fix in admin-edit.php would not reach the listing.",
+  "updated": "2026-10-30T19:51:14Z"
+}
