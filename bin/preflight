@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#
+# preflight <repo|router> — the first and, on most runs, only thing a routine does.
+#
+# Installs the push guard, then asks intake whether there is any work. With none, it records the
+# run and prints IDLE as its last line, so the session can end before reading a runbook or
+# installing dependencies. Otherwise it prints the candidates and WORK.
+#
+set -euo pipefail
+
+BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+target=${1:?Usage: preflight <repo|router>}
+now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+command -v jq >/dev/null || apt-get install -y -qq jq >/dev/null
+"$BIN/cloud-setup" >/dev/null
+
+if [[ $target == router ]]; then
+	work=$("$BIN/router-intake" --limit 15)
+else
+	work=$("$BIN/intake" "$target" --limit 8)
+fi
+
+if [[ -z $work ]]; then
+	[[ $target == router ]] || "$BIN/state" put "runs/$target.json" "$(jq -n --arg ts "$now" '{last_run: $ts}')"
+	echo IDLE
+else
+	printf '%s\n' "$work"
+	echo WORK
+fi

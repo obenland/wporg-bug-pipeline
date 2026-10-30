@@ -2,30 +2,126 @@
 	"owner": "WordPress",
 	"fork_owner": "obenland",
 	"repos": {
-		"wordpress.org":                 { "branch": "trunk",      "push": "fork",   "cadence": 1 },
-		"wporg-mu-plugins":              { "branch": "trunk",      "push": "branch", "cadence": 2 },
-		"wporg-main-2022":               { "branch": "trunk",      "push": "branch", "cadence": 2 },
-		"wporg-developer":               { "branch": "trunk",      "push": "branch", "cadence": 2 },
-		"wporg-theme-directory":         { "branch": "trunk",      "push": "branch", "cadence": 3 },
-		"wporg-parent-2021":             { "branch": "trunk",      "push": "branch", "cadence": 3 },
-		"pattern-directory":             { "branch": "trunk",      "push": "branch", "cadence": 3 },
-		"wporg-two-factor":              { "branch": "trunk",      "push": "branch", "cadence": 3 },
-		"five-for-the-future":           { "branch": "production", "push": "branch", "cadence": 3 },
-		"wordcamp.org":                  { "branch": "production", "push": "branch", "cadence": 3 },
-		"Learn":                         { "branch": "trunk",      "push": "branch", "cadence": 3 },
-		"wporg-news-2021":               { "branch": "trunk",      "push": "branch", "cadence": 6 },
-		"wporg-make":                    { "branch": "trunk",      "push": "branch", "cadence": 6 },
-		"wporg-photo-directory":         { "branch": "trunk",      "push": "branch", "cadence": 6 },
-		"wporg-gutenberg":               { "branch": "trunk",      "push": "branch", "cadence": 6 },
-		"wporg-book":                    { "branch": "trunk",      "push": "branch", "cadence": 6 },
-		"wporg-documentation-2022":      { "branch": "trunk",      "push": "branch", "cadence": 6 },
-		"wporg-contributor-dashboard":   { "branch": "main",       "push": "branch", "cadence": 6 },
-		"wporg-code-analysis":           { "branch": "trunk",      "push": "branch", "cadence": 6 },
-		"wporg-developer-blog":          { "branch": "trunk",      "push": "branch", "cadence": 6 },
-		"wporg-contributor-orientation": { "branch": "trunk",      "push": "branch", "cadence": 6 },
-		"wporg-gp-engagement":           { "branch": "main",       "push": "branch", "cadence": 6 },
-		"wporg-showcase-2022":           { "branch": "trunk",      "push": "branch", "cadence": 6 },
-		"wporg-repo-tools":              { "branch": "trunk",      "push": "branch", "cadence": 6 }
+		"wordpress.org": {
+			"branch": "trunk",
+			"push": "fork",
+			"cadence": 2
+		},
+		"wporg-mu-plugins": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 6
+		},
+		"wporg-main-2022": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 6
+		},
+		"wporg-developer": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 6
+		},
+		"wporg-theme-directory": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-parent-2021": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"pattern-directory": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-two-factor": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"five-for-the-future": {
+			"branch": "production",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wordcamp.org": {
+			"branch": "production",
+			"push": "branch",
+			"cadence": 24
+		},
+		"Learn": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-news-2021": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-make": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-photo-directory": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-gutenberg": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-book": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-documentation-2022": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-contributor-dashboard": {
+			"branch": "main",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-code-analysis": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-developer-blog": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-contributor-orientation": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-gp-engagement": {
+			"branch": "main",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-showcase-2022": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		},
+		"wporg-repo-tools": {
+			"branch": "trunk",
+			"push": "branch",
+			"cadence": 24
+		}
 	},
 	"excluded": {
 		"openverse": "Openverse team runs its own pipeline.",

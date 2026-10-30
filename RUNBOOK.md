@@ -18,12 +18,11 @@ Paths: the pipeline repo is at `~/wporg-bug-pipeline` (`$P` below), the target r
 
 ## 1. Setup
 
+The routine already ran `$P/bin/preflight $REPO`, which installed the push guard and printed this run's candidates, one JSON object per line, before the final `WORK`. Those lines are your work list; do not run intake again. Now install what fixing and testing need:
+
 ```
 $P/bin/cloud-setup $REPO
-$P/bin/intake $REPO --limit 8
 ```
-
-If intake prints nothing, write `$P/bin/state put runs/$REPO.json '{"last_run":"<now>"}'` and end the run with "Nothing to do."
 
 ## 2. Triage each candidate (up to 8)
 

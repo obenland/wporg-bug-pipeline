@@ -3,8 +3,7 @@
 # cloud-setup [<repo>] — per-session setup inside a Claude Code cloud VM, run first by every routine.
 #
 # - Guards every checkout with a pre-push hook that refuses any ref outside claude/*.
-# - Starts dockerd (the environment's snapshot keeps files, not processes).
-# - For <repo>: adds the fork remote where the repo pushes to a fork, and installs dependencies.
+# - For <repo>: starts dockerd (the environment's snapshot keeps files, not processes), adds the fork remote where the repo pushes to a fork, and installs dependencies.
 #
 # Safe to run more than once.
 #
@@ -13,6 +12,12 @@ set -euo pipefail
 PIPELINE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 HOME_DIR="$(dirname "$PIPELINE_DIR")"
 repo=${1:-}
+
+# It rewrites hooks in every sibling checkout, which on a laptop would be all of ~/code.
+if [[ -z ${CCR_AGENT_PROXY_ENABLED:-} && -z ${WPORG_PIPELINE_LOCAL:-} ]]; then
+	echo "cloud-setup: not in a cloud session; set WPORG_PIPELINE_LOCAL=1 to run it anyway." >&2
+	exit 1
+fi
 
 log() { echo "▸ $*" >&2; }
 
@@ -37,6 +42,14 @@ HOOK
 done
 log "pre-push guard installed in $(ls -d "$HOME_DIR"/*/.git 2>/dev/null | wc -l | tr -d ' ') checkouts"
 
+# ── Toolchain checks ────────────────────────────────────────────────────────
+node_major=$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)
+php_minor=$(php -r 'echo PHP_MAJOR_VERSION * 100 + PHP_MINOR_VERSION;' 2>/dev/null || echo 0)
+(( node_major >= 24 )) || log "Node $(node -v 2>/dev/null) is older than 24; the environment setup script should install it"
+(( php_minor >= 804 )) || log "PHP $(php -r 'echo PHP_VERSION;' 2>/dev/null) is older than 8.4; the environment setup script should install it"
+
+[[ -n $repo ]] || exit 0
+
 # ── Docker ──────────────────────────────────────────────────────────────────
 if ! docker info >/dev/null 2>&1; then
 	# Anonymous Docker Hub pulls from the shared egress hit 429; the setup script points dockerd at a mirror.
@@ -48,14 +61,6 @@ if ! docker info >/dev/null 2>&1; then
 	for _ in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 2; done
 	docker info >/dev/null 2>&1 && log "dockerd started" || log "dockerd did not start; see /tmp/dockerd.log"
 fi
-
-# ── Toolchain checks ────────────────────────────────────────────────────────
-node_major=$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)
-php_minor=$(php -r 'echo PHP_MAJOR_VERSION * 100 + PHP_MINOR_VERSION;' 2>/dev/null || echo 0)
-(( node_major >= 24 )) || log "Node $(node -v 2>/dev/null) is older than 24; the environment setup script should install it"
-(( php_minor >= 804 )) || log "PHP $(php -r 'echo PHP_VERSION;' 2>/dev/null) is older than 8.4; the environment setup script should install it"
-
-[[ -n $repo ]] || exit 0
 wt="$HOME_DIR/$repo"
 [[ -d $wt/.git ]] || { log "no checkout at $wt"; exit 1; }
 

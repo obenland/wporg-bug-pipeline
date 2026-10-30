@@ -12,8 +12,8 @@ Paths: the pipeline repo is at `~/wporg-bug-pipeline` (`$P` below).
 
 ## Steps
 
-1. `$P/bin/cloud-setup` (no repo argument: installs the push guard only).
-2. `$P/bin/router-intake --limit 15`. If it prints nothing, end with "Nothing to route."
+1. The routine already ran `$P/bin/preflight router`, which installed the push guard and printed the tickets to place, one JSON object per line, before the final `WORK`. Those lines are your work list; do not run intake again.
+2. Place them in the order given.
 3. For each ticket:
    1. `$P/bin/trac getTicket '{"id": N, "commentLimit": 20}'`.
    2. If it is closed, or already has an open linked PR, record `status: "skip"` with that reason.
