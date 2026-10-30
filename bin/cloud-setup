@@ -42,7 +42,14 @@ HOOK
 done
 log "pre-push guard installed in $(ls -d "$HOME_DIR"/*/.git 2>/dev/null | wc -l | tr -d ' ') checkouts"
 
-# ── Toolchain checks ────────────────────────────────────────────────────────
+# ── Toolchain ───────────────────────────────────────────────────────────────
+# The setup script installs Node 24 into /usr/local/bin, but the image's /opt/node22/bin comes first on PATH.
+active_node=$(command -v node || true)
+if [[ -n $active_node && $active_node != /usr/local/bin/node ]] && /usr/local/bin/node -v 2>/dev/null | grep -q '^v24'; then
+	for b in node npm npx; do
+		[[ -e /usr/local/bin/$b ]] && ln -sf "/usr/local/bin/$b" "$(dirname "$active_node")/$b"
+	done
+fi
 node_major=$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)
 php_minor=$(php -r 'echo PHP_MAJOR_VERSION * 100 + PHP_MINOR_VERSION;' 2>/dev/null || echo 0)
 (( node_major >= 24 )) || log "Node $(node -v 2>/dev/null) is older than 24; the environment setup script should install it"
@@ -86,6 +93,10 @@ fi
 for lock in "$wt/package-lock.json" "$wt/environments/package-lock.json"; do
 	[[ -f $lock ]] || continue
 	log "npm ci in ${lock%/package-lock.json}"
-	(cd "$(dirname "$lock")" && npm ci --no-audit --no-fund --loglevel=error) || log "npm ci failed in $(dirname "$lock")"
+	# A transient registry error once cost a run nine minutes; retry once, bounded.
+	for attempt in 1 2; do
+		(cd "$(dirname "$lock")" && timeout 300 npm ci --no-audit --no-fund --loglevel=error --fetch-retries=4) && break
+		(( attempt == 2 )) && log "npm ci failed twice in $(dirname "$lock")"
+	done
 done
 log "setup done for $repo"
