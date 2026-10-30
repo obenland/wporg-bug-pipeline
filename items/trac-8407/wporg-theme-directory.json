@@ -1,5 +1,5 @@
 {
   "status": "ready",
-  "reason": "Re-queued after the runbook started favoring PRs: the width question is a technical trade-off to make and list under Decisions. Defect at wporg-themes-2024/functions.php:142 and inc/embed.php:78.",
-  "updated": "2026-10-30T20:09:21Z"
+  "reason": "post_thumbnail_html() in wporg-themes-2024/functions.php passes the size slug as the Photon w parameter, so listing thumbnails load at full size.",
+  "updated": "2026-10-30T20:13:08Z"
 }
