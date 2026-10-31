@@ -1,9 +1,9 @@
 {
-  "repo": "wporg-mu-plugins",
-  "status": "routed",
+  "repo": null,
+  "status": "skip",
   "summary": "404 page footer is inconsistent with other pages: duplicate logo, missing trademark text, and \"Code is Poetry\" overlapping the social links row",
-  "path": "mu-plugins/blocks/global-header-footer",
-  "reason": "The 404 template (wporg-parent-2021 templates/404.html) renders wporg/global-footer, whose markup and styles live in the global-header-footer block; the footer layout (logo, trademark, code-is-poetry row) is defined there.",
-  "ticket_updated": "2026-10-30T22:55:02Z",
-  "updated": "2026-10-31T00:52:08Z"
+  "path": "",
+  "reason": "out of scope",
+  "ticket_updated": "2026-10-31T05:37:50Z",
+  "updated": "2026-10-31T06:52:53Z"
 }
