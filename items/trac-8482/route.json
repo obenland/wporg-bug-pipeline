@@ -1,0 +1,9 @@
+{
+  "repo": "wordpress.org",
+  "status": "routed",
+  "summary": "Plugin submission: re-uploading a ZIP gives unclear or no confirmation",
+  "path": "wordpress.org/public_html/wp-content/plugins/plugin-directory/shortcodes/class-upload-handler.php",
+  "reason": "Upload_Handler in the plugin-directory shortcodes handles re-upload notices and confirmation.",
+  "ticket_updated": "2026-10-30T00:00:00Z",
+  "updated": "2026-11-01T00:51:54Z"
+}
