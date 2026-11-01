@@ -1,0 +1,9 @@
+{
+  "repo": "wporg-developer",
+  "status": "routed",
+  "summary": "WP-CLI command pages: -- in option names rendered as en dash since mid-2026",
+  "path": "source/wp-content/themes/wporg-developer-2023/inc/cli.php",
+  "reason": "CLI importer/formatting code in wporg-developer; ticket suggests a code-side safeguard (code wrap or skip wptexturize).",
+  "ticket_updated": "2026-10-30T00:00:00Z",
+  "updated": "2026-11-01T00:51:56Z"
+}
