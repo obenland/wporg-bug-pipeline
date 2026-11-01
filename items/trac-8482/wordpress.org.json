@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Upload shortcode silently re-renders with no message when the nonce fails or an oversized POST is discarded (shortcodes/class-upload.php POST handling).",
+  "updated": "2026-11-01T01:12:37Z"
+}
