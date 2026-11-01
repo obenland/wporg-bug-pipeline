@@ -1,0 +1,9 @@
+{
+  "repo": null,
+  "status": "skip",
+  "summary": "Changing account email triggers confirmation to new email and not original one.",
+  "path": "",
+  "reason": "out of scope",
+  "ticket_updated": "2026-10-30T00:00:00Z",
+  "updated": "2026-11-01T00:51:52Z"
+}
