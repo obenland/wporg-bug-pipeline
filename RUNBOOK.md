@@ -35,7 +35,7 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
    - already has someone's open PR or patch. Preflight already left those out; this catches one posted since. Run `$P/bin/existing_pr.py <key>`, and also read the comments for a PR or patch it could not recognize. Record `skip` with the reason and add `"pr":"<url>"`;
    - is a feature request, a proposal, a change to content or data stored on the site (not in this repo), or an operations problem (server, DNS, caching, mail delivery, a missing language pack) rather than a code defect: record `skip` with reason "out of scope", the same words a security skip uses;
    - is a code defect, but not in `$REPO`. Record `wrong-repo` with where it belongs if you can tell.
-3. **Locate and understand.** Find the code. Reproduce the defect from the code: trace the input to the wrong output. If the repo has tests covering the area, write the failing test first. If you cannot explain the defect in two sentences pointing at specific lines, it is `not-ready`.
+3. **Locate and understand.** Find the code. Reproduce the defect from the code: trace the input to the wrong output. If a test suite can load the code you are fixing, write the failing test first (see step 3.3). If you cannot explain the defect in two sentences pointing at specific lines, it is `not-ready`.
 4. **Second opinion.** Spawn a fresh subagent with only the item text, the repo path, and this question: "Is this a code defect in this repository that a reviewable change fixes? Technical trade-offs and wording choices do not make it not-ready; name them. If yes, where, and what is the fix in one sentence? Answer ready / not-ready with your confidence." Do not share your conclusion with it. The item is `ready` when you both say ready and agree on the location. If you differ on the shape of the fix, take the more conventional one and mention the other in the PR description.
 5. **Record the decision** for every item you looked at:
 
@@ -49,7 +49,7 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
 
 1. **Claim it.** `$P/bin/state claim <key> $REPO`. Exit code 1 means another run holds it; skip the item.
 2. **Branch** from a fresh default branch: `git -C /home/user/$REPO fetch origin && git -C /home/user/$REPO checkout -B claude/<key> origin/<default branch>` (default branch from `$P/repos.json`).
-3. **Write the fix and its test.** A regression test when the area already has tests; no new test harnesses. Follow the repo's conventions over your preferences.
+3. **Write the fix and its test.** Add a regression test whenever a suite the repo's CI already runs can load the changed code. That includes code no existing test touches yet, such as a shortcode in a plugin whose suite tests other classes; in `wordpress.org`, a plugin listed in `.github/unit-tests-suites.yml` counts. Add a new test file in the suite's existing style; that is not new test infrastructure. The test must fail without the fix and pass with it, and you run it to prove both. Skip the test only when no CI suite can load the code, and then say so in Testing. Follow the repo's conventions over your preferences.
 4. **Commit.** Subject describes the change in imperative mood. Body: what was wrong and why this fixes it, then the reference:
    - Trac ticket in `wordpress.org`: `Fixes #N.` on its own line.
    - Trac ticket in any other repo: `See https://meta.trac.wordpress.org/ticket/N.`
