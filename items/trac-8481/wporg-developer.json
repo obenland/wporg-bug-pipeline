@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Importer code in inc/cli.php is unchanged and produces correct output per the reporter; the regression comes from production setup (Jetpack/mu-plugin/kses), which needs diagnosis of stored post_content before a repo fix.",
+  "updated": "2026-11-02T00:15:41Z"
+}
