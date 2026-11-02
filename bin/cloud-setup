@@ -71,6 +71,26 @@ fi
 wt="$HOME_DIR/$repo"
 [[ -d $wt/.git ]] || { log "no checkout at $wt"; exit 1; }
 
+# ── wp-env base images ──────────────────────────────────────────────────────
+# The network proxy re-signs HTTPS, and wp-env's image builds (apk, apt) trust only the CAs in
+# their base image. Docker builds FROM a local image of that tag before the registry's, so
+# re-tag each wordpress base image the repo's wp-env configs use with the host's CA bundle.
+ca_bundle=${SSL_CERT_FILE:-/etc/ssl/certs/ca-certificates.crt}
+wp_env_configs=$(find "$wt" -name '.wp-env*.json' -not -path '*/node_modules/*' 2>/dev/null)
+if [[ -n $wp_env_configs ]] && docker info >/dev/null 2>&1 && [[ -f $ca_bundle ]]; then
+	ctx=$(mktemp -d)
+	cp "$ca_bundle" "$ctx/ca.crt"
+	# An empty version is wp-env's default, the untagged PHP image.
+	while IFS= read -r v; do
+		for img in "wordpress${v:+:php$v}" "wordpress:cli${v:+-php$v}"; do
+			[[ $(docker image inspect "$img" --format '{{index .Config.Labels "wporg-pipeline.ca"}}' 2>/dev/null) == yes ]] && continue
+			printf 'FROM %s\nCOPY ca.crt /etc/ssl/certs/ca-certificates.crt\nLABEL wporg-pipeline.ca=yes\n' "$img" > "$ctx/Dockerfile"
+			docker build -q -t "$img" "$ctx" >/dev/null 2>&1 && log "$img trusts the proxy CA" || log "could not add the proxy CA to $img"
+		done
+	done < <(xargs jq -r '[.phpVersion // ""] + [.env // {} | .[] | .phpVersion | select(.)] | .[]' <<< "$wp_env_configs" 2>/dev/null | sort -u)
+	rm -rf "$ctx"
+fi
+
 # ── Remotes ─────────────────────────────────────────────────────────────────
 push_mode=$(jq -r --arg r "$repo" '.repos[$r].push // empty' "$PIPELINE_DIR/repos.json")
 [[ -n $push_mode ]] || { log "$repo is not in repos.json"; exit 1; }

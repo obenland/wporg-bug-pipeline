@@ -6,6 +6,10 @@ ppa.launchpadcontent.net
 keyserver.ubuntu.com
 api.launchpad.net
 mirror.gcr.io
-nodejs.org
 storage.googleapis.com
+nodejs.org
+registry-1.docker.io
+auth.docker.io
+production.cloudflare.docker.com
 dl-cdn.alpinelinux.org
+deb.debian.org
