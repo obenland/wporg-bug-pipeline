@@ -88,7 +88,8 @@ platform_args=()
 (( php_minor >= 804 )) || platform_args=(--ignore-platform-req=php)
 if [[ -f $wt/composer.lock ]]; then
 	log "composer install in $repo"
-	(cd "$wt" && composer install -q --no-interaction --no-progress "${platform_args[@]+"${platform_args[@]}"}") || log "composer install failed"
+	# Sessions run as root, where Composer skips plugins unless told otherwise, and the phpcs installer is one.
+	(cd "$wt" && COMPOSER_ALLOW_SUPERUSER=1 composer install -q --no-interaction --no-progress "${platform_args[@]+"${platform_args[@]}"}") || log "composer install failed"
 fi
 for lock in "$wt/package-lock.json" "$wt/environments/package-lock.json"; do
 	[[ -f $lock ]] || continue

@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+#
+# shepherd-intake [--limit N] — the pipeline's open PRs that need another pass, one JSON object per line.
+# shepherd-intake --mark <key> --seen <ts> [--pushed] — record that a pass handled a PR's activity up to <ts>.
+#
+# A PR needs a pass when, since the last one: a person reviewed or commented, a bot left an inline
+# review comment, a check failed on a head no pass has tried, or it stopped merging cleanly against
+# a base no pass has tried. Bot summaries and the pipeline's own replies do not count. A merged or
+# closed PR moves its claim to done. A PR the pipeline pushed to MAX_PUSHES times is left to people.
+# Prints nothing when there is nothing to do.
+#
+import json
+import os
+import re
+import subprocess
+import sys
+from datetime import datetime, timezone
+
+BIN = os.path.dirname(os.path.abspath(__file__))
+STATE_DIR = os.environ.get('WPORG_STATE_DIR', os.path.expanduser('~/.wporg-state'))
+MARKER = '<!-- wporg-bug-pipeline -->'
+MAX_PUSHES = 3
+FAILED = {'failure', 'timed_out', 'action_required', 'startup_failure'}
+PR_URL = re.compile(r'https://github\.com/WordPress/([\w.-]+)/pull/(\d+)$')
+
+
+def gh(path):
+	out = subprocess.run(['gh', 'api', path], capture_output=True, text=True)
+	if out.returncode != 0:
+		print(f'shepherd-intake: {path}: {out.stderr.strip()}', file=sys.stderr)
+		return None
+	return json.loads(out.stdout)
+
+
+def read(path):
+	try:
+		with open(os.path.join(STATE_DIR, path)) as f:
+			return json.load(f)
+	except (FileNotFoundError, json.JSONDecodeError):
+		return None
+
+
+def put(path, data):
+	subprocess.run([os.path.join(BIN, 'state'), 'put', path, json.dumps(data)], capture_output=True, check=True)
+
+
+def open_claims():
+	items = os.path.join(STATE_DIR, 'items')
+	for key in sorted(os.listdir(items)) if os.path.isdir(items) else []:
+		c = read(f'items/{key}/claim.json')
+		if c and c.get('status') == 'pr-open' and PR_URL.match(c.get('pr', '')):
+			yield key, c
+
+
+def is_feedback(entry, seen, bots_count):
+	body = entry.get('body') or ''
+	if MARKER in body or (entry.get('updated_at') or entry.get('submitted_at') or '') <= seen:
+		return False
+	return bots_count or entry['user']['type'] != 'Bot'
+
+
+def check(key, claim):
+	repo, n = PR_URL.match(claim['pr']).groups()
+	base_path = f'repos/WordPress/{repo}'
+	pr = gh(f'{base_path}/pulls/{n}')
+	if not pr:
+		return None
+	if pr['state'] == 'closed':
+		put(f'items/{key}/claim.json', {**claim, 'status': 'done', 'outcome': 'merged' if pr.get('merged_at') else 'closed'})
+		return None
+	rec = read(f'items/{key}/shepherd.json') or {}
+	if rec.get('pushes', 0) >= MAX_PUSHES:
+		return None
+	seen = rec.get('seen') or pr['created_at']
+	head, base = pr['head']['sha'], pr['base']['sha']
+	reasons = []
+
+	# A review body counts from people; bots put what is actionable in inline comments.
+	reviews = [r for r in gh(f'{base_path}/pulls/{n}/reviews?per_page=100') or [] if r.get('body') or r['state'] == 'CHANGES_REQUESTED']
+	inline = gh(f'{base_path}/pulls/{n}/comments?per_page=100') or []
+	comments = gh(f'{base_path}/issues/{n}/comments?per_page=100') or []
+	if any(is_feedback(r, seen, False) for r in reviews + comments) or any(is_feedback(c, seen, True) for c in inline):
+		reasons.append('feedback')
+
+	runs = (gh(f'{base_path}/commits/{head}/check-runs?per_page=100') or {}).get('check_runs', [])
+	if rec.get('head') != head and any(r.get('conclusion') in FAILED for r in runs):
+		reasons.append('checks failed')
+	if pr.get('mergeable') is False and (rec.get('head') != head or rec.get('base') != base):
+		reasons.append('conflicts')
+	# Wait for CI to finish before a pass that only has feedback to go on; the next run picks it up.
+	if reasons == ['feedback'] and any(r['status'] != 'completed' for r in runs):
+		return None
+	if not reasons:
+		return None
+	return {
+		'key': key, 'repo': repo, 'number': int(n), 'pr': claim['pr'], 'branch': pr['head']['ref'],
+		'head': head, 'reasons': reasons, 'since': seen,
+	}
+
+
+def mark(key, seen, pushed):
+	claim = read(f'items/{key}/claim.json') or {}
+	repo, n = PR_URL.match(claim.get('pr', '')).groups()
+	pr = gh(f'repos/WordPress/{repo}/pulls/{n}') or {}
+	rec = read(f'items/{key}/shepherd.json') or {}
+	put(f'items/{key}/shepherd.json', {
+		'head': pr.get('head', {}).get('sha'), 'base': pr.get('base', {}).get('sha'), 'seen': seen,
+		'pushes': rec.get('pushes', 0) + (1 if pushed else 0),
+	})
+
+
+def main():
+	args = sys.argv[1:]
+	if '--mark' in args:
+		mark(args[args.index('--mark') + 1], args[args.index('--seen') + 1], '--pushed' in args)
+		return
+	limit = int(args[args.index('--limit') + 1]) if '--limit' in args else 4
+	started = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+	subprocess.run([os.path.join(BIN, 'state'), 'ls', 'items'], capture_output=True, check=True)
+	listed = 0
+	for key, claim in open_claims():
+		if listed == limit:
+			break
+		item = check(key, claim)
+		if item:
+			print(json.dumps({**item, 'until': started}))
+			listed += 1
+
+
+main()

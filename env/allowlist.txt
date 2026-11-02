@@ -8,3 +8,4 @@ api.launchpad.net
 mirror.gcr.io
 nodejs.org
 storage.googleapis.com
+dl-cdn.alpinelinux.org

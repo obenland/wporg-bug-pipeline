@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# preflight <repo|router> — the first and, on most runs, only thing a routine does.
+# preflight <repo|router|shepherd> — the first and, on most runs, only thing a routine does.
 #
 # Installs the push guard, then asks intake whether there is any work. With none, it records the
 # run and prints IDLE as its last line, so the session can end before reading a runbook or
@@ -9,7 +9,7 @@
 set -euo pipefail
 
 BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-target=${1:?Usage: preflight <repo|router>}
+target=${1:?Usage: preflight <repo|router|shepherd>}
 now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 command -v jq >/dev/null || apt-get install -y -qq jq >/dev/null
@@ -17,6 +17,8 @@ command -v jq >/dev/null || apt-get install -y -qq jq >/dev/null
 
 if [[ $target == router ]]; then
 	work=$("$BIN/router-intake" --limit 15)
+elif [[ $target == shepherd ]]; then
+	work=$("$BIN/shepherd-intake" --limit 4)
 else
 	work=$("$BIN/intake" "$target" --limit 8)
 fi

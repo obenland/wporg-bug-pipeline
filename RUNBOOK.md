@@ -11,7 +11,7 @@ Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below), the
 - **Never merge, close, or approve anything.** Never comment on, label, or edit issues or PRs other than the PR you opened this run. Never request reviewers or mention people.
 - **Never touch the dotorg sandbox** or any production site. Nothing you run writes to a wordpress.org site; the only reads are Trac through `$P/bin/trac` and the public downloads the test environments fetch.
 - **Security issues stay out.** An item that describes a vulnerability, an exploit, private data, or an account takeover is recorded `skip` with reason "out of scope" and nothing else, so the public state never marks which tickets are security-sensitive. It is never fixed in public. Never write HackerOne report numbers anywhere.
-- **Bias toward a PR.** A maintainer would rather rework a PR than get none. When a fix involves a judgment call, make the most conventional choice, keep it easy to change, and list it under `## Decisions` in the PR. That covers technical trade-offs (image sizes, `srcset`, cache lifetimes, limits, timeouts) and wording (labels, messages, help text, link text in code). Only a product decision is `not-ready`: whether something should exist, who may do what, or a policy question.
+- **Bias toward a PR.** A maintainer would rather rework a PR than get none. When a fix involves a judgment call, make the most conventional choice, keep it easy to change, and name it in one sentence in the PR description. That covers technical trade-offs (image sizes, `srcset`, cache lifetimes, limits, timeouts) and wording (labels, messages, help text, link text in code). Only a product decision is `not-ready`: whether something should exist, who may do what, or a policy question.
 - **American English** in code, comments, commits, and PR text. WordPress coding standards. Follow each repo's `.editorconfig`, `CLAUDE.md`, and `AGENTS.md`.
 - **Smallest fix that resolves the item.** No refactors, no features, no unrelated cleanups, no new test infrastructure.
 - Read `$P/LESSONS.md` before you start; it is what earlier runs learned.
@@ -35,7 +35,7 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
    - is a feature request, a proposal, a change to content or data stored on the site (not in this repo), or an operations problem (server, DNS, caching, mail delivery, a missing language pack) rather than a code defect: record `skip` with reason "out of scope", the same words a security skip uses;
    - is a code defect, but not in `$REPO`. Record `wrong-repo` with where it belongs if you can tell.
 3. **Locate and understand.** Find the code. Reproduce the defect from the code: trace the input to the wrong output. If the repo has tests covering the area, write the failing test first. If you cannot explain the defect in two sentences pointing at specific lines, it is `not-ready`.
-4. **Second opinion.** Spawn a fresh subagent with only the item text, the repo path, and this question: "Is this a code defect in this repository that a reviewable change fixes? Technical trade-offs and wording choices do not make it not-ready; name them. If yes, where, and what is the fix in one sentence? Answer ready / not-ready with your confidence." Do not share your conclusion with it. The item is `ready` when you both say ready and agree on the location. If you differ on the shape of the fix, take the more conventional one and list the other under `## Decisions`.
+4. **Second opinion.** Spawn a fresh subagent with only the item text, the repo path, and this question: "Is this a code defect in this repository that a reviewable change fixes? Technical trade-offs and wording choices do not make it not-ready; name them. If yes, where, and what is the fix in one sentence? Answer ready / not-ready with your confidence." Do not share your conclusion with it. The item is `ready` when you both say ready and agree on the location. If you differ on the shape of the fix, take the more conventional one and mention the other in the PR description.
 5. **Record the decision** for every item you looked at:
 
    ```
@@ -59,36 +59,39 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
    - When a check cannot run here (network, missing service), say which and why in the PR's Testing section. Never claim a check passed that did not run.
 6. **Review in rounds** (at most 3):
    - Round 1: run the `/code-review` skill at high effort on the branch's diff against the default branch. If the skill is unavailable, spawn a fresh reviewer subagent with the diff, the item text, and `$P/review-policy.md`.
-   - Triage the findings under `$P/review-policy.md`. Must-fixes go in one separate commit on top of the fix; everything else gets a one-line disposition in your notes.
+   - Triage the findings under `$P/review-policy.md`. Must-fixes go in one separate commit on top of the fix; everything else gets a one-line disposition in your final report, not the PR.
    - Later rounds review only that fix commit's diff, at medium effort, and fold any further must-fix into the same commit. Stop when a round changes nothing.
    - Re-run step 5 after the last change.
-7. **Decide the risk tier.** Ask: could this change do something a revert cannot undo, or change what happens rather than what people see? Copy, docs, tests, and display fixes are `low`. Anything that touches sign-in, permissions, user data, email, payments, caching of shared data, or code many sites load is `needs-review`. A PR with anything under `## Decisions` is `needs-review`.
+7. **Decide the risk tier.** Ask: could this change do something a revert cannot undo, or change what happens rather than what people see? Copy, docs, tests, and display fixes are `low`. Anything that touches sign-in, permissions, user data, email, payments, caching of shared data, or code many sites load is `needs-review`. A PR whose description names a judgment call is `needs-review`.
 8. **Push and open the PR.**
    - First run `$P/bin/existing_pr.py <key>` once more. If it prints a PR or patch, someone got there first: do not push. Record the item's decision as `skip` with `"pr":"<url>"`, release the claim with `"status":"failed"`, and say so in the report.
    - Push: `fork` repos (`wordpress.org`) push to `fork`; all others push to `origin`. Always `git push -u <remote> claude/<key>`.
-   - Write the body to a file and run `$P/bin/open-pr $REPO claude/<key> "<title>" <file>`. The title is the commit subject. The body:
+   - Write the body to a file and run `$P/bin/open-pr $REPO claude/<key> "<title>" <file>`. The title is the commit subject.
+   - **The body is short.** A maintainer reads it in under a minute. Model it on a human PR, not a report:
 
      ```
-     Fixes https://meta.trac.wordpress.org/ticket/N   (or: Fixes #N for a GitHub issue)
+     Fixes https://meta.trac.wordpress.org/ticket/N
 
-     ## Problem
-     <what users see, and the root cause with file:line>
+     <What is broken and why: two to four sentences naming the file or function, without line numbers.>
 
-     ## Fix
-     <what changed and why it is the smallest correct change>
+     <What this changes: one to three sentences. A judgment call a reviewer may want changed gets one sentence with the alternative.>
 
      ## Testing
-     <the exact checks run and their results; steps a reviewer can follow to see the fix>
+     - `<command>`: <result>
+     - Not run: <check>, because <reason>.
+     - Manually: <a step or two a reviewer can follow>.
 
-     ## Decisions
-     <each judgment call: the option taken, the alternatives, and why; or "None.">
-
-     ## Pipeline
-     Risk: low | needs-review — <one sentence>
-     Drafted by the wporg bug pipeline (Claude, unattended). Review rounds: <n>. A maintainer reviews and commits.
+     <sub>Opened by the wporg bug pipeline, unattended. Risk: low | needs-review.</sub>
      ```
 
-     The first line is always the full ticket URL for Trac (a bare `#N` links the repo's own issue).
+     - The first line is always the full ticket URL for Trac, since a bare `#N` links the repo's own issue. For a GitHub issue it is `Fixes #N`.
+     - Leave out:
+       - anything the diff already shows;
+       - full file paths and line numbers;
+       - review rounds and dispositions (those go in your report);
+       - lists of what the PR does not do. One sentence, "Leaves X for a follow-up.", is the most.
+     - No headings other than Testing. About 150 words above Testing.
+
 9. **Record it.** `$P/bin/state put items/<key>/claim.json '{"status":"pr-open","repo":"<REPO>","pr":"<url>","risk":"<tier>"}'`.
 
 If anything in step 3 fails and you cannot finish, put the claim back with `{"status":"failed","repo":"$REPO","reason":"<one sentence>"}` and leave the branch unpushed.
