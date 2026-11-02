@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#
+# maintainer <repo> <login> — exit 0 when <login> can push to WordPress/<repo>, the people who could
+# merge the PR anyway. Org membership is not enough: the WordPress org is far larger than the
+# people who maintain any one wporg repository.
+#
+set -euo pipefail
+[[ $# == 2 ]] || { echo "Usage: maintainer <repo> <login>" >&2; exit 2; }
+perm=$(gh api "repos/WordPress/$1/collaborators/$2/permission" --jq .permission 2>/dev/null || echo none)
+[[ $perm == admin || $perm == maintain || $perm == write ]]
