@@ -77,7 +77,8 @@ wt="$HOME_DIR/$repo"
 # re-tag each wordpress base image the repo's wp-env configs use with the host's CA bundle.
 # Sessions run as root, which wp-env passes on to its containers: wp-cli refuses root unless
 # WP_CLI_ALLOW_ROOT is set, and Apache refuses to serve as root (APACHE_RUN_USER=#0) and exits,
-# so Apache falls back to the image's own www-data.
+# so Apache falls back to the image's own www-data. wp-env puts /home/<user>/.composer/vendor/bin
+# on PATH and mounts that home, but root's own home is /root, so Composer's home moves there.
 ca_bundle=${SSL_CERT_FILE:-/etc/ssl/certs/ca-certificates.crt}
 wp_env_configs=$(find "$wt" -name '.wp-env*.json' -not -path '*/node_modules/*' 2>/dev/null)
 if [[ -n $wp_env_configs ]] && docker info >/dev/null 2>&1 && [[ -f $ca_bundle ]]; then
@@ -86,13 +87,13 @@ if [[ -n $wp_env_configs ]] && docker info >/dev/null 2>&1 && [[ -f $ca_bundle ]
 	# An empty version is wp-env's default, the untagged PHP image.
 	while IFS= read -r v; do
 		for img in "wordpress${v:+:php$v}" "wordpress:cli${v:+-php$v}"; do
-			[[ $(docker image inspect "$img" --format '{{index .Config.Labels "wporg-pipeline"}}' 2>/dev/null) == 3 ]] && continue
+			[[ $(docker image inspect "$img" --format '{{index .Config.Labels "wporg-pipeline"}}' 2>/dev/null) == 4 ]] && continue
 			cat > "$ctx/Dockerfile" <<-DOCKERFILE
 				FROM $img
 				COPY ca.crt /etc/ssl/certs/ca-certificates.crt
-				ENV WP_CLI_ALLOW_ROOT=1
+				ENV WP_CLI_ALLOW_ROOT=1 COMPOSER_HOME=/home/root/.composer
 				RUN if [ -f /etc/apache2/envvars ]; then printf '%s\\n' 'if [ "\$APACHE_RUN_USER" = "#0" ]; then export APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data; fi' >> /etc/apache2/envvars; fi
-				LABEL wporg-pipeline=3
+				LABEL wporg-pipeline=4
 			DOCKERFILE
 			if docker build -q -t "$img" "$ctx" >/dev/null 2>&1; then
 				log "$img trusts the proxy CA"; rebuilt=1
