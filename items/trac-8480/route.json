@@ -1,9 +1,9 @@
 {
   "repo": null,
   "status": "skip",
-  "summary": "404 page footer is inconsistent with other pages",
+  "summary": "404 page footer is inconsistent with other pages: duplicate logo, missing trademark text, and \"Code is Poetry\" overlapping the social links row",
   "path": "",
   "reason": "out of scope",
-  "ticket_updated": "2026-10-31T19:07:04Z",
-  "updated": "2026-11-01T00:51:58Z"
+  "ticket_updated": "2026-11-01T22:32:55Z",
+  "updated": "2026-11-02T00:52:09Z"
 }
