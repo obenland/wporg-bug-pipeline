@@ -15,6 +15,7 @@ Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below), the
 - **American English** in code, comments, commits, and PR text. WordPress coding standards. Follow each repo's `.editorconfig`, `CLAUDE.md`, and `AGENTS.md`.
 - **Smallest fix that resolves the item.** No refactors, no features, no unrelated cleanups, no new test infrastructure.
 - Read `$P/LESSONS.md` before you start; it is what earlier runs learned.
+- **Long commands run in the foreground.** `cloud-setup`, test suites, builds, and wp-env take minutes: give them the Bash tool's 600000 ms timeout. If one still moves to the background, wait for it to finish; never end the run while a command is still running.
 
 ## 1. Setup
 

@@ -13,6 +13,7 @@ Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below), eac
 - **Never bypass hooks** (`--no-verify` is forbidden). Only the push after a rebase may force, and it uses `--force-with-lease`.
 - **Never touch the dotorg sandbox** or any production site. Security reports stay out of public PRs; never write HackerOne report numbers anywhere.
 - WordPress coding standards, American English, the smallest change. Read `$P/LESSONS.md` first.
+- **Long commands run in the foreground.** `cloud-setup`, test suites, builds, and wp-env take minutes: give them the Bash tool's 600000 ms timeout. If one still moves to the background, wait for it to finish; never end the run while a command is still running.
 
 ## For each PR preflight printed
 
