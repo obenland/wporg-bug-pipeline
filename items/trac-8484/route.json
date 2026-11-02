@@ -1,0 +1,9 @@
+{
+  "repo": null,
+  "status": "unknown",
+  "summary": "Custom HTML Disappears",
+  "path": "",
+  "reason": "Custom HTML block content vanishing in the editor looks like core/Gutenberg or unfiltered_html capability behavior; no matching code in the HelpHub checkouts or mu-plugins.",
+  "ticket_updated": "2026-11-02T03:43:35Z",
+  "updated": "2026-11-02T06:53:06Z"
+}
