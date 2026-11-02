@@ -13,3 +13,5 @@ auth.docker.io
 production.cloudflare.docker.com
 dl-cdn.alpinelinux.org
 deb.debian.org
+getcomposer.org
+composer.github.io
