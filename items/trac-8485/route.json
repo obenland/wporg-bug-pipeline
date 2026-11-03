@@ -1,0 +1,9 @@
+{
+  "repo": null,
+  "status": "unknown",
+  "summary": "Trac: Incorrect URL in ticket RSS feed",
+  "path": "",
+  "reason": "Ticket footer download links are rendered by upstream Trac core; no code for them in any checkout (trac.wordpress.org only has templates/config/patches without that footer).",
+  "ticket_updated": "2026-11-03T00:00:00Z",
+  "updated": "2026-11-03T12:52:18Z"
+}
