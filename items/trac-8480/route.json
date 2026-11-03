@@ -3,7 +3,7 @@
   "status": "skip",
   "summary": "404 page footer is inconsistent with other pages: duplicate logo, missing trademark text, and \"Code is Poetry\" overlapping the social links row",
   "path": "",
-  "reason": "out of scope",
-  "ticket_updated": "2026-11-02T03:51:01Z",
-  "updated": "2026-11-02T06:53:04Z"
+  "reason": "Ticket is closed as fixed; the stale 404 template was resolved by a manual sync, no code change.",
+  "ticket_updated": "2026-11-02T20:04:10Z",
+  "updated": "2026-11-03T00:52:12Z"
 }
