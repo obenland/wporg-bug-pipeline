@@ -1,7 +1,8 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wporg-theme-directory",
   "pr": "https://github.com/WordPress/wporg-theme-directory/pull/184",
   "risk": "needs-review",
-  "updated": "2026-10-30T20:18:19Z"
+  "updated": "2026-11-03T15:42:13Z",
+  "outcome": "merged"
 }
