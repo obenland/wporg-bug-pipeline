@@ -1,7 +1,8 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wordpress.org",
   "pr": "https://github.com/WordPress/wordpress.org/pull/1133",
   "risk": "needs-review",
-  "updated": "2026-11-01T01:21:09Z"
+  "updated": "2026-11-03T00:39:33Z",
+  "outcome": "closed"
 }
