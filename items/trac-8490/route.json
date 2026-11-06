@@ -1,0 +1,8 @@
+{
+  "repo": null,
+  "status": "skip",
+  "summary": "Make: p2-hovercards shows an empty card for Trac links whose text continues after the ticket number",
+  "reason": "has a patch",
+  "pr": "https://meta.trac.wordpress.org/ticket/8490",
+  "updated": "2026-11-06T18:52:17Z"
+}
