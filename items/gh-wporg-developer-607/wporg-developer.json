@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Could not trace where the escaped hyphen becomes a literal -- before wptexturize; Jetpack 16.4 plus kses stores &#045;- which texturize leaves alone, so the stored production content needs inspecting first.",
+  "updated": "2026-11-07T00:27:17Z"
+}
