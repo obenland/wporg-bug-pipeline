@@ -3,7 +3,7 @@
   "status": "skip",
   "summary": "WP-CLI command pages: -- in option names rendered as en dash (–) since mid-2026",
   "path": "",
-  "reason": "ticket is closed (resolution: fixed), redirected upstream to wporg-developer GitHub issues",
-  "ticket_updated": "2026-11-06T14:39:23Z",
-  "updated": "2026-11-06T18:52:32Z"
+  "reason": "ticket is closed; moved to GitHub issue wporg-developer#607",
+  "ticket_updated": "2026-11-06T19:08:37Z",
+  "updated": "2026-11-07T00:51:38Z"
 }
