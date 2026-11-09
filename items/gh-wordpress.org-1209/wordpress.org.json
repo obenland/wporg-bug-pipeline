@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Block icon kses allowlist in wporg-plugins-2024 section-blocks.php omits common SVG shape elements and attributes.",
+  "updated": "2026-11-09T01:24:26Z"
+}
