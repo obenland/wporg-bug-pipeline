@@ -1,6 +1,7 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wordpress.org",
-  "run": "cse_01YBAW4sVxy1RZgSC8NRuZKc",
-  "updated": "2026-11-09T01:24:28Z"
+  "pr": "https://github.com/WordPress/wordpress.org/pull/1210",
+  "risk": "needs-review",
+  "updated": "2026-11-09T01:36:25Z"
 }
