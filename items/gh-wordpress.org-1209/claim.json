@@ -1,7 +1,8 @@
 {
-  "status": "pr-open",
+  "status": "merged",
   "repo": "wordpress.org",
   "pr": "https://github.com/WordPress/wordpress.org/pull/1210",
   "risk": "needs-review",
-  "updated": "2026-11-09T01:36:25Z"
+  "commit": "b2f0c2c09",
+  "updated": "2026-11-10T16:59:27Z"
 }
