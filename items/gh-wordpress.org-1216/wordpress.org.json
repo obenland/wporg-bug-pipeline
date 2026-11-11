@@ -1,5 +1,6 @@
 {
   "status": "skip",
-  "reason": "out of scope",
-  "updated": "2026-11-09T19:12:18Z"
+  "reason": "has an open PR",
+  "pr": "https://github.com/WordPress/wordpress.org/pull/1226",
+  "updated": "2026-11-11T19:13:00Z"
 }
