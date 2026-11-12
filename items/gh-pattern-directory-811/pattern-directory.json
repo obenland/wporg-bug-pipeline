@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Status changes and deletion of an original never reach its stored translations; propagate them from a transition_post_status/before_delete_post hook.",
+  "updated": "2026-11-12T04:33:06Z"
+}
