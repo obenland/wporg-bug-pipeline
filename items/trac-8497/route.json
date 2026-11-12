@@ -1,0 +1,9 @@
+{
+  "repo": "wordpress.org",
+  "status": "routed",
+  "summary": "Trac logo 404",
+  "path": "trac.wordpress.org/conf/common.ini",
+  "reason": "Trac renders the placeholder your_project_logo.png because no [header_logo] section is configured in the shared Trac config (or the template should hide it).",
+  "ticket_updated": "2026-11-12T00:00:00Z",
+  "updated": "2026-11-12T00:51:24Z"
+}
