@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Shared Trac config never sets [header_logo], so Trac 1.6 renders its default placeholder logo image that 404s.",
+  "updated": "2026-11-12T01:26:09Z"
+}
