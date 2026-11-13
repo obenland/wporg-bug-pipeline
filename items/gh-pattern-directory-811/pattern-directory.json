@@ -1,5 +1,6 @@
 {
-  "status": "ready",
-  "reason": "Status changes and deletion of an original never reach its stored translations; propagate them from a transition_post_status/before_delete_post hook.",
-  "updated": "2026-11-12T04:33:06Z"
+  "status": "skip",
+  "reason": "PR #814 closed in favor of #812, which includes its changes plus a backfill command.",
+  "pr": "https://github.com/WordPress/pattern-directory/pull/812",
+  "updated": "2026-11-13T20:58:03Z"
 }
