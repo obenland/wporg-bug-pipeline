@@ -1,7 +1,7 @@
 {
-  "status": "pr-open",
+  "status": "failed",
   "repo": "pattern-directory",
+  "reason": "PR #814 closed unmerged in favor of #812.",
   "pr": "https://github.com/WordPress/pattern-directory/pull/814",
-  "risk": "needs-review",
-  "updated": "2026-11-13T15:24:41Z"
+  "updated": "2026-11-13T20:58:11Z"
 }
