@@ -1,6 +1,7 @@
 {
-  "status": "failed",
+  "status": "pr-open",
   "repo": "pattern-directory",
-  "reason": "Fix and tests were ready, but the push to WordPress/pattern-directory was refused with 403: the Claude GitHub App has no access to that repo.",
-  "updated": "2026-11-12T04:45:48Z"
+  "pr": "https://github.com/WordPress/pattern-directory/pull/814",
+  "risk": "needs-review",
+  "updated": "2026-11-13T15:24:41Z"
 }
