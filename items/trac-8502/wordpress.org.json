@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Choosing the Reply-To address (noreply vs mailing list, per Trac) is an open policy question, and the per-Trac trac.ini that would load or override notifications.ini is not in this repo.",
+  "updated": "2026-11-14T19:11:41Z"
+}
