@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "groups-site templates, parts and most patterns hard-code English instead of wrapping strings in wordcamporg i18n calls",
+  "updated": "2026-11-14T07:28:54Z"
+}
