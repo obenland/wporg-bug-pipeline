@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Needs detection of each pattern's localized variants and slugs before emitting hreflang links; not a focused fix, and no maintainer approach is set.",
+  "updated": "2026-11-15T04:23:58Z"
+}

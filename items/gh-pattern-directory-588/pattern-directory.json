@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Labeled Needs Design; the notice's form and when it shows are undecided.",
+  "question": "Should pattern pages show a minimum-WordPress-version notice when wpop_wp_version is set, and only for pre-release versions or always?",
+  "updated": "2026-11-15T04:23:58Z"
+}

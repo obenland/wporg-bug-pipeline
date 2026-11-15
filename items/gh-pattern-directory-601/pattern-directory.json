@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The pattern creator no longer depends on Gutenberg's gutenberg_initialize_editor(); it ships its own namespaced copy.",
+  "evidence": "pattern-creator.php defines WordPressdotorg\\Pattern_Creator\\gutenberg_initialize_editor(), so the call resolves locally and the Gutenberg 16.5 fatal cannot recur.",
+  "updated": "2026-11-15T04:23:58Z"
+}

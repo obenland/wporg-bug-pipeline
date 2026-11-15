@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Exposing a user's favorites by username is a product and privacy choice.",
+  "question": "Should any user's favorite patterns be publicly listable through the Patterns API by username?",
+  "updated": "2026-11-15T04:23:58Z"
+}
