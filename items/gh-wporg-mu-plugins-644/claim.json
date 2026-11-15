@@ -1,6 +1,6 @@
 {
-  "status": "working",
+  "status": "failed",
   "repo": "wporg-mu-plugins",
-  "run": "cse_01YBAW4rvreMsqgMR3qYPSpM",
-  "updated": "2026-11-15T22:29:16Z"
+  "reason": "Push to WordPress/wporg-mu-plugins was refused with 403: the Claude GitHub App has no access to the repository for this org.",
+  "updated": "2026-11-15T22:37:31Z"
 }
