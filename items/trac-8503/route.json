@@ -1,0 +1,9 @@
+{
+  "repo": "wordpress.org",
+  "status": "routed",
+  "summary": "Plugins API: totals differ by browse value, page silently capped at 999, stats limit off by one",
+  "path": "wordpress.org/public_html/wp-content/plugins/plugin-directory/api/routes/class-query-plugins.php",
+  "reason": "Plugins query API paging cap (min(paged, 999)) and browse-dependent result totals live in the plugin-directory query route; the stats downloads endpoint is not in any checkout.",
+  "ticket_updated": "2026-11-10T00:00:00Z",
+  "updated": "2026-11-15T00:52:03Z"
+}
