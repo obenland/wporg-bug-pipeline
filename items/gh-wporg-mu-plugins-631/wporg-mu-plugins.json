@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The code change is small, but the localized-image workflow is still waiting on design.",
+  "question": "Should Rosetta og:images be translator-uploaded localized images (URL as a translatable string), or should the text move out of the image into a language-neutral design?",
+  "updated": "2026-11-15T22:24:06Z"
+}
