@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The nonce sniff flags wp_verify_nonce() inside a ternary assignment; allowing it is easy, but the thread leans toward discouraging the pattern anyway.",
+  "question": "Should UnsafeVerifyNonceStatement accept wp_verify_nonce() used in a ternary assignment (e.g. $ok = wp_verify_nonce(...) ? true : false), or keep warning to discourage that pattern?",
+  "updated": "2026-11-15T16:46:30Z"
+}
