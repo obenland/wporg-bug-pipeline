@@ -21,3 +21,15 @@ s.w.org
 cdn.playwright.dev
 playwright.download.prss.microsoft.com
 playwright.azureedge.net
+wordcamp.org
+wordpress.tv
+*.wordpress.tv
+buddypress.org
+*.buddypress.org
+bbpress.org
+*.bbpress.org
+jobs.wordpress.net
+wp15.wordpress.net
+browsehappy.com
+wp-themes.com
+wpcontributordashboard.org
