@@ -1,0 +1,5 @@
+{
+  "status": "skip",
+  "reason": "A maintainer put this on hold until the_block_template_html filter lands in core; the current hooks work again since Gutenberg 18.5.",
+  "updated": "2026-11-15T03:26:59Z"
+}
