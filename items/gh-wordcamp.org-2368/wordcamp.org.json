@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Concrete spec for Groups-network theme lock: deny switch_themes without manage_network, revert off-theme switches, disable block locking/code editing and header/footer part writes for non-network admins.",
+  "updated": "2026-11-15T07:30:31Z"
+}
