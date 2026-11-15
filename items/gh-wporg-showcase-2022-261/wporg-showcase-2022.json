@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Confirmed live: on /tag/magazine/ the label reads Popular tags [1] and on /category/featured/ it reads Categories [1], but neither term is an option. get_post_tag_options and get_category_options in inc/block-config.php count every queried term, not just the listed ones. The fix counts only selected terms that appear in the options (alternative: add the current term to the options).",
+  "updated": "2026-11-15T19:57:06Z"
+}
