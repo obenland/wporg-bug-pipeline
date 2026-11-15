@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Fixing the double announcement means changing the shared search field pattern across sites, which is labeled Needs Design Feedback.",
+  "question": "Should the shared search fields show a visible label and drop the placeholder, as Learn did, or keep the placeholder and drop the hidden label text?",
+  "updated": "2026-11-15T03:26:56Z"
+}
