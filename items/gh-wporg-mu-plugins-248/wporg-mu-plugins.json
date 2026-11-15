@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The header overflow menu only recalculates on window resize, which text-only zoom never fires; recompute from a ResizeObserver as the maintainer suggested.",
+  "updated": "2026-11-15T22:24:50Z"
+}
