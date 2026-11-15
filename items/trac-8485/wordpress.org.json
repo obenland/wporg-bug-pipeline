@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "For signed-in users, Trac core wraps the ticket RSS link in /login?referer=..., and wordpress.org redirects /login to login.wordpress.org, which drops the feed URL; wp-trac.js can unwrap it.",
+  "updated": "2026-11-15T07:22:06Z"
+}
