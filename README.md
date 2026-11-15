@@ -2,10 +2,10 @@
 
 Unattended bug fixing for the WordPress.org repositories, run as Claude Code cloud routines.
 
-- **Router** (every 6 hours): reads new Meta Trac bug tickets through the Trac MCP server, decides which repository each ticket's fix belongs in by finding the code, and records the route. See [ROUTER.md](ROUTER.md).
+- **Router** (every 6 hours): reads new Meta Trac tickets (bugs, enhancements, and tasks; not feature requests) through the Trac MCP server, decides which repository each ticket's fix belongs in by finding the code, and records the route. See [ROUTER.md](ROUTER.md).
 - **Workers** (one per repository, every 6–24 hours per `repos.json`): pick up new GitHub issues on their repo and the Trac tickets routed to it, triage each (bounded enhancements included) with a second, independent opinion on where the fix goes, fix the ones that are ready with the smallest change, run what CI runs, review the fix in rounds under [review-policy.md](review-policy.md), and open a short PR. See [RUNBOOK.md](RUNBOOK.md).
 - **Shepherd** (every 3 hours): takes the pipeline's open PRs through review. It acts on maintainer feedback and triages bot findings under the same policy. It fixes failing checks and rebases branches that stopped merging, then reviews and tests its own commit before pushing. It replies only to maintainers, and it stops after three pushes to a PR. Merged and closed PRs move their claim to `done`. See [SHEPHERD.md](SHEPHERD.md).
-- **New bugs only.** The first run of the router records the newest ticket number, and the first run of each worker records the time; nothing filed before that is considered.
+- **New tickets and issues only.** The first run of the router records the newest ticket number, and the first run of each worker records the time; nothing filed before that is considered, whatever its type.
 - **Repo profiles** in `repos.json` hold each repo's default branch, push target, the site it serves, how it credits props, how a commit cites a Trac ticket, and the checks its CI runs on a PR (`bin/check`). The dotorg skill's local pipeline reads the same profiles and `review-policy.md`.
 - **State** lives on the `claude/state` branch, one JSON file per fact, written only through `bin/state`.
 
