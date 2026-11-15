@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The thread lists several alert-format ideas, and maintainers disagree on whether trunk commits should alert the channel.",
+  "question": "Which Slack alert changes should ship first: a per-sniff count summary with a link, and should trunk commits alert the channel or only the author?",
+  "updated": "2026-11-15T16:46:34Z"
+}
