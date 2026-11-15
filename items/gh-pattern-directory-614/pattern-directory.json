@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "wpop_viewport_width is registered meta exposed in REST, but the pattern creator sidebar has no control for it; a maintainer welcomed a PR adding one.",
+  "updated": "2026-11-15T04:24:18Z"
+}
