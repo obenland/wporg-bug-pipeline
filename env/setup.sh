@@ -34,6 +34,9 @@ fi
 
 command -v jq >/dev/null || apt-get install -y -qq jq || warn "jq install failed"
 
+# Playwright's Chromium and the libraries it needs, for bin/screenshot's before/after shots.
+npm install -g -s playwright@1.64.1 && playwright install --with-deps chromium >/dev/null || warn "Playwright Chromium install failed; PRs say screenshots could not be taken"
+
 # Anonymous Docker Hub pulls from the shared egress are rate limited; use Google's mirror.
 mkdir -p /etc/docker
 echo '{"registry-mirrors":["https://mirror.gcr.io"]}' > /etc/docker/daemon.json
