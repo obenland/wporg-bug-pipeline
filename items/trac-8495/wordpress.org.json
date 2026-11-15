@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The plugin importer already detects wp_add_dashboard_widget() calls; detecting wp_ai_client_prompt()/wp_ai_client_embedding() calls the same way and storing a flag is the bounded first step the ticket describes.",
+  "updated": "2026-11-15T07:22:08Z"
+}
