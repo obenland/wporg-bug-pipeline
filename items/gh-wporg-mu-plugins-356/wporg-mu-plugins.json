@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "screenshot-preview/src/screenshot.js shows a bare \"error\" string on failure; show a readable message and a retry for timeouts.",
+  "updated": "2026-11-15T22:25:01Z"
+}
