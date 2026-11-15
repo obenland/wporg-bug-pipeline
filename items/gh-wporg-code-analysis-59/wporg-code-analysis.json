@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "An open question on whether to reuse the WPCS escaping-function lists in OutputEscapingSniff; the thread has no answer yet.",
+  "question": "Should OutputEscapingSniff inherit the WPCS escaping and auto-escaped function lists instead of its own lists, accepting the change in what it flags?",
+  "updated": "2026-11-15T16:46:38Z"
+}
