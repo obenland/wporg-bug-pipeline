@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "Export is restricted network-wide in the wporg mu-plugins, and the issue author chose to grant the feedback-export capability there rather than in this theme.",
+  "updated": "2026-11-15T19:56:09Z"
+}
