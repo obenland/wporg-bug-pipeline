@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Korean headings break mid-word because Hangul may break between any syllables; the ko_KR locale CSS in inc/rosetta-styles.php needs word-break: keep-all on headings.",
+  "updated": "2026-11-15T03:27:36Z"
+}
