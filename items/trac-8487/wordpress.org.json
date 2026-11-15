@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The support-forums Audit_Log already adds automatic user notes; a hook on new/edited topics and replies that land pending can add a note naming the matched Comment Moderation word, or Akismet.",
+  "updated": "2026-11-15T07:22:09Z"
+}
