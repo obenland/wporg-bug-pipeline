@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The :where() fallback CSS in src/style/style.scss forces centered margins with !important, breaking left/right content justification; :where is Baseline and the rules can go.",
+  "updated": "2026-11-15T23:16:01Z"
+}
