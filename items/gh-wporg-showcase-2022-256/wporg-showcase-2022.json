@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Could not reproduce a mid-word label break. Read-only production screenshots of a single-site meta table at 1000 and 1200px show labels intact and only values wrapping between words. Reproducing would need a site with a long author value, and ryelle's suggested change (stack the table between the one-column breakpoint, now 1179px, and wider) conflicts with the 1180–1280px height rule.",
+  "updated": "2026-11-15T19:57:15Z"
+}
