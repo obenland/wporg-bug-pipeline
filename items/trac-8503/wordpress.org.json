@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Only point 1 is a code-adjacent defect (the active_installs EXISTS meta clause drops plugins without _active_installs meta); its conventional fix is a data backfill, since an OR/NOT EXISTS clause would slow the hot popular query; point 2 is a deliberate cap and point 3 lives outside this repo.",
+  "updated": "2026-11-15T01:21:02Z"
+}
