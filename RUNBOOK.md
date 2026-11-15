@@ -64,12 +64,11 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
 3. **Write the fix and its test.** Add a regression test whenever a suite the repo's CI already runs can load the changed code. That includes code no existing test touches yet, such as a shortcode in a plugin whose suite tests other classes; in `wordpress.org`, a plugin listed in `.github/unit-tests-suites.yml` counts. Add a new test file in the suite's existing style; that is not new test infrastructure. The test must fail without the fix and pass with it, and you run it to prove both. Skip the test only when no CI suite can load the code, and then say so in Testing. Follow the repo's conventions over your preferences.
    - **Screenshots for visual changes.** When the fix changes how a page looks, capture before and after with `$P/bin/screenshot <url> <out.png> [--width N] [--full-page] [--selector CSS]`. Before is the live page (a read-only production check) or wp-env on the default branch; after is wp-env on the fix branch. Capture every state and width the change touches, at the same width before and after. After pushing, `$P/bin/publish-screenshots <key> <png>...` prints the image URLs for the PR body. When you cannot capture them, say so in Testing.
 4. **Commit.** The subject follows the PR title rule in step 8, since it usually becomes the title. Body: what was wrong and why this fixes it, then the reference:
-   - Trac ticket in `wordpress.org`: `Fixes #N.` on its own line.
-   - Trac ticket in any other repo: `See https://meta.trac.wordpress.org/ticket/N.`
+   - Trac ticket: the repo's `ticket_ref` in `$P/repos.json`, with the ticket number for `{N}`, on its own line (`Fixes #N.` in `wordpress.org`, the full-URL `See` form elsewhere).
    - GitHub issue: `Fixes #N.`
 5. **Verify.** Run what the repo's CI runs on a PR, and nothing gets past a failure:
-   - `wordpress.org`: `$P/bin/test-wordpress-org /home/user/wordpress.org`.
-   - Other repos: read `.github/workflows/*.yml` for the lint, build, and test jobs that run on `pull_request`, and run the same commands (for example `composer run lint`, `npm run lint:js`, `npm run build`, PHPUnit through the repo's wp-env config).
+   - `$P/bin/check $REPO /home/user/$REPO`. It runs the `checks` in the repo's profile in `$P/repos.json` (for `wordpress.org`, the CI-selected suites through `$P/bin/test-wordpress-org`).
+   - A repo whose profile lists no checks says why in `checks_note`; run what fits the change (a syntax check, the build) and say so in Testing. If the workflows on the default branch changed since the profile was written, run what they run and add a lesson.
    - When a check cannot run here (network, missing service), say which and why in the PR's Testing section. Never claim a check passed that did not run.
 6. **Review in rounds** (at most 3). You wrote the fix, so neither the review nor its triage is yours:
    - **Review**, round 1: a fresh subagent runs the `/code-review` skill at high effort on the branch's diff against the default branch. If the skill is unavailable, the subagent gets the diff, the item text, and `$P/review-policy.md`, and reviews under the policy.

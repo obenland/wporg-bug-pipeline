@@ -2,8 +2,9 @@
 #
 # test-wordpress-org [<checkout>] — the checks CI runs on a WordPress/wordpress.org PR, inside a cloud VM.
 #
-# A cloud port of the dotorg skill's wporg-test, without its worktree and merge handling: the
-# pipeline's branch is cut from a fresh origin/trunk, so it is tested as is.
+# The cloud side of the dotorg skill's wporg-test, without its worktree and merge handling: the
+# pipeline's branch is cut from a fresh origin/trunk, so it is tested as is. Suite selection and the
+# phpcs call live in wordpress-org-checks.sh, which wporg-test sources too.
 # 1. phpcs on the branch, with the same script the PHPCS workflow uses.
 # 2. The PHPUnit suites whose paths the branch touches, chosen from
 #    .github/unit-tests-suites.yml exactly as the Unit Tests workflow does:
@@ -11,6 +12,7 @@
 # 3. A smoke request against each started environment's front page.
 #
 set -euo pipefail
+source "$(dirname "${BASH_SOURCE[0]}")/wordpress-org-checks.sh"
 
 log()  { echo "▸ $*" >&2; }
 ok()   { echo "✔ $*" >&2; }
@@ -31,77 +33,11 @@ changed=$(git -C "$wt" diff --name-only origin/trunk...HEAD)
 
 # ── phpcs ───────────────────────────────────────────────────────────────────
 log "phpcs on changed PHP files…"
-base_ref="wporg-test-base-$$"
-git -C "$wt" update-ref "refs/remotes/origin/$base_ref" "$(git -C "$wt" merge-base origin/trunk HEAD)"
-trap 'git -C "$wt" update-ref -d "refs/remotes/origin/$base_ref" 2>/dev/null' EXIT
-if (cd "$wt" && BASE_REF=$base_ref php .github/bin/phpcs-branch.php < /dev/null); then
+if wporg_phpcs "$wt"; then
 	ok "phpcs clean"
 else
 	warn "phpcs reported violations"; rc=1
 fi
-git -C "$wt" update-ref -d "refs/remotes/origin/$base_ref"
-
-# ── Suite selection ─────────────────────────────────────────────────────────
-# Mirrors the workflow's `changes` job: suite paths + shared paths for the type +
-# the plugins a WordPress suite's environment activates.
-select_suites() {
-	CHANGED="$changed" python3 -I - "$wt" "$all" "${suites[@]+"${suites[@]}"}" <<'PY'
-import sys, json, re, fnmatch, os
-wt, all_flag, *only = sys.argv[1:]
-changed = [l for l in os.environ.get('CHANGED', '').splitlines() if l]
-
-# A dedicated parser for this file's shape: two map levels, lists of quoted scalars, comments.
-def parse_suites_file(text):
-    shared = {}; suites = {}; section = None; cur = None; curkey = None; listkey = None
-    for raw in text.splitlines():
-        if raw.lstrip().startswith('#') or not raw.strip(): continue
-        line = re.sub(r'\s+#.*$', '', raw.rstrip())
-        indent = len(line) - len(line.lstrip()); body = line.strip()
-        if indent == 0:
-            section = body.rstrip(':'); continue
-        if section == 'shared-paths':
-            if indent == 2: curkey = body.rstrip(':'); shared[curkey] = []
-            elif body.startswith('- '): shared[curkey].append(body[2:].strip("'\""))
-        elif section == 'suites':
-            if indent == 2: curkey = body.rstrip(':'); suites[curkey] = {}; listkey = None
-            elif indent == 4:
-                k, _, v = body.partition(':'); v = v.strip().strip("'\"")
-                if v == '': suites[curkey][k] = []; listkey = k
-                else: suites[curkey][k] = v
-            elif body.startswith('- ') and listkey: suites[curkey][listkey].append(body[2:].strip("'\""))
-    return shared, suites
-
-# CI tests the branch merged with trunk, so a branch older than the suite definitions still gets trunk's.
-import subprocess
-suites_path = os.path.join(wt, '.github/unit-tests-suites.yml')
-if os.path.exists(suites_path):
-    suites_text = open(suites_path).read()
-else:
-    suites_text = subprocess.run(['git', '-C', wt, 'show', 'origin/trunk:.github/unit-tests-suites.yml'], capture_output=True, text=True, check=True).stdout
-shared, suites = parse_suites_file(suites_text)
-
-def matches(path, pattern):
-    # dorny/paths-filter globs: ** spans directories; fnmatch's * also spans '/', which is what we want for '**'.
-    return fnmatch.fnmatch(path, pattern.replace('**', '*'))
-
-for key, s in suites.items():
-    if only and key not in only: continue
-    paths = list(shared.get(s['type'], [])) + list(s.get('paths', []))
-    if s['type'] == 'wordpress':
-        cfg = os.path.join(wt, 'environments', key, '.wp-env.test.json')
-        try:
-            cfg_text = open(cfg).read()
-        except FileNotFoundError:
-            r = subprocess.run(['git', '-C', wt, 'show', f'origin/trunk:environments/{key}/.wp-env.test.json'], capture_output=True, text=True)
-            cfg_text = r.stdout if r.returncode == 0 else '{}'
-        for p in json.loads(cfg_text or '{}').get('plugins', []):
-            if p.startswith('../'): paths.append(p[3:] + '/**')
-    hit = all_flag or bool(only) or any(matches(c, p) for c in changed for p in paths)
-    if hit:
-        # Unit separator: bash collapses runs of tabs, which would shift empty fields.
-        print('\x1f'.join([s['type'], key, s.get('name', key), s.get('script', ''), s.get('working-directory', ''), s.get('phpunit-args', ''), s.get('bootstrap', '')]))
-PY
-}
 
 run_standalone() {
 	local key=$1 name=$2 wd=$3 args=$4 bootstrap=$5 stub=""
@@ -160,7 +96,7 @@ run_wordpress() {
 	return 0
 }
 
-selected=$(select_suites)
+selected=$(wporg_select_suites "$wt" "$changed" "$all" "${suites[@]+"${suites[@]}"}")
 if [[ -z $selected ]]; then
 	log "No test suite covers the changed files."
 else
