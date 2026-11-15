@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "admin-stats.php loads a forked Export_CSV class; the issue (by a maintainer) asks to load the canonical wporg-mu-plugins copy and delete the fork.",
+  "updated": "2026-11-15T04:24:24Z"
+}
