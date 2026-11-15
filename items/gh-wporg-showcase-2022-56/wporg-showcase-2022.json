@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The thread endorsed redirecting ?s=term to /search/term/, but the SEO feedback in #234 asks for the ?s= format instead, and the filter forms submit s alongside tag[]/cat[] to /archives/.",
+  "question": "Should search canonicalize to /search/term/ (redirecting ?s=, and what happens to combined filters) or stay on ?s=term?",
+  "updated": "2026-11-15T19:56:21Z"
+}
