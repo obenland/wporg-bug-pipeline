@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "Localized (Rosetta) homepage news sections are rendered by the Rosetta code in WordPress/wordpress.org, not the News theme; a global-feed fallback is also an open product question there.",
+  "updated": "2026-11-15T09:30:22Z"
+}
