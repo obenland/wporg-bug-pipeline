@@ -1,0 +1,8 @@
+{
+  "repo": null,
+  "status": "skip",
+  "summary": "Secret key service: add an endpoint for `WP_SECRETS_KEY`",
+  "reason": "has an open PR",
+  "pr": "https://github.com/WordPress/wordpress.org/pull/1239",
+  "updated": "2026-11-15T06:52:34Z"
+}
