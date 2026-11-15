@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Flag status logging runs on transition_post_status, before terms and meta are saved; the maintainer asked to move it to wp_after_insert_post like the notifications code.",
+  "updated": "2026-11-15T04:24:07Z"
+}
