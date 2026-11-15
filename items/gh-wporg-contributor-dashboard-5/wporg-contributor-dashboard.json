@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "The \"(active only)\" profile-count footer the issue describes no longer exists.",
+  "evidence": "Commit 8c4153c (single-tier data model refactor) removed the footer and its $active_only_label; the Ladder view now shows explicit Contribution date ranges with an \"Include inactive users\" toggle, and no \"All time\" preset remains.",
+  "updated": "2026-11-15T15:43:36Z"
+}
