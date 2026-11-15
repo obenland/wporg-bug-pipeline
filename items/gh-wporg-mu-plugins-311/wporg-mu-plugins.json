@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The maintainer notes the search toggle depends on its own Navigation block for its interaction and a11y behavior, so removing the landmark needs a restructure, not a small fix.",
+  "updated": "2026-11-15T22:24:10Z"
+}
