@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Each listed header problem is resolved or tracked elsewhere.",
+  "evidence": "The search panel now closes on an outside click (checked live on wordpress.org), the Get WordPress hover issue is closed as #167, and the /downloads/ URL was fixed in 6255311.",
+  "updated": "2026-11-15T22:24:04Z"
+}
