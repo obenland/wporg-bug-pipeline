@@ -1,0 +1,6 @@
+{
+  "status": "skip",
+  "reason": "The open Notice inner-blocks migration PR covers the Callout feature gap this issue lists first.",
+  "pr": "https://github.com/WordPress/wporg-mu-plugins/pull/719",
+  "updated": "2026-11-15T22:23:59Z"
+}
