@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Whether to keep warning on _e() and hardcoded strings or constants is a policy choice for the minimum standard.",
+  "question": "Should the minimum plugin standard stop warning on translated strings (_e, __) and constants passed to output, or keep the WPCS EscapeOutput warnings?",
+  "updated": "2026-11-15T16:47:05Z"
+}
