@@ -5,8 +5,8 @@
 # Trac's linkedPullRequests lags behind GitHub (a PR can be open for hours before the ticket lists
 # it), so for a ticket this also searches the WordPress org's open PRs for a reference to it, and
 # reads PR links posted in the ticket's comments. A patch on the ticket counts too.
-# Prints "<reason>\t<url>" and exits 0 when it finds one; exits 1 otherwise. intake and
-# router-intake import it.
+# Prints "<reason>\t<url>" and exits 0 when it finds one; exits 1 otherwise. intake, router-intake,
+# and digest import it; they also count the pipeline's own open PRs with it.
 #
 import json
 import os
@@ -35,6 +35,24 @@ def pr_state(url):
 	if pr['state'] == 'open':
 		return 'open'
 	return 'merged' if pr.get('merged_at') else 'closed'
+
+
+def pipeline_prs(repo):
+	"""Return how many of the pipeline's claude/* PRs are open on WordPress/<repo>; None when it cannot tell."""
+	with open(os.path.join(os.path.dirname(BIN), 'repos.json')) as f:
+		conf = json.load(f)
+	owners = {conf['owner'], conf['fork_owner']}
+	out = subprocess.run(
+		['gh', 'api', '--paginate', f'repos/WordPress/{repo}/pulls?state=open&per_page=100',
+			'--jq', '.[] | [.head.ref, .head.repo.owner.login // ""] | @tsv'],
+		capture_output=True, text=True,
+	)
+	if out.returncode != 0:
+		print(f'existing_pr: open PRs on {repo}: {out.stderr.strip()}', file=sys.stderr)
+		return None
+	# Contributors' own Claude Code branches are claude/* too; only the pipeline's push targets count.
+	heads = [line.split('\t') for line in out.stdout.splitlines()]
+	return sum(1 for ref, owner in heads if ref.startswith('claude/') and owner in owners)
 
 
 def for_ticket(n):

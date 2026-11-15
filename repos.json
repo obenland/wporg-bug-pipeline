@@ -1,7 +1,7 @@
 {
 	"owner": "WordPress",
 	"fork_owner": "obenland",
-	"_profile": "Per repo: branch (default), push (fork or branch), cadence (hours), site (the public URL it serves), props (bot when its workflows run Props Bot, else line), ticket_ref (how a commit body cites Meta Trac ticket {N}), links (dependency directories a fresh local worktree borrows from the main checkout; empty when the checks install their own), checks (what CI runs on a PR, in order, from the repo root or dir; bin/check runs them).",
+	"_profile": "Per repo: branch (default), push (fork or branch), cadence (hours), site (the public URL it serves), props (bot when its workflows run Props Bot, else line), ticket_ref (how a commit body cites Meta Trac ticket {N}), links (dependency directories a fresh local worktree borrows from the main checkout; empty when the checks install their own), checks (what CI runs on a PR, in order, from the repo root or dir; bin/check runs them), backlog (open issues filed before the baseline: enabled; mode triage records decisions only, fix also fixes the ready ones; skip_labels are recorded skip \"out of scope\" with no model run; max_open_prs stops backlog fixes while the repo has that many open claude/* PRs; batch is the run's triage limit, new items first).",
 	"repos": {
 		"wordpress.org": {
 			"branch": "trunk",
@@ -15,7 +15,10 @@
 				"environments/node_modules"
 			],
 			"checks": [],
-			"checks_note": "Its suites depend on the files a branch changes; bin/check delegates to bin/test-wordpress-org."
+			"checks_note": "Its suites depend on the files a branch changes; bin/check delegates to bin/test-wordpress-org.",
+			"backlog": {
+				"enabled": false
+			}
 		},
 		"wporg-mu-plugins": {
 			"branch": "trunk",
@@ -58,7 +61,14 @@
 					"name": "PHPUnit",
 					"run": "npm run test:php"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "fix",
+				"skip_labels": [],
+				"max_open_prs": 5,
+				"batch": 25
+			}
 		},
 		"wporg-main-2022": {
 			"branch": "trunk",
@@ -99,7 +109,14 @@
 					"name": "PHPUnit",
 					"run": "npm run test:php"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "fix",
+				"skip_labels": [],
+				"max_open_prs": 3,
+				"batch": 25
+			}
 		},
 		"wporg-developer": {
 			"branch": "trunk",
@@ -130,7 +147,14 @@
 					"name": "Lint JS",
 					"run": "npm run lint:js --workspace=wporg-developer-2023"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "fix",
+				"skip_labels": [],
+				"max_open_prs": 5,
+				"batch": 25
+			}
 		},
 		"wporg-theme-directory": {
 			"branch": "trunk",
@@ -170,7 +194,14 @@
 					"name": "Build theme",
 					"run": "npm run build:theme"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "fix",
+				"skip_labels": [],
+				"max_open_prs": 3,
+				"batch": 25
+			}
 		},
 		"wporg-parent-2021": {
 			"branch": "trunk",
@@ -220,7 +251,14 @@
 					"run": "WP_CORE_DIR=/tmp/wordpress WP_TESTS_DIR=/tmp/wordpress-develop/tests/phpunit WP_TESTS_CONFIG_FILE_PATH=\"$PWD/.github/wp-tests-config.php\" vendor/bin/phpunit",
 					"note": "not wp-env: CI uses the runner's MySQL (root/root@127.0.0.1, db wordpress_test), the nightly WordPress zip unpacked to /tmp/wordpress and a sparse wordpress-develop checkout (tests/phpunit/includes + data) at /tmp/wordpress-develop. Path-filtered to source/**, phpunit.xml.dist, composer.*, .github/wp-tests-config.php"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "fix",
+				"skip_labels": [],
+				"max_open_prs": 3,
+				"batch": 25
+			}
 		},
 		"pattern-directory": {
 			"branch": "trunk",
@@ -266,7 +304,14 @@
 					"run": "npm run test:unit --workspace=wporg-pattern-creator",
 					"note": "same path filter as PHPUnit"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "fix",
+				"skip_labels": [],
+				"max_open_prs": 3,
+				"batch": 25
+			}
 		},
 		"wporg-two-factor": {
 			"branch": "trunk",
@@ -297,7 +342,13 @@
 					"name": "JS tests",
 					"run": "npm run test:js"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "triage",
+				"skip_labels": [],
+				"batch": 25
+			}
 		},
 		"five-for-the-future": {
 			"branch": "production",
@@ -328,7 +379,14 @@
 					"run": "PATH=\"$PWD/mu-plugins/vendor/bin:$PATH\" composer run-script test -- -c phpunit.xml.dist",
 					"note": "CI runs PHP 7.4"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "fix",
+				"skip_labels": [],
+				"max_open_prs": 3,
+				"batch": 25
+			}
 		},
 		"wordcamp.org": {
 			"branch": "production",
@@ -387,7 +445,15 @@
 					"note": "CI shards by --testsuite across PHP 8.3/8.4/8.5 ('WordCamp Groups' / 'WordCamp Groups Network,WordCamp MU Plugins' / all others); no --testsuite runs them all. Needs wporg-groups-frontend built (covered by the Build step)"
 				}
 			],
-			"checks_note": "The Playwright E2E workflow needs a scripted Docker environment and is left out; it runs only for changes under the groups code."
+			"checks_note": "The Playwright E2E workflow needs a scripted Docker environment and is left out; it runs only for changes under the groups code.",
+			"backlog": {
+				"enabled": true,
+				"mode": "triage",
+				"skip_labels": [
+					"[Type] Operation"
+				],
+				"batch": 25
+			}
 		},
 		"Learn": {
 			"branch": "trunk",
@@ -425,7 +491,27 @@
 					"name": "Lint CSS",
 					"run": "yarn lint:css"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "triage",
+				"skip_labels": [
+					"[Admin] Agenda",
+					"[Admin] Handbook",
+					"[Admin] Site improvement",
+					"[Component] Content",
+					"[Content] Experienced Author",
+					"[Content] Feedback",
+					"[Content] Needs Co-host",
+					"[Content] Needs SME",
+					"[Content] Needs Translation Reviewer",
+					"[Content] Needs Update",
+					"[Content] Published",
+					"[Content] Translation",
+					"Office Hours"
+				],
+				"batch": 25
+			}
 		},
 		"wporg-news-2021": {
 			"branch": "trunk",
@@ -471,12 +557,19 @@
 					"dir": "source/wp-content/themes/wporg-news-2021",
 					"note": "build output is committed; CI fails if the build changes tracked files"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "fix",
+				"skip_labels": [],
+				"max_open_prs": 3,
+				"batch": 25
+			}
 		},
 		"wporg-make": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24,
+			"cadence": 168,
 			"site": "https://make.wordpress.org",
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
@@ -518,7 +611,10 @@
 					"name": "PHPUnit",
 					"run": "yarn test:php"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": false
+			}
 		},
 		"wporg-photo-directory": {
 			"branch": "trunk",
@@ -529,23 +625,33 @@
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
 			"links": [],
 			"checks": [],
-			"checks_note": "Only a push-triggered build runs; no PR checks."
+			"checks_note": "Only a push-triggered build runs; no PR checks.",
+			"backlog": {
+				"enabled": true,
+				"mode": "fix",
+				"skip_labels": [],
+				"max_open_prs": 3,
+				"batch": 25
+			}
 		},
 		"wporg-gutenberg": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24,
+			"cadence": 168,
 			"site": "https://wordpress.org/gutenberg",
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
 			"links": [],
 			"checks": [],
-			"checks_note": "No workflows."
+			"checks_note": "No workflows.",
+			"backlog": {
+				"enabled": false
+			}
 		},
 		"wporg-book": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24,
+			"cadence": 168,
 			"site": "https://wordpress.org/book",
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
@@ -571,12 +677,15 @@
 					"name": "Lint PHP",
 					"run": "npm run lint:php"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": false
+			}
 		},
 		"wporg-documentation-2022": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24,
+			"cadence": 168,
 			"site": "https://wordpress.org/documentation",
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
@@ -610,7 +719,10 @@
 					"name": "Lint PHP",
 					"run": "yarn run lint:php"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": false
+			}
 		},
 		"wporg-contributor-dashboard": {
 			"branch": "main",
@@ -633,7 +745,13 @@
 					"name": "Lint PHP",
 					"run": "composer lint"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "triage",
+				"skip_labels": [],
+				"batch": 25
+			}
 		},
 		"wporg-code-analysis": {
 			"branch": "trunk",
@@ -653,7 +771,13 @@
 					"run": "composer run test",
 					"note": "CI uses PHP 7.4 with the phpunit tool from setup-php; the script is `phpunit tests`"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "triage",
+				"skip_labels": [],
+				"batch": 25
+			}
 		},
 		"wporg-developer-blog": {
 			"branch": "trunk",
@@ -664,7 +788,13 @@
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
 			"links": [],
 			"checks": [],
-			"checks_note": "No workflows."
+			"checks_note": "No workflows.",
+			"backlog": {
+				"enabled": true,
+				"mode": "triage",
+				"skip_labels": [],
+				"batch": 25
+			}
 		},
 		"wporg-contributor-orientation": {
 			"branch": "trunk",
@@ -675,7 +805,14 @@
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
 			"links": [],
 			"checks": [],
-			"checks_note": "Lint runs only in the push-triggered build; no PR checks."
+			"checks_note": "Lint runs only in the push-triggered build; no PR checks.",
+			"backlog": {
+				"enabled": true,
+				"mode": "fix",
+				"skip_labels": [],
+				"max_open_prs": 3,
+				"batch": 25
+			}
 		},
 		"wporg-gp-engagement": {
 			"branch": "main",
@@ -686,7 +823,13 @@
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
 			"links": [],
 			"checks": [],
-			"checks_note": "No workflows."
+			"checks_note": "No workflows.",
+			"backlog": {
+				"enabled": true,
+				"mode": "triage",
+				"skip_labels": [],
+				"batch": 25
+			}
 		},
 		"wporg-showcase-2022": {
 			"branch": "trunk",
@@ -725,7 +868,13 @@
 					"name": "Lint PHP",
 					"run": "yarn run lint:php"
 				}
-			]
+			],
+			"backlog": {
+				"enabled": true,
+				"mode": "triage",
+				"skip_labels": [],
+				"batch": 25
+			}
 		},
 		"wporg-repo-tools": {
 			"branch": "trunk",
@@ -736,7 +885,13 @@
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
 			"links": [],
 			"checks": [],
-			"checks_note": "CI runs the composite actions against a staged fixture across a yarn/npm and PHP matrix; there is no command set to run from the repo root."
+			"checks_note": "CI runs the composite actions against a staged fixture across a yarn/npm and PHP matrix; there is no command set to run from the repo root.",
+			"backlog": {
+				"enabled": true,
+				"mode": "triage",
+				"skip_labels": [],
+				"batch": 25
+			}
 		}
 	},
 	"excluded": {

@@ -5,6 +5,7 @@
 #
 #   state get <path>                  print a file, or nothing
 #   state put <path> <json>           write a file, commit, push (retries on a race)
+#   state put-many                    write every "<path>\t<json>" line on stdin in one commit
 #   state rm <path>                   delete a file, so intake sees the item as new again (re-triage)
 #   state claim <key> <repo>          take the fix for an item; exit 1 if another run holds it
 #   state ls <dir>                    list files under a directory
@@ -12,7 +13,8 @@
 # Layout:
 #   runs/<repo>.json                  {"last_run": ts}
 #   items/<key>/route.json            the router's decision for a Trac ticket: target repo, reason
-#   items/<key>/<repo>.json           a worker's triage decision for the item in that repo
+#   items/<key>/<repo>.json           a worker's triage decision for the item in that repo: status, reason,
+#                                     and evidence (already-fixed, obsolete) or question (needs-decision)
 #   items/<key>/claim.json            who is fixing it, and the PR once there is one
 #
 # Keys: trac-<ticket> for Meta Trac, gh-<repo>-<issue> for GitHub issues.
@@ -73,6 +75,24 @@ cmd_put() {
 	commit_push "Update $1."
 }
 
+# Intake records hundreds of label skips on a backlog's first run; one commit keeps that to one push.
+cmd_put_many() {
+	local paths=() docs=() path doc i
+	while IFS=$'\t' read -r path doc; do
+		[[ -n $path ]] || continue
+		valid_path "$path"
+		jq -e . >/dev/null <<< "$doc" || die "not JSON: $doc"
+		paths+=("$path") docs+=("$doc")
+	done
+	(( ${#paths[@]} )) || return 0
+	ensure_checkout; sync
+	for i in "${!paths[@]}"; do
+		mkdir -p "$(dirname "$STATE_DIR/${paths[i]}")"
+		jq --arg ts "$(now)" '. + {updated: $ts}' <<< "${docs[i]}" > "$STATE_DIR/${paths[i]}"
+	done
+	if (( ${#paths[@]} == 1 )); then commit_push "Update ${paths[0]}."; else commit_push "Update ${#paths[@]} files."; fi
+}
+
 cmd_rm() {
 	valid_path "$1"; ensure_checkout; sync
 	[[ -f $STATE_DIR/$1 ]] || die "no such file: $1"
@@ -123,8 +143,9 @@ cmd_ls() {
 case ${1:-} in
 	get)   shift; cmd_get "$@" ;;
 	put)   shift; cmd_put "$@" ;;
+	put-many) cmd_put_many ;;
 	rm)    shift; cmd_rm "$@" ;;
 	claim) shift; cmd_claim "$@" ;;
 	ls)    shift; cmd_ls "${1:-}" ;;
-	*) sed -n '3,21p' "$0"; exit 1 ;;
+	*) sed -n '3,23p' "$0"; exit 1 ;;
 esac

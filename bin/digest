@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+#
+# digest [<repo>] [--since <ts>] — what the pipeline decided, per repo, for the people who close issues and merge PRs.
+#
+# For each repo with decisions or claims: the count per decision, the close candidates (already-fixed
+# and obsolete, with their evidence), the items that need a product decision, the ready items no PR
+# is open for yet and what holds them, and how the pipeline's PRs fared. With --since, the counts
+# add what changed after <ts> and the lists show only those items; a worker passes its run's start
+# time to report its delta. Read-only: it changes nothing in the state or on GitHub.
+#
+import json
+import os
+import re
+import subprocess
+import sys
+from collections import Counter
+
+import existing_pr
+
+BIN = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(BIN)
+STATE_DIR = os.environ.get('WPORG_STATE_DIR', os.path.expanduser('~/.wporg-state'))
+GH_KEY = re.compile(r'^gh-(.+)-(\d+)$')
+
+
+def read(path):
+	try:
+		with open(os.path.join(STATE_DIR, path)) as f:
+			return json.load(f)
+	except (FileNotFoundError, json.JSONDecodeError):
+		return None
+
+
+def url(key):
+	if key.startswith('trac-'):
+		return f'https://meta.trac.wordpress.org/ticket/{key[5:]}'
+	m = GH_KEY.match(key)
+	return f'https://github.com/WordPress/{m.group(1)}/issues/{m.group(2)}' if m else key
+
+
+def outcome(claim):
+	"""merged, closed, or open for a claim's PR, from the claim when the shepherd recorded it, else from GitHub."""
+	if claim.get('status') == 'merged' or claim.get('outcome') == 'merged':
+		return 'merged'
+	if claim.get('outcome') == 'closed':
+		return 'closed'
+	return existing_pr.pr_state(claim['pr']) or 'unknown'
+
+
+def held_by(repo, conf):
+	"""Why the repo's ready items have no PR yet."""
+	backlog = conf.get('backlog') or {}
+	if backlog.get('enabled') and backlog.get('mode') == 'triage':
+		return 'not fixed in triage mode'
+	if backlog.get('enabled') and backlog.get('mode') == 'fix':
+		cap = backlog.get('max_open_prs', 0)
+		n = existing_pr.pipeline_prs(repo)
+		if n is None or n >= cap:
+			return f"held by the cap ({'?' if n is None else n}/{cap} open PRs)"
+	return 'waiting for a fix slot'
+
+
+def digest(repo, conf, keys, since):
+	decisions, claims = {}, {}
+	for key in keys:
+		if (d := read(f'items/{key}/{repo}.json')):
+			decisions[key] = d
+		c = read(f'items/{key}/claim.json')
+		if c and c.get('repo') == repo:
+			claims[key] = c
+	if not decisions and not claims:
+		return None
+
+	def changed(d):
+		return not since or d.get('updated', '') >= since
+
+	counts = Counter(d.get('status') for d in decisions.values())
+	delta = Counter(d.get('status') for d in decisions.values() if since and changed(d))
+	out = [f'## {repo}']
+	parts = [f'{n} {s}' + (f' (+{delta[s]})' if delta[s] else '') for s, n in counts.most_common()]
+	out.append('Decisions: ' + (', '.join(parts) or 'none'))
+
+	prs = Counter(outcome(c) for c in claims.values() if c.get('pr'))
+	if prs:
+		out.append('PRs: ' + ', '.join(f'{prs[o]} {label}' for o, label in (
+			('merged', 'merged'), ('closed', 'closed without merging'), ('open', 'open'), ('unknown', 'unknown')) if prs[o]))
+
+	close = [(k, d) for k, d in decisions.items() if d.get('status') in ('already-fixed', 'obsolete') and changed(d)]
+	if close:
+		out.append('Close candidates:')
+		out += [f"- {url(k)} {d['status']}: {d.get('evidence') or d.get('reason', '')}" for k, d in sorted(close)]
+
+	ask = [(k, d) for k, d in decisions.items() if d.get('status') == 'needs-decision' and changed(d)]
+	if ask:
+		out.append('Needs a decision:')
+		out += [f"- {url(k)}: {d.get('question') or d.get('reason', '')}" for k, d in sorted(ask)]
+
+	ready = [(k, d) for k, d in decisions.items()
+		if d.get('status') == 'ready' and changed(d) and claims.get(k, {}).get('status') not in ('working', 'pr-open', 'done', 'merged')]
+	if ready:
+		out.append(f'Ready, {held_by(repo, conf)}:')
+		out += [f"- {url(k)}: {d.get('reason', '')}" for k, d in sorted(ready)]
+	return '\n'.join(out)
+
+
+def main():
+	args = sys.argv[1:]
+	since = args[args.index('--since') + 1] if '--since' in args else None
+	repos = [a for i, a in enumerate(args) if not a.startswith('--') and (i == 0 or args[i - 1] != '--since')]
+	with open(os.path.join(ROOT, 'repos.json')) as f:
+		profiles = json.load(f)['repos']
+	for r in repos:
+		if r not in profiles:
+			sys.exit(f'digest: {r} has no profile in repos.json')
+	subprocess.run([os.path.join(BIN, 'state'), 'ls', 'items'], capture_output=True, check=True)
+	items = os.path.join(STATE_DIR, 'items')
+	keys = sorted(os.listdir(items)) if os.path.isdir(items) else []
+
+	sections = [s for r in (repos or profiles) if (s := digest(r, profiles[r], keys, since))]
+	print('\n\n'.join(sections) if sections else 'Nothing decided yet.')
+
+
+main()
