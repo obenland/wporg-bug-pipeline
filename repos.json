@@ -569,7 +569,7 @@
 		"wporg-make": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 168,
+			"cadence": 24,
 			"site": "https://make.wordpress.org",
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
@@ -637,7 +637,7 @@
 		"wporg-gutenberg": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 168,
+			"cadence": 24,
 			"site": "https://wordpress.org/gutenberg",
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
@@ -651,7 +651,7 @@
 		"wporg-book": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 168,
+			"cadence": 24,
 			"site": "https://wordpress.org/book",
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
@@ -685,7 +685,7 @@
 		"wporg-documentation-2022": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 168,
+			"cadence": 24,
 			"site": "https://wordpress.org/documentation",
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
