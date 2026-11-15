@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Anchor targets now land below the sticky local nav.",
+  "evidence": "Live check 2026-11-15 at 1280px: /news/2023/12/whats-new-for-developers-december-2023/#nav-link-block-renaming-support-disabled shows the heading fully visible below the sticky nav.",
+  "updated": "2026-11-15T17:50:25Z"
+}
