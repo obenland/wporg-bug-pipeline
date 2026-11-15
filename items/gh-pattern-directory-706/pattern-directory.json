@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The curation filter shows on author archives, where only wordpressdotorg patterns are curated, so picking Curated returns a 404; a maintainer asked to hide it there.",
+  "updated": "2026-11-15T04:24:05Z"
+}
