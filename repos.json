@@ -1,126 +1,742 @@
 {
 	"owner": "WordPress",
 	"fork_owner": "obenland",
+	"_profile": "Per repo: branch (default), push (fork or branch), cadence (hours), site (the public URL it serves), props (bot when its workflows run Props Bot, else line), ticket_ref (how a commit body cites Meta Trac ticket {N}), links (dependency directories a fresh local worktree borrows from the main checkout; empty when the checks install their own), checks (what CI runs on a PR, in order, from the repo root or dir; bin/check runs them).",
 	"repos": {
 		"wordpress.org": {
 			"branch": "trunk",
 			"push": "fork",
-			"cadence": 6
+			"cadence": 6,
+			"site": "https://wordpress.org",
+			"props": "bot",
+			"ticket_ref": "Fixes #{N}.",
+			"links": [
+				"vendor",
+				"environments/node_modules"
+			],
+			"checks": [],
+			"checks_note": "Its suites depend on the files a branch changes; bin/check delegates to bin/test-wordpress-org."
 		},
 		"wporg-mu-plugins": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install"
+				},
+				{
+					"name": "npm ci",
+					"run": "npm ci"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "composer run lint"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "npm run lint:css"
+				},
+				{
+					"name": "Lint JS",
+					"run": "npm run lint:js"
+				},
+				{
+					"name": "Build blocks",
+					"run": "npm run build"
+				},
+				{
+					"name": "wp-env start",
+					"run": "npx wp-env start --update"
+				},
+				{
+					"name": "PHPUnit",
+					"run": "npm run test:php"
+				}
+			]
 		},
 		"wporg-main-2022": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer update",
+					"run": "composer update",
+					"note": "CI runs `composer update` (no committed composer.lock, #562), restoring a daily cache first; needs svn for meta.svn packages"
+				},
+				{
+					"name": "npm ci",
+					"run": "npm ci --no-audit --no-fund"
+				},
+				{
+					"name": "Generate tool configs",
+					"run": "npm run setup:tools"
+				},
+				{
+					"name": "Lint front-end",
+					"run": "npm run lint:frontend"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "npm run lint:php"
+				},
+				{
+					"name": "wp-env start",
+					"run": "npx wp-env --config=.wp-env.test.json start",
+					"note": "phpunit.yml skips PRs touching only theme patterns/templates/parts or *.md"
+				},
+				{
+					"name": "PHPUnit",
+					"run": "npm run test:php"
+				}
+			]
 		},
 		"wporg-developer": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://developer.wordpress.org",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "npm ci",
+					"run": "npm ci --ignore-scripts --no-audit --no-fund"
+				},
+				{
+					"name": "wporg-repo-tools",
+					"run": "test -d vendor/wporg/wporg-repo-tools || git clone -q --depth 1 https://github.com/WordPress/wporg-repo-tools vendor/wporg/wporg-repo-tools"
+				},
+				{
+					"name": "Setup configs",
+					"run": "TEXTDOMAIN=wporg bash vendor/wporg/wporg-repo-tools/bin/update-configs"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "npm run lint:css --workspace=wporg-developer-2023"
+				},
+				{
+					"name": "Lint JS",
+					"run": "npm run lint:js --workspace=wporg-developer-2023"
+				}
+			]
 		},
 		"wporg-theme-directory": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org/themes",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install || composer update wporg/*"
+				},
+				{
+					"name": "Generate configs",
+					"run": "TEXTDOMAIN=wporg-themes composer exec update-configs"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "composer lint ./source/wp-content/themes/wporg-themes-2024"
+				},
+				{
+					"name": "npm ci",
+					"run": "npm ci --ignore-scripts",
+					"note": "js-css-lint.yml is path-filtered to the theme, package/composer manifests, .nvmrc and its own file"
+				},
+				{
+					"name": "Lint JS",
+					"run": "npm run lint:js"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "npm run lint:css"
+				},
+				{
+					"name": "Build theme",
+					"run": "npm run build:theme"
+				}
+			]
 		},
 		"wporg-parent-2021": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install || composer update wporg/*"
+				},
+				{
+					"name": "yarn install",
+					"run": "yarn"
+				},
+				{
+					"name": "Setup tools",
+					"run": "yarn setup:tools"
+				},
+				{
+					"name": "Build",
+					"run": "yarn workspaces run build"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "yarn workspaces run lint:css"
+				},
+				{
+					"name": "Lint JS",
+					"run": "yarn workspaces run lint:js"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "yarn run lint:php",
+					"note": "the script is `echo \"No PHP lint.\"`, a no-op"
+				},
+				{
+					"name": "Install WordPress",
+					"run": "curl -sSL https://wordpress.org/nightly-builds/wordpress-latest.zip -o /tmp/wordpress.zip && unzip -q -o /tmp/wordpress.zip -d /tmp && { test -d /tmp/wordpress-develop || { git clone -q --depth=1 --filter=blob:none --sparse https://github.com/WordPress/wordpress-develop /tmp/wordpress-develop && git -C /tmp/wordpress-develop sparse-checkout set tests/phpunit/includes tests/phpunit/data; }; }",
+					"note": "as CI's Install WordPress step; PHPUnit also needs MySQL at 127.0.0.1 (root/root) with a wordpress_test database"
+				},
+				{
+					"name": "PHPUnit",
+					"run": "WP_CORE_DIR=/tmp/wordpress WP_TESTS_DIR=/tmp/wordpress-develop/tests/phpunit WP_TESTS_CONFIG_FILE_PATH=\"$PWD/.github/wp-tests-config.php\" vendor/bin/phpunit",
+					"note": "not wp-env: CI uses the runner's MySQL (root/root@127.0.0.1, db wordpress_test), the nightly WordPress zip unpacked to /tmp/wordpress and a sparse wordpress-develop checkout (tests/phpunit/includes + data) at /tmp/wordpress-develop. Path-filtered to source/**, phpunit.xml.dist, composer.*, .github/wp-tests-config.php"
+				}
+			]
 		},
 		"pattern-directory": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org/patterns",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "composer run lint"
+				},
+				{
+					"name": "npm ci",
+					"run": "npm ci"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "npm run lint:css --workspaces --if-present"
+				},
+				{
+					"name": "Lint JS",
+					"run": "npm run lint:js --workspaces --if-present"
+				},
+				{
+					"name": "Install WordPress",
+					"run": "curl -sSL https://wordpress.org/nightly-builds/wordpress-latest.zip -o /tmp/wordpress.zip && unzip -q -o /tmp/wordpress.zip -d /tmp && { test -d /tmp/wordpress-develop || { git clone -q --depth=1 --filter=blob:none --sparse https://github.com/WordPress/wordpress-develop /tmp/wordpress-develop && git -C /tmp/wordpress-develop sparse-checkout set tests/phpunit/includes tests/phpunit/data; }; }",
+					"note": "as CI's Install WordPress step; PHPUnit also needs MySQL at 127.0.0.1 (root/root) with a wordpress_test database"
+				},
+				{
+					"name": "PHPUnit",
+					"run": "WP_CORE_DIR=/tmp/wordpress WP_TESTS_DIR=/tmp/wordpress-develop/tests/phpunit WP_TESTS_CONFIG_FILE_PATH=\"$PWD/.github/wp-tests-config.php\" vendor/bin/phpunit -c public_html/wp-content/tests/phpunit/phpunit.xml",
+					"note": "CI uses the runner's MySQL (root/root, db wordpress_test), the nightly WordPress zip in /tmp/wordpress and a sparse wordpress-develop checkout in /tmp/wordpress-develop. The repo's local equivalent is `npm run test:env start && npm run test:php` (wp-env). Path-filtered to public_html/**, .github/actions/**, manifests"
+				},
+				{
+					"name": "JS unit tests",
+					"run": "npm run test:unit --workspace=wporg-pattern-creator",
+					"note": "same path filter as PHPUnit"
+				}
+			]
 		},
 		"wporg-two-factor": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://profiles.wordpress.org",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "npm install",
+					"run": "npm install"
+				},
+				{
+					"name": "Lint JS",
+					"run": "npm run lint:js"
+				},
+				{
+					"name": "wp-env start",
+					"run": "npx wp-env start --xdebug=coverage"
+				},
+				{
+					"name": "PHPUnit",
+					"run": "npm test"
+				},
+				{
+					"name": "JS tests",
+					"run": "npm run test:js"
+				}
+			]
 		},
 		"five-for-the-future": {
 			"branch": "production",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org/five-for-the-future",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install --prefer-dist --no-suggest --no-progress --no-ansi --no-interaction",
+					"note": "needs subversion; vendor-dir is mu-plugins/vendor and CI puts mu-plugins/vendor/bin on PATH"
+				},
+				{
+					"name": "PHPCS on changed files",
+					"run": "mu-plugins/vendor/bin/phpcs -q -n $(git diff --name-only --diff-filter=AM origin/production)",
+					"note": "CI runs `phpcs -q -n --report=checkstyle tmp.php $(git diff --name-only --diff-filter=AM remotes/origin/<base_ref>) | cs2pr` on PHP 7.4; this is the local equivalent with base production"
+				},
+				{
+					"name": "Install WP test suite",
+					"run": "bash bin/install-wp-tests.sh wporg_5ftf_test root root 127.0.0.1 trunk",
+					"note": "needs a local MySQL (CI uses a mysql:5.7 service, root/root)"
+				},
+				{
+					"name": "PHPUnit",
+					"run": "PATH=\"$PWD/mu-plugins/vendor/bin:$PATH\" composer run-script test -- -c phpunit.xml.dist",
+					"note": "CI runs PHP 7.4"
+				}
+			]
 		},
 		"wordcamp.org": {
 			"branch": "production",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordcamp.org",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install",
+					"note": "CI deletes composer.lock first (`rm composer.lock || true`) so the latest wporg-mu-plugins dev build installs; post-install also runs `COMPOSER=composer-dev.json composer install`. PHP 8.3 for lint"
+				},
+				{
+					"name": "npm ci",
+					"run": "npm ci --no-audit --no-fund"
+				},
+				{
+					"name": "Build",
+					"run": "npm run build --workspaces --if-present"
+				},
+				{
+					"name": "Lint JS",
+					"run": "npm run lint:js --workspaces --if-present"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "npm run lint:css --workspaces --if-present"
+				},
+				{
+					"name": "Lint non-workspace CSS",
+					"run": "npx stylelint 'public_html/wp-content/themes/groups-site/assets/css/*.css' 'public_html/wp-content/mu-plugins/gatherpress-recurring-events/assets/*.css'"
+				},
+				{
+					"name": "Lint PHP (changed lines)",
+					"run": "BASE_REF=production php .github/bin/phpcs-branch.php"
+				},
+				{
+					"name": "JS unit tests",
+					"run": "npm run test --workspace=wordcamp-blocks && npm run test --workspace=wporg-groups-frontend"
+				},
+				{
+					"name": "Install WP test suite",
+					"run": "bash .docker/bin/install-wp-tests.sh wcorg_test root root 127.0.0.1:3306 latest true",
+					"note": "needs a local MariaDB/MySQL (CI uses a mariadb:lts service, root/root, db wcorg_test, on a mapped port)"
+				},
+				{
+					"name": "Install GatherPress",
+					"run": "curl -sL https://github.com/GatherPress/gatherpress/releases/download/0.36.2/gatherpress.0.36.2.zip -o /tmp/gatherpress.zip && unzip -q -o /tmp/gatherpress.zip -d public_html/wp-content/plugins/"
+				},
+				{
+					"name": "PHPUnit",
+					"run": "./public_html/wp-content/mu-plugins/vendor/bin/phpunit -c phpunit.xml.dist",
+					"note": "CI shards by --testsuite across PHP 8.3/8.4/8.5 ('WordCamp Groups' / 'WordCamp Groups Network,WordCamp MU Plugins' / all others); no --testsuite runs them all. Needs wporg-groups-frontend built (covered by the Build step)"
+				}
+			],
+			"checks_note": "The Playwright E2E workflow needs a scripted Docker environment and is left out; it runs only for changes under the groups code."
 		},
 		"Learn": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://learn.wordpress.org",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install --no-interaction --no-progress",
+					"note": "needs subversion (two require-dev packages come from meta.svn). On a cache miss CI follows it with `git reset --hard && git clean -f -d` because the svn checkout into wp-content/mu-plugins/pub can clobber tracked files"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "composer run lint",
+					"note": "lint-php.yml is path-filtered to **.php, phpcs.xml.dist, composer.*, its workflow and the setup-composer action"
+				},
+				{
+					"name": "Copy shared lint configs",
+					"run": "yarn setup:tools"
+				},
+				{
+					"name": "yarn install",
+					"run": "yarn install --frozen-lockfile"
+				},
+				{
+					"name": "Lint JS",
+					"run": "yarn lint:js",
+					"note": "lint-frontend.yml is path-filtered to js/scss/css, package.json, lint configs, yarn.lock, .nvmrc, composer.lock and its workflow"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "yarn lint:css"
+				}
+			]
 		},
 		"wporg-news-2021": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org/news",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install --no-interaction --no-progress"
+				},
+				{
+					"name": "Generate PHPCS config",
+					"run": "TEXTDOMAIN=wporg composer exec update-configs"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "composer lint",
+					"note": "php-lint.yml path-filtered to **.php, composer.*, its workflow"
+				},
+				{
+					"name": "npm ci",
+					"run": "npm ci --ignore-scripts",
+					"dir": "source/wp-content/themes/wporg-news-2021",
+					"note": "js-css-lint.yml path-filtered to the theme dir, .nvmrc, its workflow"
+				},
+				{
+					"name": "Lint JS",
+					"run": "npm run lint:js",
+					"dir": "source/wp-content/themes/wporg-news-2021"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "npm run lint:css",
+					"dir": "source/wp-content/themes/wporg-news-2021"
+				},
+				{
+					"name": "Build output up to date",
+					"run": "npm run build && test -z \"$(git status --porcelain -- .)\"",
+					"dir": "source/wp-content/themes/wporg-news-2021",
+					"note": "build output is committed; CI fails if the build changes tracked files"
+				}
+			]
 		},
 		"wporg-make": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://make.wordpress.org",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install || composer update wporg/*"
+				},
+				{
+					"name": "yarn install",
+					"run": "yarn"
+				},
+				{
+					"name": "Setup tools",
+					"run": "yarn setup:tools"
+				},
+				{
+					"name": "Build",
+					"run": "yarn workspaces run build"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "yarn workspaces run lint:css"
+				},
+				{
+					"name": "Lint JS",
+					"run": "yarn workspaces run lint:js"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "yarn run lint:php"
+				},
+				{
+					"name": "wp-env start",
+					"run": "touch source/wp-content/mu-plugins/0-sandbox.php && yarn wp-env start"
+				},
+				{
+					"name": "PHPUnit",
+					"run": "yarn test:php"
+				}
+			]
 		},
 		"wporg-photo-directory": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org/photos",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [],
+			"checks_note": "Only a push-triggered build runs; no PR checks."
 		},
 		"wporg-gutenberg": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org/gutenberg",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [],
+			"checks_note": "No workflows."
 		},
 		"wporg-book": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org/book",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "npm install",
+					"run": "npm install"
+				},
+				{
+					"name": "composer install",
+					"run": "composer install || composer update wporg/wporg-mu-plugins"
+				},
+				{
+					"name": "Generate configs",
+					"run": "TEXTDOMAIN=wporg-book composer exec update-configs"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "npm run lint:css"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "npm run lint:php"
+				}
+			]
 		},
 		"wporg-documentation-2022": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org/documentation",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install || composer update wporg/*"
+				},
+				{
+					"name": "yarn install",
+					"run": "yarn"
+				},
+				{
+					"name": "Setup tools",
+					"run": "yarn setup:tools"
+				},
+				{
+					"name": "Build",
+					"run": "yarn workspaces run build"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "yarn workspaces run lint:css"
+				},
+				{
+					"name": "Lint JS",
+					"run": "yarn workspaces run lint:js"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "yarn run lint:php"
+				}
+			]
 		},
 		"wporg-contributor-dashboard": {
 			"branch": "main",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wpcontributordashboard.org",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install"
+				},
+				{
+					"name": "PHPUnit",
+					"run": "composer test"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "composer lint"
+				}
+			]
 		},
 		"wporg-code-analysis": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": null,
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install"
+				},
+				{
+					"name": "PHPUnit",
+					"run": "composer run test",
+					"note": "CI uses PHP 7.4 with the phpunit tool from setup-php; the script is `phpunit tests`"
+				}
+			]
 		},
 		"wporg-developer-blog": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://developer.wordpress.org/news",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [],
+			"checks_note": "No workflows."
 		},
 		"wporg-contributor-orientation": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://make.wordpress.org/contribute",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [],
+			"checks_note": "Lint runs only in the push-triggered build; no PR checks."
 		},
 		"wporg-gp-engagement": {
 			"branch": "main",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://translate.wordpress.org",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [],
+			"checks_note": "No workflows."
 		},
 		"wporg-showcase-2022": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": "https://wordpress.org/showcase",
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [
+				{
+					"name": "composer install",
+					"run": "composer install || composer update wporg/*"
+				},
+				{
+					"name": "yarn install",
+					"run": "yarn"
+				},
+				{
+					"name": "Setup tools",
+					"run": "yarn setup:tools"
+				},
+				{
+					"name": "Build",
+					"run": "yarn workspaces run build"
+				},
+				{
+					"name": "Lint CSS",
+					"run": "yarn workspaces run lint:css"
+				},
+				{
+					"name": "Lint JS",
+					"run": "yarn workspaces run lint:js"
+				},
+				{
+					"name": "Lint PHP",
+					"run": "yarn run lint:php"
+				}
+			]
 		},
 		"wporg-repo-tools": {
 			"branch": "trunk",
 			"push": "branch",
-			"cadence": 24
+			"cadence": 24,
+			"site": null,
+			"props": "line",
+			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
+			"links": [],
+			"checks": [],
+			"checks_note": "CI runs the composite actions against a staged fixture across a yarn/npm and PHP matrix; there is no command set to run from the repo root."
 		}
 	},
 	"excluded": {

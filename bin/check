@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# check <repo> [<checkout>] — run what CI runs on a PR to WordPress/<repo>, from the repo's profile in repos.json.
+#
+# wordpress.org's suites depend on the files a branch changes, so it delegates to bin/test-wordpress-org.
+# Every other repo runs its profile's `checks` in order, each from the checkout root or its `dir`, and
+# reports each one; it keeps going after a failure so one run shows them all, and exits 1 if any failed.
+# The default checkout is the sibling of this repo named <repo>.
+#
+set -euo pipefail
+
+PIPELINE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+log()  { echo "▸ $*" >&2; }
+ok()   { echo "✔ $*" >&2; }
+warn() { echo "! $*" >&2; }
+die()  { echo "✖ $*" >&2; exit 1; }
+
+repo=${1:-}
+[[ $repo =~ ^[A-Za-z0-9._-]+$ ]] || die "Usage: check <repo> [<checkout>]"
+wt=$(cd "${2:-$(dirname "$PIPELINE_DIR")/$repo}" && git rev-parse --show-toplevel)
+jq -e --arg r "$repo" '.repos[$r]' "$PIPELINE_DIR/repos.json" >/dev/null || die "$repo has no profile in repos.json."
+
+if [[ $repo == wordpress.org ]]; then
+	exec "$PIPELINE_DIR/bin/test-wordpress-org" "$wt"
+fi
+
+count=$(jq -r --arg r "$repo" '.repos[$r].checks // [] | length' "$PIPELINE_DIR/repos.json")
+if (( count == 0 )); then
+	warn "$repo's profile lists no checks; say in Testing what you ran instead."
+	exit 0
+fi
+
+log "Checkout: $wt ($(git -C "$wt" branch --show-current))"
+rc=0
+for (( i = 0; i < count; i++ )); do
+	name=$(jq -r --arg r "$repo" --argjson i "$i" '.repos[$r].checks[$i].name' "$PIPELINE_DIR/repos.json")
+	run=$(jq -r --arg r "$repo" --argjson i "$i" '.repos[$r].checks[$i].run' "$PIPELINE_DIR/repos.json")
+	dir=$(jq -r --arg r "$repo" --argjson i "$i" '.repos[$r].checks[$i].dir // ""' "$PIPELINE_DIR/repos.json")
+	[[ $dir != *..* ]] || die "Bad dir for check $name: $dir"
+	log "$name: $run${dir:+ (in $dir)}"
+	if (cd "$wt/$dir" && bash -c "$run" < /dev/null); then
+		ok "$name passed"
+	else
+		warn "$name failed"; rc=1
+	fi
+done
+
+if [[ $rc == 0 ]]; then ok "All checks passed for $repo."; else warn "Checks failed for $repo; see above."; fi
+exit $rc

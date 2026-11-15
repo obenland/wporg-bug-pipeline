@@ -1,0 +1,82 @@
+#!/usr/bin/env node
+//
+// screenshot <url> <out.png> [--width N] [--full-page] [--selector CSS] — one PNG of a page, for a PR's before/after table.
+//
+// Uses the Playwright Chromium that env/setup.sh installs. A page that is not on localhost is a
+// production page, and production is read-only: the browser sends only GET and HEAD requests there,
+// with no cookies, so a form, beacon, or login never goes out.
+//
+'use strict';
+
+const { execSync } = require( 'child_process' );
+const path = require( 'path' );
+
+function usage() {
+	console.error( 'Usage: screenshot <url> <out.png> [--width N] [--full-page] [--selector CSS]' );
+	process.exit( 2 );
+}
+
+function loadPlaywright() {
+	try {
+		return require( 'playwright' );
+	} catch {
+		return require( path.join( execSync( 'npm root -g' ).toString().trim(), 'playwright' ) );
+	}
+}
+
+const args = process.argv.slice( 2 );
+const opts = { width: 1280, fullPage: false, selector: null };
+const positional = [];
+for ( let i = 0; i < args.length; i++ ) {
+	if ( args[ i ] === '--width' ) {
+		opts.width = parseInt( args[ ++i ], 10 );
+	} else if ( args[ i ] === '--full-page' ) {
+		opts.fullPage = true;
+	} else if ( args[ i ] === '--selector' ) {
+		opts.selector = args[ ++i ];
+	} else if ( args[ i ].startsWith( '--' ) ) {
+		usage();
+	} else {
+		positional.push( args[ i ] );
+	}
+}
+const [ url, out ] = positional;
+if ( ! url || ! out || ! out.endsWith( '.png' ) || ! ( opts.width > 0 ) ) {
+	usage();
+}
+const isLocal = ( u ) => [ 'localhost', '127.0.0.1', '[::1]' ].includes( new URL( u ).hostname );
+
+( async () => {
+	const { chromium } = loadPlaywright();
+	const browser = await chromium.launch();
+	try {
+		const context = await browser.newContext( { viewport: { width: opts.width, height: 900 }, serviceWorkers: 'block' } );
+		// Cookies a production response sets must never go back out, so the jar is emptied before every production request.
+		await context.route( '**/*', async ( route ) => {
+			const req = route.request();
+			if ( isLocal( req.url() ) ) {
+				return route.continue();
+			}
+			if ( ! [ 'GET', 'HEAD' ].includes( req.method() ) ) {
+				return route.abort();
+			}
+			await context.clearCookies();
+			const headers = await req.allHeaders();
+			delete headers.cookie;
+			return route.continue( { headers } );
+		} );
+		const page = await context.newPage();
+		await page.goto( url, { waitUntil: 'networkidle', timeout: 60000 } );
+		if ( opts.selector ) {
+			await page.locator( opts.selector ).first().screenshot( { path: out } );
+		} else {
+			await page.screenshot( { path: out, fullPage: opts.fullPage } );
+		}
+		console.log( out );
+	} finally {
+		await browser.close();
+	}
+} )().catch( ( e ) => {
+	console.error( `screenshot: ${ e.message }` );
+	process.exit( 1 );
+} );

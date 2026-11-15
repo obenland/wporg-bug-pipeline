@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+#
+# props <repo> <pr> <user>... — credit the people behind a fix on the pipeline's own PR, and check that the credit landed.
+#
+# Each <user> is a WordPress.org username, or gh:<login> for a GitHub account; a login linked to a
+# WordPress.org account is credited as that account. In a repo whose workflows run Props Bot
+# (`"props": "bot"` in repos.json), this waits for the bot's comment, posts one
+# `@propsbot add <user>@git.wordpress.org` line per person (the suffix means the WordPress.org user,
+# never a GitHub account of the same name), and checks the bot's Props line, posting `@propsbot
+# refresh` once if names are missing. Elsewhere it adds a `Props <user>, <user>.` line to the PR body.
+# Prints {"props": [...], "props_verified": true|false|null} for the claim.
+#
+# Uses REST: the cloud's GitHub proxy blocks GraphQL.
+#
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MARKER = '<!-- props-bot -->'
+# The shepherd skips comments carrying this, so the pipeline's own commands do not count as review activity.
+OWN = '<!-- wporg-bug-pipeline -->'
+LOOKUP = 'https://profiles.wordpress.org/wp-json/wporg-github/v1/lookup/'
+NAME = re.compile(r'^(gh:)?[A-Za-z0-9._-]+$')
+
+
+def gh(*args, body=None):
+	out = subprocess.run(['gh', 'api', *args], input=body, capture_output=True, text=True)
+	if out.returncode != 0:
+		sys.exit(f'props: gh api {args[-1]}: {out.stderr.strip()}')
+	return json.loads(out.stdout) if out.stdout.strip() else None
+
+
+def wporg_for(login):
+	"""The WordPress.org username linked to a GitHub login, or None."""
+	req = urllib.request.Request(LOOKUP + login, headers={'User-Agent': 'wporg-bug-pipeline/1.0'})
+	try:
+		with urllib.request.urlopen(req, timeout=30) as res:
+			return json.load(res).get('slug')
+	except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
+		return None
+
+
+def bot_comment(path):
+	for c in gh('--paginate', f'{path}/comments?per_page=100') or []:
+		if c['user']['type'] == 'Bot' and MARKER in (c.get('body') or ''):
+			return c
+	return None
+
+
+def props_line(body):
+	return next((l for l in body.splitlines() if l.startswith('Props ')), '')
+
+
+def missing(names, body):
+	"""Names the bot's comment does not credit: WordPress.org users in its Props line, unlinked GitHub logins anywhere in it."""
+	line = props_line(body).lower()
+	return [n for n in names if not re.search(rf'(?<![\w.-]){re.escape(n.removeprefix("gh:").lower())}(?![\w-])', body.lower() if n.startswith('gh:') else line)]
+
+
+def wait(seconds, check):
+	end = time.time() + seconds
+	while True:
+		found = check()
+		if found or time.time() >= end:
+			return found
+		time.sleep(min(30, max(0, end - time.time())))
+
+
+def main():
+	if len(sys.argv) < 4:
+		sys.exit('Usage: props <repo> <pr> <user|gh:login>...')
+	repo, pr, users = sys.argv[1], sys.argv[2], sys.argv[3:]
+	if not pr.isdigit() or not all(NAME.match(u) for u in users):
+		sys.exit('props: bad PR number or username')
+	with open(os.path.join(ROOT, 'repos.json')) as f:
+		config = json.load(f)
+	mode = config['repos'].get(repo, {}).get('props')
+	if mode not in ('bot', 'line'):
+		sys.exit(f'props: no props mode for {repo} in repos.json')
+	path = f"repos/{config['owner']}/{repo}/issues/{pr}"
+
+	names = []
+	for u in users:
+		if u.startswith('gh:'):
+			slug = wporg_for(u[3:])
+			u = slug if slug else u
+		if u not in names:
+			names.append(u)
+
+	if mode == 'line':
+		pull = gh(f"repos/{config['owner']}/{repo}/pulls/{pr}")
+		line = f"Props {', '.join(n.removeprefix('gh:') for n in names)}."
+		body = pull.get('body') or ''
+		if line not in body:
+			lines = body.splitlines()
+			at = next((i for i, l in enumerate(lines) if l.startswith('<sub>')), len(lines))
+			lines[at:at] = [line, '']
+			gh('-X', 'PATCH', f"repos/{config['owner']}/{repo}/pulls/{pr}", '--input', '-', body=json.dumps({'body': '\n'.join(lines)}))
+		print(json.dumps({'props': names, 'props_verified': None}))
+		return
+
+	# The bot reruns on every push and comment; commands posted before its first run still count, but waiting keeps the check honest.
+	if not wait(240, lambda: bot_comment(path)):
+		print(json.dumps({'props': names, 'props_verified': False, 'reason': 'no Props Bot comment'}))
+		return
+	commands = [f"@propsbot add {n[3:]}" if n.startswith('gh:') else f'@propsbot add {n}@git.wordpress.org' for n in names]
+	gh('-X', 'POST', f'{path}/comments', '-f', 'body=' + '\n'.join([*commands, OWN]))
+	ok = wait(120, lambda: not missing(names, (bot_comment(path) or {}).get('body', '')))
+	if not ok:
+		gh('-X', 'POST', f'{path}/comments', '-f', f'body=@propsbot refresh\n{OWN}')
+		ok = wait(120, lambda: not missing(names, (bot_comment(path) or {}).get('body', '')))
+	print(json.dumps({'props': names, 'props_verified': bool(ok)}))
+
+
+main()

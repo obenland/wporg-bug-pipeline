@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+#
+# publish-screenshots <key> <png>... — put a PR's screenshots where its body can link them, and print their URLs.
+#
+# Commits the images under <key>/ on this repo's claude/screenshots branch, an orphan branch created
+# on first use, and pushes it (the pre-push guard allows claude/*). Prints one raw.githubusercontent.com
+# URL per image, in the order given. An image of the same name replaces the earlier one.
+#
+set -euo pipefail
+
+PIPELINE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SHOTS_DIR="${WPORG_SCREENSHOTS_DIR:-$HOME/.wporg-screenshots}"
+BRANCH="claude/screenshots"
+
+die() { echo "publish-screenshots: $*" >&2; exit 1; }
+
+key=${1:-}
+[[ $key =~ ^[A-Za-z0-9._-]+$ && $key != *..* ]] || die "Usage: publish-screenshots <key> <png>..."
+shift
+[[ $# -gt 0 ]] || die "no images given"
+for f in "$@"; do
+	[[ -f $f && $f == *.png && $(basename "$f") =~ ^[A-Za-z0-9._-]+$ ]] || die "not a PNG with a plain name: $f"
+done
+
+# The cloud's origin is a proxy URL; its last two path parts are still <owner>/<repo>.
+slug=$(git -C "$PIPELINE_DIR" remote get-url origin | sed -E 's#\.git$##; s#^.*[:/]([^/]+/[^/]+)$#\1#')
+[[ $slug =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || die "cannot tell the repository from origin"
+
+if [[ ! -e $SHOTS_DIR/.git ]]; then
+	git -C "$PIPELINE_DIR" fetch -q origin "$BRANCH" 2>/dev/null || true
+	if git -C "$PIPELINE_DIR" rev-parse -q --verify "origin/$BRANCH" >/dev/null; then
+		git -C "$PIPELINE_DIR" worktree add -q -B "$BRANCH" "$SHOTS_DIR" "origin/$BRANCH"
+	else
+		git -C "$PIPELINE_DIR" worktree add -q --orphan -b "$BRANCH" "$SHOTS_DIR"
+		echo "Screenshots for the pipeline's PRs, one directory per item. Written by bin/publish-screenshots on trunk." > "$SHOTS_DIR/README.md"
+	fi
+fi
+git -C "$SHOTS_DIR" pull -q --rebase origin "$BRANCH" 2>/dev/null || true
+
+mkdir -p "$SHOTS_DIR/$key"
+cp "$@" "$SHOTS_DIR/$key/"
+git -C "$SHOTS_DIR" add -A
+git -C "$SHOTS_DIR" diff --cached --quiet || git -C "$SHOTS_DIR" commit -q -m "Add screenshots for $key."
+# Concurrent runs write separate directories, so a rebase over the other run's push never conflicts.
+for n in 1 2 3 4 5; do
+	git -C "$SHOTS_DIR" push -q -u origin "$BRANCH" 2>/dev/null && break
+	(( n == 5 )) && die "push to $BRANCH kept failing"
+	sleep $(( n * 2 ))
+	git -C "$SHOTS_DIR" pull -q --rebase origin "$BRANCH" || die "rebase failed; resolve $SHOTS_DIR by hand"
+done
+
+for f in "$@"; do
+	echo "https://raw.githubusercontent.com/$slug/$BRANCH/$key/$(basename "$f")"
+done

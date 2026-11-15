@@ -5,6 +5,7 @@
 #
 #   state get <path>                  print a file, or nothing
 #   state put <path> <json>           write a file, commit, push (retries on a race)
+#   state rm <path>                   delete a file, so intake sees the item as new again (re-triage)
 #   state claim <key> <repo>          take the fix for an item; exit 1 if another run holds it
 #   state ls <dir>                    list files under a directory
 #
@@ -72,6 +73,13 @@ cmd_put() {
 	commit_push "Update $1."
 }
 
+cmd_rm() {
+	valid_path "$1"; ensure_checkout; sync
+	[[ -f $STATE_DIR/$1 ]] || die "no such file: $1"
+	git -C "$STATE_DIR" rm -q "$1"
+	commit_push "Remove $1."
+}
+
 claim_held() {
 	local f=$STATE_DIR/items/$1/claim.json status since age
 	[[ -f $f ]] || return 1
@@ -115,7 +123,8 @@ cmd_ls() {
 case ${1:-} in
 	get)   shift; cmd_get "$@" ;;
 	put)   shift; cmd_put "$@" ;;
+	rm)    shift; cmd_rm "$@" ;;
 	claim) shift; cmd_claim "$@" ;;
 	ls)    shift; cmd_ls "${1:-}" ;;
-	*) sed -n '3,20p' "$0"; exit 1 ;;
+	*) sed -n '3,21p' "$0"; exit 1 ;;
 esac

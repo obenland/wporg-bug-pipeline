@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 #
-# router-intake [--limit N] — new Meta Trac bug tickets the router should place this run, one JSON object per line.
+# router-intake [--limit N] — new Meta Trac tickets the router should place this run, one JSON object per line.
 #
 # Only tickets filed after the pipeline started count: the first run records the newest ticket
-# number as a baseline and places nothing. After that, each run picks up open defect tickets above
+# number as a baseline and places nothing. After that, each run picks up open tickets of the TYPES above
 # the baseline it has not placed yet, and baseline tickets that changed since they were placed (a
 # new comment can move or unblock them). Tickets in a skipped component, and tickets someone already
 # has an open PR or patch for, are recorded as skipped here, with no model involved. Prints nothing
@@ -22,6 +22,9 @@ import existing_pr
 BIN = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BIN)
 STATE_DIR = os.environ.get('WPORG_STATE_DIR', os.path.expanduser('~/.wporg-state'))
+# Bounded enhancements and tasks are fixable too; the router and workers decide which are. Feature requests stay out.
+# The Trac MCP server's search takes one value per field, so each type is its own query.
+TYPES = ('defect (bug)', 'enhancement', 'task (blessed)')
 
 
 def trac(tool, args):
@@ -70,8 +73,8 @@ def main():
 	run = json.loads(state('get', 'runs/router.json') or '{}')
 
 	picked = []
-	res = trac('searchTickets', {'query': 'status!=closed&type=defect (bug)&order=id&desc=1', 'limit': 50})
-	for r in res.get('results', []):
+	results = [r for t in TYPES for r in trac('searchTickets', {'query': f'status!=closed&type={t}&order=id&desc=1', 'limit': 50}).get('results', [])]
+	for r in sorted(results, key=lambda r: r['id'], reverse=True):
 		t = r['id']
 		if t <= baseline or routed(t):
 			continue

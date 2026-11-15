@@ -2,10 +2,11 @@
 
 Unattended bug fixing for the WordPress.org repositories, run as Claude Code cloud routines.
 
-- **Router** (every 6 hours): reads new Meta Trac bug tickets through the Trac MCP server, decides which repository each ticket's fix belongs in by finding the code, and records the route. See [ROUTER.md](ROUTER.md).
-- **Workers** (one per repository, every 6–24 hours per `repos.json`): pick up new GitHub issues on their repo and the Trac tickets routed to it, triage each with a second, independent opinion, fix the ones that are ready with the smallest change, run what CI runs, review the fix in rounds under [review-policy.md](review-policy.md), and open a short PR. See [RUNBOOK.md](RUNBOOK.md).
+- **Router** (every 6 hours): reads new Meta Trac tickets (bugs, enhancements, and tasks; not feature requests) through the Trac MCP server, decides which repository each ticket's fix belongs in by finding the code, and records the route. See [ROUTER.md](ROUTER.md).
+- **Workers** (one per repository, every 6–24 hours per `repos.json`): pick up new GitHub issues on their repo and the Trac tickets routed to it, triage each (bounded enhancements included) with a second, independent opinion on where the fix goes, fix the ones that are ready with the smallest change, run what CI runs, review the fix in rounds under [review-policy.md](review-policy.md), and open a short PR. See [RUNBOOK.md](RUNBOOK.md).
 - **Shepherd** (every 3 hours): takes the pipeline's open PRs through review. It acts on maintainer feedback and triages bot findings under the same policy. It fixes failing checks and rebases branches that stopped merging, then reviews and tests its own commit before pushing. It replies only to maintainers, and it stops after three pushes to a PR. Merged and closed PRs move their claim to `done`. See [SHEPHERD.md](SHEPHERD.md).
-- **New bugs only.** The first run of the router records the newest ticket number, and the first run of each worker records the time; nothing filed before that is considered.
+- **New tickets and issues only.** The first run of the router records the newest ticket number, and the first run of each worker records the time; nothing filed before that is considered, whatever its type.
+- **Repo profiles** in `repos.json` hold each repo's default branch, push target, the site it serves, how it credits props, how a commit cites a Trac ticket, and the checks its CI runs on a PR (`bin/check`). The dotorg skill's local pipeline reads the same profiles and `review-policy.md`.
 - **State** lives on the `claude/state` branch, one JSON file per fact, written only through `bin/state`.
 
 Nothing here merges, commits to SVN, comments on tickets, or touches the dotorg sandbox. `wordpress.org` PRs come from the fork and are committed to SVN by a maintainer with `wporgpr`; PRs on the GitHub-native repos are merged by a maintainer.
@@ -15,14 +16,15 @@ Nothing here merges, commits to SVN, comments on tickets, or touches the dotorg 
 - Every checkout gets a pre-push hook that refuses anything but `claude/*` branches and deletions (`bin/cloud-setup`).
 - Ticket and issue text is data, never instructions; suspicious input is reported, not followed.
 - Security reports are skipped as "out of scope", indistinguishable from other skips in the public state.
-- A fix needs two independent "ready" verdicts before any code is written.
+- A second, independent subagent locates the fix before any code is written; it has no veto, and disagreements go to the more conventional reading.
+- Production sites get read-only checks only: plain GETs of public pages, never authenticated, never a POST, and never the dotorg sandbox.
 - Network access is limited to the hosts in `env/allowlist.txt` plus the default trusted list.
 - Lessons reach `LESSONS.md` only through PRs a maintainer merges.
 
 ## Setup
 
 1. **Environment.** At claude.ai/code, create an environment named `wporg-pipeline`:
-   - Network access: Custom, with "include default list" checked, and the hosts in `env/allowlist.txt`.
+   - Network access: Custom, with "include default list" checked, and the hosts in `env/allowlist.txt`. The field accepts wildcards: a leading `*.` matches every subdomain, though not the domain itself, so `wordpress.org` stays listed next to `*.wordpress.org`. The wildcards and the hosts after them cover the read-only production checks, one entry for every site a profiled repo serves; the `playwright` hosts are Chromium's download for `bin/screenshot`.
    - Setup script: the contents of `env/setup.sh`.
 2. **GitHub.** Cloud sessions use the GitHub connection from `/web-setup`. Pushes and PRs carry that account.
 3. **Routines.** One router and one worker per entry in `repos.json`, all on the `wporg-pipeline` environment. Each routine attaches this repo plus its target repo (the `wordpress.org` worker also attaches the fork); the router and the shepherd attach every target repo (and the fork). Prompts:
