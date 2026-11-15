@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-photo-directory",
-  "run": "cse_01YBAW4qf9Jg2jnFCDk2M16S",
-  "updated": "2026-11-15T11:37:35Z"
+  "pr": "https://github.com/WordPress/wporg-photo-directory/pull/60",
+  "risk": "needs-review",
+  "props": [
+    "annezazu"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-15T11:40:16Z"
 }
