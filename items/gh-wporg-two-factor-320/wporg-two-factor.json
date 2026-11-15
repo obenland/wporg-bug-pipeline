@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "In onboarding, Back on the backup-codes step always returns to method selection (first-time.js / screen-navigation.js), so a user who already added a key must redo setup to reach backup codes; hide Back there once a primary provider exists. Leaves the elevated-privileges banner link for a follow-up.",
+  "updated": "2026-11-15T05:26:02Z"
+}

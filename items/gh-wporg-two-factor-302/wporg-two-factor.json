@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Account status cards for not-yet-configured extra methods get status info, but StatusIcon and account-status.scss render info with the same red X as disabled; give info a neutral info icon and gray color, as the maintainer suggested.",
+  "updated": "2026-11-15T05:26:02Z"
+}

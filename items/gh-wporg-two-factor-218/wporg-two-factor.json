@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "maybeRefreshUser in revalidate-modal.js only console.errors when refreshing the user record fails; show an inline error Notice inside the modal instead.",
+  "updated": "2026-11-15T05:26:02Z"
+}
