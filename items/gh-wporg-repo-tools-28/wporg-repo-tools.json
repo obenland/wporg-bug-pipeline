@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The failing setup:wp script lives in wporg-showcase-2022 (and the quoting change in @wordpress/env); no template or config in this repo uses wp-env run with a quoted command.",
+  "updated": "2026-11-15T21:56:47Z"
+}
