@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The template env script could start wp-env with Xdebug develop mode, but that slows every request in every consumer environment.",
+  "question": "Should templates/package.json.template start wp-env with --xdebug=develop by default, and should it also ship env:debug/env:profile scripts?",
+  "updated": "2026-11-15T21:56:45Z"
+}
