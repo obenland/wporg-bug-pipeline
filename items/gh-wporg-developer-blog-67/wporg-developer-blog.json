@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "No Bordered style exists for core/image in this theme or the parent; register one in functions.php with a palette-token border in style.css.",
+  "updated": "2026-11-15T17:50:12Z"
+}
