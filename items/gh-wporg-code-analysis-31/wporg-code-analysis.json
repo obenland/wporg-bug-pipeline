@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "check-plugin-by-slug.php runs extra sniffs while scan-dir.sh runs only the custom standard; which behavior is intended is the open question.",
+  "question": "Should scan-dir.sh and check-plugin-by-slug.php run the same set of sniffs, and if so, which set?",
+  "updated": "2026-11-15T16:47:12Z"
+}
