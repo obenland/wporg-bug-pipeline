@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "MinimalPluginStandard/ruleset.xml still includes WordPress.NamingConventions.PrefixAllGlobals with no prefixes, so it does nothing; the fix is either removing it or passing a per-plugin prefix.",
+  "question": "Should PrefixAllGlobals be removed from the ruleset, or should the scan scripts pass a per-plugin prefix (e.g. derived from the slug) so it runs?",
+  "updated": "2026-11-15T16:47:11Z"
+}
