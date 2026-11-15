@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Comments get core default $allowedtags, which lack pre/ul/ol/li; add them for the pre_comment_content context via a wp_kses_allowed_html filter in functions.php.",
+  "updated": "2026-11-15T17:50:28Z"
+}
