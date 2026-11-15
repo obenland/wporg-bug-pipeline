@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "jetpack_related_posts_results in functions.php always pads with the same recent featured posts. Fill from the current post's categories at random first, then top up from random featured posts, excluding IDs already returned. Also, the category slug is passed as category instead of category_name.",
+  "updated": "2026-11-15T19:57:07Z"
+}
