@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "Jetpack-generated social images are no longer used for sharing.",
+  "evidence": "PR #54 overrides og:image and twitter:image with the post featured image or the theme default opengraph-image.png (custom_open_graph_tags in functions.php).",
+  "updated": "2026-11-15T17:50:21Z"
+}
