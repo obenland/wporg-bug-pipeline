@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The theme inline-code rule in style.css (display:inline-block; max-width:100%) never wraps long URLs, so the page overflows at 390px (718px scroll width with an injected URL); adding overflow-wrap:anywhere brings it back to 390px.",
+  "updated": "2026-11-15T17:50:14Z"
+}
