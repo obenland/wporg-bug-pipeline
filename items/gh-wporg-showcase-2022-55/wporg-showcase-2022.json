@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The editor meta box (src/meta-box/index.js) uses a free-text TextControl for country. Per ryelle, switch it to a dropdown that still stores the plain string. The country list has to be supplied from PHP or hardcoded, because the WordCamp helper is not available here.",
+  "updated": "2026-11-15T19:57:11Z"
+}
