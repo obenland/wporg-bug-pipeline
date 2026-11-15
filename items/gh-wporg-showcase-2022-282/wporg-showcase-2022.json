@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The Featured category is deliberately excluded from the Categories filter (get_category_options in inc/block-config.php) and from frontend term lists, because it is used as an internal marker.",
+  "question": "Should Featured become a public, filterable category, or stay an internal marker that is hidden from the Categories dropdown?",
+  "updated": "2026-11-15T19:56:07Z"
+}
