@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Scanning files marked phpcs:ignoreFile means rewriting the downloaded copy or changing how PHPCS is invoked; it is a policy choice about overriding author annotations.",
+  "question": "Should the scanner ignore authors phpcs:ignoreFile annotations and ruleset exclusions (e.g. by stripping them from the exported copy) while still honoring line-level ignores?",
+  "updated": "2026-11-15T16:46:32Z"
+}
