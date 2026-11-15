@@ -62,7 +62,7 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
 1. **Claim it.** `$P/bin/state claim <key> $REPO`. Exit code 1 means another run holds it; skip the item.
 2. **Branch** from a fresh default branch: `git -C /home/user/$REPO fetch origin && git -C /home/user/$REPO checkout -B claude/<key> origin/<default branch>` (default branch from `$P/repos.json`).
 3. **Write the fix and its test.** Add a regression test whenever a suite the repo's CI already runs can load the changed code. That includes code no existing test touches yet, such as a shortcode in a plugin whose suite tests other classes; in `wordpress.org`, a plugin listed in `.github/unit-tests-suites.yml` counts. Add a new test file in the suite's existing style; that is not new test infrastructure. The test must fail without the fix and pass with it, and you run it to prove both. Skip the test only when no CI suite can load the code, and then say so in Testing. Follow the repo's conventions over your preferences.
-4. **Commit.** Subject describes the change in imperative mood. Body: what was wrong and why this fixes it, then the reference:
+4. **Commit.** The subject follows the PR title rule in step 8, since it usually becomes the title. Body: what was wrong and why this fixes it, then the reference:
    - Trac ticket in `wordpress.org`: `Fixes #N.` on its own line.
    - Trac ticket in any other repo: `See https://meta.trac.wordpress.org/ticket/N.`
    - GitHub issue: `Fixes #N.`
@@ -79,7 +79,17 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
 8. **Push and open the PR.**
    - First run `$P/bin/existing_pr.py <key>` once more. If it prints a PR or patch, someone got there first: do not push. Record the item's decision as `skip` with `"pr":"<url>"`, release the claim with `"status":"failed"`, and say so in the report.
    - Push: `fork` repos (`wordpress.org`) push to `fork`; all others push to `origin`. Always `git push -u <remote> claude/<key>`.
-   - Write the body to a file and run `$P/bin/open-pr $REPO claude/<key> "<title>" <file>`. The title is the commit subject.
+   - Write the body to a file and run `$P/bin/open-pr $REPO claude/<key> "<title>" <file>`.
+   - **The title says why.** In `wordpress.org` it becomes the first line of the SVN commit, and elsewhere it is what people read in the log.
+     - `Component: Summary`, imperative, no trailing period, under 100 characters.
+     - Take the why from the ticket or issue (the reporter's problem and the thread), not from the diff. The summary names the problem solved or the outcome for the people who use the site. Keep a mechanism (a function, a query var, a block) only when it is what people will search for.
+     - Not "Fix #1234", "Update X" or "Changes to X", and not the ticket title when it only describes the symptom.
+
+     | Describes only what | Says why |
+     | --- | --- |
+     | Translate Site & Plugins: Split project contributors into current and past | Translate Site & Plugins: Show active translators apart from past contributors |
+     | Support Forums: Remove the PHP Compatibility Checker link | Support Forums: Stop recommending a PHP compatibility plugin that no longer covers current PHP |
+     | WordPress.tv: Request video thumbnails at the size they are shown | WordPress.tv: Load video grids faster by fetching thumbnails at display size |
    - **The body is short.** A maintainer reads it in under a minute. Model it on a human PR, not a report:
 
      ```
