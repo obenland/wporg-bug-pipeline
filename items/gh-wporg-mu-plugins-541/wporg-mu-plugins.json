@@ -1,0 +1,6 @@
+{
+  "status": "skip",
+  "reason": "An open PR already implements the type-ahead.",
+  "pr": "https://github.com/WordPress/wporg-mu-plugins/pull/781",
+  "updated": "2026-11-15T22:23:57Z"
+}
