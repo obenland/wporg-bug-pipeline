@@ -1,0 +1,9 @@
+{
+  "repo": "wordpress.org",
+  "status": "routed",
+  "summary": "Add to user's account notes when their reply, topic or review goes to the pending queue",
+  "path": "wordpress.org/public_html/wp-content/plugins/support-forums/inc/class-user-notes.php",
+  "reason": "Support forums plugin owns user notes (add_user_note_or_update_previous) and moderation hooks.",
+  "ticket_updated": "2026-11-12T00:00:00Z",
+  "updated": "2026-11-15T06:53:06Z"
+}
