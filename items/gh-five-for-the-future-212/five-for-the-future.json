@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Inactivity emails to banned users already stop (2880d80); removing their hours/teams data is still open, and the thread did not settle when or how.",
+  "question": "Should a banned account's 5ftF hours, teams, and sponsor data be removed, and if so at ban time, at the inactivity check, or by a periodic recalculation that skips banned users?",
+  "updated": "2026-11-15T06:26:11Z"
+}

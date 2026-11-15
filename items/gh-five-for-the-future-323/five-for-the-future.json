@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "A maintainer moved this back to discussion because hiding Edit Pledge leaves logged-out visitors no way to learn how to edit.",
+  "question": "Should the Edit Pledge action on a single pledge be hidden from logged-out visitors, and if so, where should they be told how to get an edit link (for example, the Manage Pledge page)?",
+  "updated": "2026-11-15T06:26:11Z"
+}

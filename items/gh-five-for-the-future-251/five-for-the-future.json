@@ -1,0 +1,6 @@
+{
+  "status": "skip",
+  "reason": "An open PR already deactivates pledges that still have no contributors after the inactivity notice.",
+  "pr": "https://github.com/WordPress/five-for-the-future/pull/432",
+  "updated": "2026-11-15T06:26:11Z"
+}
