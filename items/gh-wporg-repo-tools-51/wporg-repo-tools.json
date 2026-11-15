@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "templates/package.json.template requires @wordpress/scripts ^35 (Node >=22.19) with no engines field and templates/mu-block/plugin/.nvmrc.mustache pins Node 14; add an engines floor, raise the .nvmrc, and modernize the PHPUnit 9-only attributes in templates/phpunit.xml.dist.template.",
+  "updated": "2026-11-15T21:57:21Z"
+}
