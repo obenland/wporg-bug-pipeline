@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Covering configs/eslintrc.js needs a separate Node 20 CI job pinned to @wordpress/scripts 27; the issue itself suggests dropping the config may be better.",
+  "question": "Should configs/eslintrc.js get its own Node 20 CI job with a @wordpress/scripts 27 fixture, or be dropped once consumers move to @wordpress/scripts 32+?",
+  "updated": "2026-11-15T21:56:43Z"
+}
