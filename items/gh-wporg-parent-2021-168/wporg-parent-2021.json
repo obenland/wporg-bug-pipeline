@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Labeled Needs Design; no spec exists for the new button states.",
+  "question": "What should the disabled and is-busy button states look like (colors, cursor, spinner or not)?",
+  "updated": "2026-11-15T03:27:03Z"
+}
