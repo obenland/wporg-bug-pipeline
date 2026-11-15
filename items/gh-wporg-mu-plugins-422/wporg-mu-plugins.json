@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Both listed issues have workarounds in time/src/index.js (inline styles, current-time fallback when date_gmt is missing); templates have no post date, so the missing support is undefined.",
+  "updated": "2026-11-15T22:24:12Z"
+}
