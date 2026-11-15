@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The issue only points to entries in a private Slack notices channel; nothing in the repo identifies which warnings or notices to fix.",
+  "updated": "2026-11-15T16:47:09Z"
+}
