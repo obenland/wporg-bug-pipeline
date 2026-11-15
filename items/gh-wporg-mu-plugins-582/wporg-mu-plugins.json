@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The floating sidebar now shrinks its height so it stops at the footer.",
+  "evidence": "Checked https://wordpress.org/documentation/article/faq-troubleshooting/ at 1400px scrolled to the footer: the fixed sidebar ends at the footer top (600px vs 599.5px); see the footerShowing height logic in sidebar-container/src/view.js.",
+  "updated": "2026-11-15T22:24:02Z"
+}
