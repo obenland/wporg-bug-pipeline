@@ -23,7 +23,7 @@ Nothing here merges, commits to SVN, comments on tickets, or touches the dotorg 
 ## Setup
 
 1. **Environment.** At claude.ai/code, create an environment named `wporg-pipeline`:
-   - Network access: Custom, with "include default list" checked, and the hosts in `env/allowlist.txt`.
+   - Network access: Custom, with "include default list" checked, and the hosts in `env/allowlist.txt`. The field accepts wildcards: a leading `*.` matches every subdomain, though not the domain itself, so `wordpress.org` stays listed next to `*.wordpress.org`. The wildcards cover the read-only production checks; the `playwright` hosts are Chromium's download for `bin/screenshot`.
    - Setup script: the contents of `env/setup.sh`.
 2. **GitHub.** Cloud sessions use the GitHub connection from `/web-setup`. Pushes and PRs carry that account.
 3. **Routines.** One router and one worker per entry in `repos.json`, all on the `wporg-pipeline` environment. Each routine attaches this repo plus its target repo (the `wordpress.org` worker also attaches the fork); the router and the shepherd attach every target repo (and the fork). Prompts:
