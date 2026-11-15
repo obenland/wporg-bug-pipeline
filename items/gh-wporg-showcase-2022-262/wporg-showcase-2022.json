@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The homepage hero image now has srcset and sizes tuned to its rendered width.",
+  "evidence": "render.php hero sizes branch (0fdc2ad, see #222); the live homepage hero img carries a 500–2000w Photon srcset.",
+  "updated": "2026-11-15T19:56:42Z"
+}
