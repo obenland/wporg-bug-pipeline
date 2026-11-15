@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "bin/check-plugin-by-slug.php still exports to a fresh random temp directory each run; caching by slug and tag needs a choice on invalidation, since trunk changes between runs.",
+  "question": "Should exports be cached in /tmp/{slug}-{tag} and reused, and how should trunk exports be refreshed?",
+  "updated": "2026-11-15T16:47:14Z"
+}
