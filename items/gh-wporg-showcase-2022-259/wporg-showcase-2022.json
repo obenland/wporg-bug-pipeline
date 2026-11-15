@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Grid thumbnails now ship responsive images.",
+  "evidence": "src/site-screenshot/render.php emits a 500–2000w srcset with location-specific sizes (0fdc2ad), and the live /showcase/archives/page/2/ grid images serve Photon srcset/sizes rather than full-size files.",
+  "updated": "2026-11-15T19:56:40Z"
+}
