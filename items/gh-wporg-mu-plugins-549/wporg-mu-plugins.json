@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The cited Gutenberg README no longer uses GitHub alert markup and its handbook page shows no raw [!NOTE] blockquote, so no current page reproduces it; the conversion likely belongs in the markdown importer.",
+  "updated": "2026-11-15T22:24:15Z"
+}
