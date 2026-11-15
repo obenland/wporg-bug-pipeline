@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The homepage RSS list now shows date and author on one small-text line under each title.",
+  "evidence": "style.css RSS block rules added in d15d98a (2023-12-10); live check 2026-11-15 shows title, then \"<date> by <author>\" on one line.",
+  "updated": "2026-11-15T17:50:32Z"
+}
