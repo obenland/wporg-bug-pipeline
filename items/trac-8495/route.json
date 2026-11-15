@@ -1,0 +1,9 @@
+{
+  "repo": "wordpress.org",
+  "status": "routed",
+  "summary": "Plugin Directory: Identify plugins that consume WP AI Client",
+  "path": "wordpress.org/public_html/wp-content/plugins/plugin-directory/cli/class-import.php",
+  "reason": "Plugin import already detects blocks/widgets metadata; AI Client usage detection would be stored alongside it.",
+  "ticket_updated": "2026-11-12T00:00:00Z",
+  "updated": "2026-11-15T06:53:01Z"
+}
