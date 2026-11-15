@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Code blocks no longer collapse to one line.",
+  "evidence": "Code Syntax Block v3.2.0 fixed the <br> handling (per the thread), and the theme replaces <br> with newlines in core/code output since #61 (code_block_add_line_breaks in functions.php).",
+  "updated": "2026-11-15T17:50:19Z"
+}
