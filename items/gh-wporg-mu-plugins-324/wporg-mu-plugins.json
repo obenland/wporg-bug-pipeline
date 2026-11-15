@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Latest News has no taxonomy filter; add the tag/category plus term slug attributes the maintainer specified and include them in the cache key.",
+  "updated": "2026-11-15T22:24:57Z"
+}
