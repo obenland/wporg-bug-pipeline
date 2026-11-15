@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wporg-photo-directory",
   "pr": "https://github.com/WordPress/wporg-photo-directory/pull/60",
   "risk": "needs-review",
@@ -8,5 +8,5 @@
   ],
   "props_verified": null,
   "outcome": "closed",
-  "updated": "2026-11-15T16:27:50Z"
+  "updated": "2026-11-15T18:39:15Z"
 }
