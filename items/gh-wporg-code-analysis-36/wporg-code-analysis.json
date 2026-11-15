@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "A double-prepare warning is a new rule, and whether it is wanted is an open question.",
+  "question": "Should the DirectDB sniff warn when a prepare() result is interpolated into another prepare() query?",
+  "updated": "2026-11-15T16:47:07Z"
+}
