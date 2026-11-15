@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wordpress.org",
-  "run": "cse_01YBAW4t6nTxp3KksrTpXEQ8",
-  "updated": "2026-11-15T07:22:13Z"
+  "pr": "https://github.com/WordPress/wordpress.org/pull/1320",
+  "risk": "low",
+  "props": [
+    "jonsurrell"
+  ],
+  "props_verified": false,
+  "updated": "2026-11-15T07:33:41Z"
 }
