@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "A maintainer suggested a plugin-control mu-plugin in wporg-mu-plugins (modeled on WordCamp.org's wcorg-network-plugin-control.php), since other network plugins also need to stay active.",
+  "updated": "2026-11-15T03:26:54Z"
+}
