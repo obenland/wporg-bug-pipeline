@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Screenshot-only report with no steps; the settings app already shows the revalidate modal on entering a protected screen after expiry and on a revalidation_required error, and no remaining path could be traced without a reproduction.",
+  "updated": "2026-11-15T05:25:54Z"
+}

@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The README now documents only the wp-env setup, so the duplicated manual setup steps are gone.",
+  "evidence": "README Setup section lists only npm install/build and wp-env start; manual environment instructions were removed.",
+  "updated": "2026-11-15T05:25:54Z"
+}

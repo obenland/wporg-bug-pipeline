@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Thread ended on a design question about when the GlobalNotice snackbar shows and where it should sit; it is still rendered right-aligned above the settings card.",
+  "question": "Should the success snackbar stay at the top right of the settings card, or move to a fixed corner of the viewport like the block editor's?",
+  "updated": "2026-11-15T05:25:54Z"
+}

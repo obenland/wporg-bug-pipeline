@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Disabling 2FA now asks for confirmation and requires a recent revalidation.",
+  "evidence": "settings/src/components/totp.js shows a ConfirmDisableApp modal before disabling the app; webauthn/list-keys.js confirms key deletion; both screens are in twoFactorRequiredScreens, which forces revalidation.",
+  "updated": "2026-11-15T05:25:54Z"
+}

@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The block page comes from Jetpack's brute-force protection/WAF, not this plugin; belongs in Automattic/jetpack (a filter to let re-auth flows through).",
+  "updated": "2026-11-15T05:25:54Z"
+}

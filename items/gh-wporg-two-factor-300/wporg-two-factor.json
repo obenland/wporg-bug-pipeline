@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Settings UI says 'Backup codes' while the upstream login screen says 'Recovery codes'; renaming is easy once the term is chosen.",
+  "question": "Which term should WordPress.org standardize on: 'Backup codes' (settings UI, recent #351) or 'Recovery codes' (upstream two-factor login screen)?",
+  "updated": "2026-11-15T05:25:54Z"
+}

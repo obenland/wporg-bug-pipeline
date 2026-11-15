@@ -1,0 +1,5 @@
+{
+  "status": "skip",
+  "reason": "Maintainer judged auto-select-on-focus not reasonable to fix after trying it in #166, which was closed unmerged.",
+  "updated": "2026-11-15T05:25:54Z"
+}

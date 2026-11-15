@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The issue says to wait for upstream WordPress/two-factor#507; backup-codes.js still generates and saves codes on page load to mirror upstream, with a comment pointing at that issue.",
+  "updated": "2026-11-15T05:25:54Z"
+}

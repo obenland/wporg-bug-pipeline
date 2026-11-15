@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Application passwords are now enabled and manageable from the security settings.",
+  "evidence": "#337 added application passwords management to the security settings; #341 added last IP to its table.",
+  "updated": "2026-11-15T05:25:54Z"
+}

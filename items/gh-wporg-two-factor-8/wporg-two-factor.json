@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "Requiring 2FA revalidation on theme releases belongs in the theme directory (WordPress/wordpress.org or wporg-theme-directory), using this repo's revalidation helpers.",
+  "updated": "2026-11-15T05:25:54Z"
+}

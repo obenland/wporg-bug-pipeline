@@ -1,0 +1,5 @@
+{
+  "status": "skip",
+  "reason": "Maintainers agreed to keep security keys as the default and skip this for now, since only ~30% of users have both methods.",
+  "updated": "2026-11-15T05:25:54Z"
+}

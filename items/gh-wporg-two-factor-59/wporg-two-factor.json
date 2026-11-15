@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Login screens (upstream two-factor) and the settings UI describe methods differently; the thread agreed to pick phrasing first and then update both.",
+  "question": "What labels should both login and settings use for the authenticator-app and backup/recovery-code methods (ties into #300)?",
+  "updated": "2026-11-15T05:25:54Z"
+}
