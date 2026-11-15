@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The bar is fetched client-side because pages and the REST endpoint are cached differently, so avoiding the shift means trading space or prominence.",
+  "question": "Should pages reserve space for the language bar for every visitor (an empty gap for those who get none), or should the bar overlay the page or move to fewer pages?",
+  "updated": "2026-11-15T22:24:08Z"
+}
