@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Site Breadcrumbs renders crumbs as inline spans with no list semantics, so NVDA reads them as one sentence; render them as a list of block-level items as the a11y reviewer suggested.",
+  "updated": "2026-11-15T22:24:48Z"
+}
