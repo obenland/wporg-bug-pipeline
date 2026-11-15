@@ -20,7 +20,7 @@ if [[ $target == router ]]; then
 elif [[ $target == shepherd ]]; then
 	work=$("$BIN/shepherd-intake" --limit 4)
 else
-	work=$("$BIN/intake" "$target" --limit 8)
+	work=$("$BIN/intake" "$target")
 fi
 
 if [[ -z $work ]]; then

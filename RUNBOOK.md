@@ -13,7 +13,7 @@ Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below), the
 - **Security issues stay out.** An item that describes a vulnerability, an exploit, private data, or an account takeover is recorded `skip` with reason "out of scope" and nothing else, so the public state never marks which tickets are security-sensitive. It is never fixed in public. Never write HackerOne report numbers anywhere.
 - **Public reasons, private reasons.** Security, content, and ops skips all record "out of scope" in the state, so none stands out. The specific reason (security, content, ops, feature, external) goes only in your final report, which only the routine's owner sees.
 - **Committer direction is binding.** If a committer, a maintainer, or the owning team said in the thread not to do it, said the behavior is intended, picked an approach, or said it belongs elsewhere, follow that: skip, use their approach, or record `wrong-repo`. On GitHub, `$P/bin/maintainer <repo> <login>` tells a maintainer from everyone else; on Trac, it is a Meta committer or the component's maintainer.
-- **Bias toward a PR.** A maintainer would rather rework a PR than get none. When a fix involves a judgment call, make the most conventional choice, keep it easy to change, and name it in one sentence in the PR description. That covers technical trade-offs (image sizes, `srcset`, cache lifetimes, limits, timeouts) and wording (labels, messages, help text, link text in code). Only a product decision is `not-ready`: whether something should exist, who may do what, or a policy question.
+- **Bias toward a PR.** A maintainer would rather rework a PR than get none. When a fix involves a judgment call, make the most conventional choice, keep it easy to change, and name it in one sentence in the PR description. That covers technical trade-offs (image sizes, `srcset`, cache lifetimes, limits, timeouts) and wording (labels, messages, help text, link text in code). Only a product decision stops it: whether something should exist, who may do what, or a policy question. Record that `needs-decision` with the one open question.
 - **American English** in code, comments, commits, and PR text. WordPress coding standards. Follow each repo's `.editorconfig`, `CLAUDE.md`, and `AGENTS.md`.
 - **Smallest fix that resolves the item.** No refactors, no features, no unrelated cleanups, no new test infrastructure.
 - Read `$P/LESSONS.md` before you start; it is what earlier runs learned.
@@ -27,9 +27,15 @@ The routine already ran `$P/bin/preflight $REPO`, which installed the push guard
 $P/bin/cloud-setup $REPO
 ```
 
-## 2. Triage each candidate (up to 8)
+When every line carries `"backlog":"triage"`, skip it; run it later only if reproducing an item needs Docker, wp-env, or the dependencies.
+
+## 2. Triage each candidate
 
 For each line preflight printed. An item whose `items/<key>/$REPO.json` already says `ready` was triaged by an earlier run that ran out of fix budget: skip straight to step 3 for it.
+
+**Backlog items** carry `"backlog"`: open issues filed before the pipeline started on this repo, listed after the new items. Triage them the same way. Their threads are older, so check whether the code still has the defect before anything else.
+- `"backlog":"triage"`: record the decision and stop. Never claim, branch, or open a PR for it. Run the second opinion (step 2.4) only for an item you record `ready`.
+- `"backlog":"fix"`: a `ready` one is fixed in step 3 like a new item, within its `pr_room`.
 
 1. **Read the whole item.** The early thread is where committers give direction. Trac: `$P/bin/trac getTicket '{"id": N, "commentLimit": 500}'`. GitHub: `gh api repos/WordPress/$REPO/issues/N` and every comment, `gh api --paginate repos/WordPress/$REPO/issues/N/comments`.
 2. **Disqualify quickly.** Record a decision and move on when the item:
@@ -52,12 +58,20 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
 5. **Record the decision** for every item you looked at:
 
    ```
-   $P/bin/state put items/<key>/$REPO.json '{"status":"ready|not-ready|wrong-repo|skip","reason":"<one sentence>"}'
+   $P/bin/state put items/<key>/$REPO.json '{"status":"ready|not-ready|wrong-repo|skip|already-fixed|obsolete|needs-decision","reason":"<one sentence>"}'
    ```
+
+   - `already-fixed`: the defect is gone. Add `"evidence":"<the commit, PR, or check that shows it>"`.
+   - `obsolete`: the page, feature, or code it describes is gone or replaced. Add `"evidence":"<what replaced it, or where it went>"`.
+   - `needs-decision`: only a product decision blocks it. Add `"question":"<the one open question>"`.
+   - A security, content, or ops item is still `skip` "out of scope", never `already-fixed` or `obsolete`.
+   - These go to maintainers through `$P/bin/digest`, so write evidence and questions a maintainer can act on without the thread.
 
    For a `wrong-repo` Trac ticket whose home you identified, also update its route so the right worker sees it: `$P/bin/state put items/<key>/route.json '{"repo":"<repo>","status":"routed","summary":"...","reason":"rerouted by $REPO worker: <why>"}'`.
 
-## 3. Fix (up to 2 ready items per run, best first; the rest stay ready for the next run)
+## 3. Fix (up to 2 ready items per run, new items first, then the best; the rest stay ready for the next run)
+
+A backlog item also needs room under the repo's cap: fix no more backlog items this run than their `pr_room`, and none at 0. Triage-mode backlog items are never fixed.
 
 1. **Claim it.** `$P/bin/state claim <key> $REPO`. Exit code 1 means another run holds it; skip the item.
 2. **Branch** from a fresh default branch: `git -C /home/user/$REPO fetch origin && git -C /home/user/$REPO checkout -B claude/<key> origin/<default branch>` (default branch from `$P/repos.json`).
@@ -139,7 +153,7 @@ If a review round, a failed check, or a dead end taught something a future run s
 
 ## 5. Finish
 
-`$P/bin/state put runs/$REPO.json '{"last_run":"<run start time>"}'`, then end with a short report:
+`$P/bin/state put runs/$REPO.json '{"last_run":"<run start time>"}'`, then run `$P/bin/digest $REPO --since <run start time>` and end with a short report:
 
 ```
 ## <REPO> run
@@ -150,6 +164,9 @@ If a review round, a failed check, or a dead end taught something a future run s
 
 ### Skips
 - <reason>: <key>, <key>   (one line per reason: security, content, ops, feature, external, closed, has a PR, direction; or "none")
+
+### Digest
+<the digest output, unchanged>
 ```
 
 The Skips section carries the real reasons the public state hides behind "out of scope".
