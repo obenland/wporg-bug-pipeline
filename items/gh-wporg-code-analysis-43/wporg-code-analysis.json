@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Detecting esc_sql() output used outside quotes is a new sniff rule, and the thread does not settle what it should flag or at which severity.",
+  "question": "Should the DirectDB sniff warn whenever an esc_sql() value is interpolated without surrounding quotes, and should it also warn on unquoted or un-backticked variable table names?",
+  "updated": "2026-11-15T16:46:55Z"
+}
