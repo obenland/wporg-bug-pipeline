@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The form already offers translation options that recommend the Polyglots Team, whose card points to translating WordPress.",
+  "evidence": "Step 2 \"Translating content into your language\" and step 3 \"Translation writing, bi- or multi-lingual proficiency\" both map to polyglots (added in 5d59894, July 2023) and render on https://make.wordpress.org/contribute/ today.",
+  "updated": "2026-11-15T18:49:08Z"
+}
