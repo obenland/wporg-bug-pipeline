@@ -69,7 +69,7 @@ def wait(seconds, check):
 		found = check()
 		if found or time.time() >= end:
 			return found
-		time.sleep(30)
+		time.sleep(min(30, max(0, end - time.time())))
 
 
 def main():
@@ -106,15 +106,15 @@ def main():
 		return
 
 	# The bot reruns on every push and comment; commands posted before its first run still count, but waiting keeps the check honest.
-	if not wait(300, lambda: bot_comment(path)):
+	if not wait(240, lambda: bot_comment(path)):
 		print(json.dumps({'props': names, 'props_verified': False, 'reason': 'no Props Bot comment'}))
 		return
 	commands = [f"@propsbot add {n[3:]}" if n.startswith('gh:') else f'@propsbot add {n}@git.wordpress.org' for n in names]
 	gh('-X', 'POST', f'{path}/comments', '-f', 'body=' + '\n'.join([*commands, OWN]))
-	ok = wait(150, lambda: not missing(names, (bot_comment(path) or {}).get('body', '')))
+	ok = wait(120, lambda: not missing(names, (bot_comment(path) or {}).get('body', '')))
 	if not ok:
 		gh('-X', 'POST', f'{path}/comments', '-f', f'body=@propsbot refresh\n{OWN}')
-		ok = wait(150, lambda: not missing(names, (bot_comment(path) or {}).get('body', '')))
+		ok = wait(120, lambda: not missing(names, (bot_comment(path) or {}).get('body', '')))
 	print(json.dumps({'props': names, 'props_verified': bool(ok)}))
 
 

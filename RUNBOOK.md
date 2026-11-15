@@ -128,7 +128,7 @@ For each line preflight printed. An item whose `items/<key>/$REPO.json` already 
    $P/bin/props $REPO <number> <wporg-user|gh:login>...
    ```
 
-   In a repo with Props Bot (`"props": "bot"` in `$P/repos.json`) it waits for the bot's comment, posts one comment with an `@propsbot add <user>@git.wordpress.org` line per person, confirms the names reach the bot's Props line, and posts `@propsbot refresh` once if they do not. Elsewhere it adds a `Props <user>.` line to the PR body above the `<sub>` line. It takes up to nine minutes; run it in the foreground. It prints the `props` and `props_verified` values for the claim.
+   In a repo with Props Bot (`"props": "bot"` in `$P/repos.json`) it waits for the bot's comment, posts one comment with an `@propsbot add <user>@git.wordpress.org` line per person, confirms the names reach the bot's Props line, and posts `@propsbot refresh` once if they do not. Elsewhere it adds a `Props <user>.` line to the PR body above the `<sub>` line. It takes up to eight minutes; run it in the foreground. It prints the `props` and `props_verified` values for the claim.
 10. **Record it.** `$P/bin/state put items/<key>/claim.json '{"status":"pr-open","repo":"<REPO>","pr":"<url>","risk":"<tier>","props":[...],"props_verified":true|false|null}'`.
 
 If anything in step 3 fails and you cannot finish, put the claim back with `{"status":"failed","repo":"$REPO","reason":"<one sentence>"}` and leave the branch unpushed.

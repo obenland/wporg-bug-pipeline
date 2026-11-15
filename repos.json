@@ -211,6 +211,11 @@
 					"note": "the script is `echo \"No PHP lint.\"`, a no-op"
 				},
 				{
+					"name": "Install WordPress",
+					"run": "curl -sSL https://wordpress.org/nightly-builds/wordpress-latest.zip -o /tmp/wordpress.zip && unzip -q -o /tmp/wordpress.zip -d /tmp && { test -d /tmp/wordpress-develop || { git clone -q --depth=1 --filter=blob:none --sparse https://github.com/WordPress/wordpress-develop /tmp/wordpress-develop && git -C /tmp/wordpress-develop sparse-checkout set tests/phpunit/includes tests/phpunit/data; }; }",
+					"note": "as CI's Install WordPress step; PHPUnit also needs MySQL at 127.0.0.1 (root/root) with a wordpress_test database"
+				},
+				{
 					"name": "PHPUnit",
 					"run": "WP_CORE_DIR=/tmp/wordpress WP_TESTS_DIR=/tmp/wordpress-develop/tests/phpunit WP_TESTS_CONFIG_FILE_PATH=\"$PWD/.github/wp-tests-config.php\" vendor/bin/phpunit",
 					"note": "not wp-env: CI uses the runner's MySQL (root/root@127.0.0.1, db wordpress_test), the nightly WordPress zip unpacked to /tmp/wordpress and a sparse wordpress-develop checkout (tests/phpunit/includes + data) at /tmp/wordpress-develop. Path-filtered to source/**, phpunit.xml.dist, composer.*, .github/wp-tests-config.php"
@@ -245,6 +250,11 @@
 				{
 					"name": "Lint JS",
 					"run": "npm run lint:js --workspaces --if-present"
+				},
+				{
+					"name": "Install WordPress",
+					"run": "curl -sSL https://wordpress.org/nightly-builds/wordpress-latest.zip -o /tmp/wordpress.zip && unzip -q -o /tmp/wordpress.zip -d /tmp && { test -d /tmp/wordpress-develop || { git clone -q --depth=1 --filter=blob:none --sparse https://github.com/WordPress/wordpress-develop /tmp/wordpress-develop && git -C /tmp/wordpress-develop sparse-checkout set tests/phpunit/includes tests/phpunit/data; }; }",
+					"note": "as CI's Install WordPress step; PHPUnit also needs MySQL at 127.0.0.1 (root/root) with a wordpress_test database"
 				},
 				{
 					"name": "PHPUnit",

@@ -50,8 +50,9 @@ const isLocal = ( u ) => [ 'localhost', '127.0.0.1', '[::1]' ].includes( new URL
 	const { chromium } = loadPlaywright();
 	const browser = await chromium.launch();
 	try {
-		const context = await browser.newContext( { viewport: { width: opts.width, height: 900 } } );
-		await context.route( '**/*', ( route ) => {
+		const context = await browser.newContext( { viewport: { width: opts.width, height: 900 }, serviceWorkers: 'block' } );
+		// Cookies a production response sets must never go back out, so the jar is emptied before every production request.
+		await context.route( '**/*', async ( route ) => {
 			const req = route.request();
 			if ( isLocal( req.url() ) ) {
 				return route.continue();
@@ -59,7 +60,8 @@ const isLocal = ( u ) => [ 'localhost', '127.0.0.1', '[::1]' ].includes( new URL
 			if ( ! [ 'GET', 'HEAD' ].includes( req.method() ) ) {
 				return route.abort();
 			}
-			const headers = { ...req.headers() };
+			await context.clearCookies();
+			const headers = await req.allHeaders();
 			delete headers.cookie;
 			return route.continue( { headers } );
 		} );
