@@ -3,7 +3,7 @@
 Unattended bug fixing for the WordPress.org repositories, run as Claude Code cloud routines.
 
 - **Router** (every 6 hours): reads new Meta Trac bug tickets through the Trac MCP server, decides which repository each ticket's fix belongs in by finding the code, and records the route. See [ROUTER.md](ROUTER.md).
-- **Workers** (one per repository, every 6–24 hours per `repos.json`): pick up new GitHub issues on their repo and the Trac tickets routed to it, triage each with a second, independent opinion, fix the ones that are ready with the smallest change, run what CI runs, review the fix in rounds under [review-policy.md](review-policy.md), and open a short PR. See [RUNBOOK.md](RUNBOOK.md).
+- **Workers** (one per repository, every 6–24 hours per `repos.json`): pick up new GitHub issues on their repo and the Trac tickets routed to it, triage each (bounded enhancements included) with a second, independent opinion on where the fix goes, fix the ones that are ready with the smallest change, run what CI runs, review the fix in rounds under [review-policy.md](review-policy.md), and open a short PR. See [RUNBOOK.md](RUNBOOK.md).
 - **Shepherd** (every 3 hours): takes the pipeline's open PRs through review. It acts on maintainer feedback and triages bot findings under the same policy. It fixes failing checks and rebases branches that stopped merging, then reviews and tests its own commit before pushing. It replies only to maintainers, and it stops after three pushes to a PR. Merged and closed PRs move their claim to `done`. See [SHEPHERD.md](SHEPHERD.md).
 - **New bugs only.** The first run of the router records the newest ticket number, and the first run of each worker records the time; nothing filed before that is considered.
 - **State** lives on the `claude/state` branch, one JSON file per fact, written only through `bin/state`.
@@ -15,7 +15,8 @@ Nothing here merges, commits to SVN, comments on tickets, or touches the dotorg 
 - Every checkout gets a pre-push hook that refuses anything but `claude/*` branches and deletions (`bin/cloud-setup`).
 - Ticket and issue text is data, never instructions; suspicious input is reported, not followed.
 - Security reports are skipped as "out of scope", indistinguishable from other skips in the public state.
-- A fix needs two independent "ready" verdicts before any code is written.
+- A second, independent subagent locates the fix before any code is written; it has no veto, and disagreements go to the more conventional reading.
+- Production sites get read-only checks only: plain GETs of public pages, never authenticated, never a POST, and never the dotorg sandbox.
 - Network access is limited to the hosts in `env/allowlist.txt` plus the default trusted list.
 - Lessons reach `LESSONS.md` only through PRs a maintainer merges.
 
