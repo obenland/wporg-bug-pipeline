@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-main-2022",
-  "run": "cse_01YBAW4syPy7X8dPDVm9dcdu",
-  "updated": "2026-11-15T23:16:03Z"
+  "pr": "https://github.com/WordPress/wporg-main-2022/pull/786",
+  "risk": "needs-review",
+  "props": [
+    "ryelle"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-15T23:47:26Z"
 }
