@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The issue asks to stop sending translation-anniversary emails, which are still scheduled daily (gp_engagement_anniversary in class-plugin.php); whether the feature ships is a product call the maintainer has not made.",
+  "question": "Should the daily anniversary email/Slack cron be turned off until get_users_and_first_translation_date() is reworked to cache first-translation dates per user (as proposed in PR #4), or should it keep running?",
+  "updated": "2026-11-15T19:50:52Z"
+}
