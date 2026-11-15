@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "tests/db/DirectDBUnitTest.php-bad.inc still defines insecure_wpdb_query_14() twice; renaming the second definition fixes it without moving any asserted line numbers.",
+  "updated": "2026-11-15T16:46:42Z"
+}
