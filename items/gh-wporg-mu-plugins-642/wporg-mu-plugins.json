@@ -1,0 +1,6 @@
+{
+  "status": "skip",
+  "reason": "Notice variations already transform between each other; Callout-to-Notice transforms are planned as a follow-up to the open Notice inner-blocks PR.",
+  "pr": "https://github.com/WordPress/wporg-mu-plugins/pull/719",
+  "updated": "2026-11-15T22:24:00Z"
+}
