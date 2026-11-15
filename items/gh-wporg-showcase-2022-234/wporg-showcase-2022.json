@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Bundle of launch feedback. Most of it is done (noindex, archive H1s) or lives outside this theme (search canonical from wporg SEO, breadcrumbs in mu-plugins). The hero redesign is open design work, and prev/next and noreferrer have no decision.",
+  "question": "Should tags with fewer than 3 sites be hidden, and if so, from the Browse tag list only or also from tag archives and single-site tag lists?",
+  "updated": "2026-11-15T19:56:38Z"
+}
