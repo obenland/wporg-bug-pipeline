@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Latest News always queries the post type post; add a post type attribute (default post) so /news podcasts can be included.",
+  "updated": "2026-11-15T22:24:56Z"
+}
