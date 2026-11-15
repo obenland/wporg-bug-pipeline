@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "No PHPCompatibility policy exists to implement; the issue asks what the rules should be.",
+  "question": "What PHP version policy should the scanner enforce, e.g. require a Requires PHP header when a plugin uses newer syntax?",
+  "updated": "2026-11-15T16:47:01Z"
+}
