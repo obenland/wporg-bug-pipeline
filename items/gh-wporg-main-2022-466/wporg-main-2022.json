@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Sharing previews publicly is a policy choice about who may see unpublished pages.",
+  "question": "Should unpublished page previews be viewable by logged-out visitors (e.g. via the Public Post Preview plugin), or only by logged-in WordPress.org users?",
+  "updated": "2026-11-15T23:14:49Z"
+}

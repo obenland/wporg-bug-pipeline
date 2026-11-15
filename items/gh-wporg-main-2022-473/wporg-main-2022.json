@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The data erasure request heading is already an h2 in this theme; the remaining flagged headings are on 40-percent-of-web and enterprise subpages, still rendered by the old wporg-main theme in WordPress/wordpress.org (see #636, #639).",
+  "updated": "2026-11-15T23:14:49Z"
+}

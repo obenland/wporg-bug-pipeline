@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The release tables have no data on which branches receive security updates; the labels need an agreed source.",
+  "question": "Which source should define each branch's support status (latest, security-only, outdated) for the Releases page: a hardcoded oldest-supported version kept by the security team, or an API?",
+  "updated": "2026-11-15T23:14:49Z"
+}

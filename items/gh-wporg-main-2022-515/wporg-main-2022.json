@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Locale teams have not settled between a second download button and a notice for formal/variant language packs.",
+  "question": "For locales with variant packs (de_DE_formal, nl_NL_formal, pt_PT_ao90), should the Rosetta download page show a second download button or a notice pointing to the language setting?",
+  "updated": "2026-11-15T23:14:49Z"
+}
