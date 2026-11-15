@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Snippets are now in the site navigation and returned by search.",
+  "evidence": "Live check 2026-11-15: the Dev Blog nav links to /news/snippets/, and a search for \"snippet\" on /news/ returns snippet posts (snippets CPT is public, added in #69/#70).",
+  "updated": "2026-11-15T17:50:08Z"
+}
