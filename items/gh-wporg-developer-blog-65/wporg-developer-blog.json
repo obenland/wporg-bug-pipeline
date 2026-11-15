@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The broken link is in the Gutenberg theme.json schema (schemas/json/theme.json), not in the Developer Blog; it belongs in WordPress/gutenberg.",
+  "updated": "2026-11-15T17:50:18Z"
+}
