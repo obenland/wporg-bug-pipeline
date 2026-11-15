@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Feature request with no spec. Maintainers noted that most sites have no country data.",
+  "question": "Should the Showcase add a frontend country filter, given that the country meta is rarely filled in?",
+  "updated": "2026-11-15T19:56:12Z"
+}
