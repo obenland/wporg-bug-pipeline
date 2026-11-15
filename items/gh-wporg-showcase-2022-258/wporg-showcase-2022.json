@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The View all tags link in patterns/page-single.php sits directly under the site's own tag row and reads like an expander. Fix by rewording it to say it goes to the showcase-wide /browse/ page (e.g. Browse all tags) and adding space above it. The exact wording is a judgment call.",
+  "updated": "2026-11-15T19:57:13Z"
+}
