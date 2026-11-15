@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The child theme has no 404 template; production shows only the parent theme's bare This page doesn't exist heading. dd32 spelled out the fix: add templates/404.html with a heading, a short message and a grid of featured sites, reusing _site-grid-featured. Wording is a judgment call.",
+  "updated": "2026-11-15T19:57:09Z"
+}
