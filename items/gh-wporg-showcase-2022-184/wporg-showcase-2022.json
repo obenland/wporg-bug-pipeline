@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The metadata-save error only showed up in the production editor on specific posts. No error text or steps were captured, and the seed content and code give nothing to trace it to, so it cannot be reproduced without authenticated production access.",
+  "updated": "2026-11-15T19:56:25Z"
+}
