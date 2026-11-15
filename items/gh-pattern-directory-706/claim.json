@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "pattern-directory",
-  "run": "cse_01YBAW4tyUi7UPtZygTvpuaQ",
-  "updated": "2026-11-15T04:24:30Z"
+  "pr": "https://github.com/WordPress/pattern-directory/pull/815",
+  "risk": "low",
+  "props": [
+    "enricosorcinelli"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-15T04:50:31Z"
 }
