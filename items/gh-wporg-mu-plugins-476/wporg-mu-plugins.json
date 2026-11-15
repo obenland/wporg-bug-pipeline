@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The map search haystack only uses title, location, and meetup; the events table already stores a country code that can be added to markers as a country name.",
+  "updated": "2026-11-15T22:24:54Z"
+}
