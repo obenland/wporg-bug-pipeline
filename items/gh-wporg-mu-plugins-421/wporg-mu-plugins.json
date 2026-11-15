@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "hideExtraItems in global-header-footer/js/view.js stops counting the … width for the last item, so the last item can stay visible after the second-to-last overflows.",
+  "updated": "2026-11-15T22:24:46Z"
+}
