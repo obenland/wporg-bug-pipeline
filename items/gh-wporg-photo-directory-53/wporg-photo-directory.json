@@ -1,5 +1,6 @@
 {
-  "status": "ready",
-  "reason": "The pending submissions table in the theme lists only file name, date, and caption; the upload-form preview part already exists in the Meta photo-directory plugin.",
-  "updated": "2026-11-15T11:37:33Z"
+  "status": "skip",
+  "reason": "A maintainer closed the pipeline PR as an undesired approach and is preparing an alternative fix.",
+  "pr": "https://github.com/WordPress/wporg-photo-directory/pull/60",
+  "updated": "2026-11-15T16:27:52Z"
 }
