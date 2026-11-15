@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Thread split between linking author names to the on-site author archive and keeping the WordPress.org profile link used by other wporg blogs.",
+  "question": "Should post author names on the Developer Blog link to the on-site author archive (/news/author/<user>/) instead of the WordPress.org profile?",
+  "updated": "2026-11-15T17:50:30Z"
+}
