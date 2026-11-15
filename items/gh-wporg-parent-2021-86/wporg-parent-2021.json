@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The subnav on the example pages is now the wporg/local-navigation-bar block from wporg-mu-plugins, so any scroll-on-selection fix belongs there; this theme only ships a subnav-bar pattern with a core navigation block.",
+  "updated": "2026-11-15T03:26:58Z"
+}
