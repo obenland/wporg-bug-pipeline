@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The block-count limits run only in PHP (pattern-validation.php); moving them before the submission modal is bounded, but I did not trace the creator submit flow far enough this run to place the check confidently.",
+  "updated": "2026-11-16T04:27:34Z"
+}
