@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wporg-mu-plugins",
   "pr": "https://github.com/WordPress/wporg-mu-plugins/pull/805",
   "risk": "needs-review",
@@ -8,5 +8,6 @@
     "00travelgirl00"
   ],
   "props_verified": null,
-  "updated": "2026-11-16T19:39:00Z"
+  "updated": "2026-11-16T21:39:40Z",
+  "outcome": "merged"
 }
