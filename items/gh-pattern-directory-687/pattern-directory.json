@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The status menu uses the is-style-button-list navigation style, whose hover and focus colors are defined in WordPress/wporg-parent-2021 (sass/blocks/_button.scss), not in this repo.",
+  "updated": "2026-11-16T04:27:26Z"
+}
