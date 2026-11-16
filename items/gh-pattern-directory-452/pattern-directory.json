@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Unpublished patterns keep their strings in GlotPress; the issue itself leaves the expected behavior open.",
+  "question": "When a translated pattern is unpublished, should its unique strings be removed from GlotPress immediately, or after a grace period (and how long)?",
+  "updated": "2026-11-16T04:27:12Z"
+}
