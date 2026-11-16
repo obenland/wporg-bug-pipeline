@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wordcamp.org",
   "pr": "https://github.com/WordPress/wordcamp.org/pull/2379",
   "risk": "needs-review",
@@ -7,5 +7,6 @@
     "bor0"
   ],
   "props_verified": null,
-  "updated": "2026-11-15T08:09:21Z"
+  "updated": "2026-11-16T12:39:36Z",
+  "outcome": "merged"
 }
