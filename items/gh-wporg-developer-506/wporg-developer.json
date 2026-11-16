@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Dropping the handbook name from handbook document titles is a one-line change in inc/head.php, but an SEO reviewer raised duplicate-title concerns and no data followed.",
+  "question": "Should handbook page titles drop the ' – {Handbook}' suffix, accepting that some pages across handbooks will share a title?",
+  "updated": "2026-11-16T00:18:37Z"
+}

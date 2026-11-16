@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The cap that 404s archive and search pages past page 49 for logged-out users is not in this repo, so a notice belongs where that cap is enforced (likely a wordpress.org mu-plugin).",
+  "updated": "2026-11-16T00:18:37Z"
+}

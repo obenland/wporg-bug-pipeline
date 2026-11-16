@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "Asks for updates to a HelpHub documentation article on wordpress.org/documentation, which lives in WordPress/wporg-documentation-2022, not developer.wordpress.org.",
+  "updated": "2026-11-16T00:18:37Z"
+}

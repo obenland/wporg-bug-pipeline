@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Both requested changes are live on the hooks section.",
+  "evidence": "src/code-hooks/style.scss sets dd { margin-inline-start: unset } so hook descriptions line up with the code, and the Hooks heading now uses the standard heading anchor instead of the squished image icon (checked on /reference/functions/register_post_type/).",
+  "updated": "2026-11-16T00:18:37Z"
+}
