@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The unchecked tasks (old header.php/footer.php, wp4.css styles, wporg_get_global_header(), navigation.js, the 5ftF environment) live in the dotorg wporg theme and other sites, not in wporg-mu-plugins.",
+  "updated": "2026-11-16T22:20:22Z"
+}
