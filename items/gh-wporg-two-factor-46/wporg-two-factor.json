@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The two open checklist items (discuss and remove the hardcoded beta tester list) are done; the first item was struck out.",
+  "evidence": "ea0763c removed is_2fa_beta_tester(); 2FA is now enabled for all users.",
+  "updated": "2026-11-16T05:24:31Z"
+}
