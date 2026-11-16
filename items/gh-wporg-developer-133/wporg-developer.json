@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "get_param_content() in src/code-parameters/block.php wraps inherited parameter arguments in a closed <details>, so they are hidden until clicked.",
+  "updated": "2026-11-16T00:18:57Z"
+}
