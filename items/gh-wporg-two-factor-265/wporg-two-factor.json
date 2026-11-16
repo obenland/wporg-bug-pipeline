@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "WebAuthn registration now catches credentials.create() failures and null results, enables the provider only after a successful registration, and sends users without backup codes on to the backup codes screen.",
+  "evidence": "onRegister try/catch in settings/src/components/webauthn/register-key.js, onRegisterSuccess in webauthn.js, and 06fffce (#305) redirecting to backup codes; the outreach to affected users is an ops task.",
+  "updated": "2026-11-16T05:24:37Z"
+}
