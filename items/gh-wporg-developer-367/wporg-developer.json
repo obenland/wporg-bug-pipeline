@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "inc/autocomplete.php returns early on handbook pages and only searches command or parsed post types; removing the early return and allowing the current (non-hidden) handbook post type would extend autocomplete to handbooks.",
+  "updated": "2026-11-16T00:18:52Z"
+}
