@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "Still reproduces (wordpress.org/themes/search/Rich%20Tabor/ returns no results), but the search query is built by the theme-directory plugin in WordPress/wordpress.org, not by this theme.",
+  "updated": "2026-11-16T02:17:05Z"
+}
