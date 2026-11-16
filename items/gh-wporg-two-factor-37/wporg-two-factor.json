@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "wp-admin profile.php and user-edit.php now hide the email, password, and profile fields, discard submitted changes, and show a notice pointing to the WordPress.org profile.",
+  "evidence": "remove_admin_profile_php() in settings/settings.php, added in 20fcf86 (#54); the profiles.wordpress.org edit/group/1 email field is in the profiles site code, not this repo.",
+  "updated": "2026-11-16T05:24:33Z"
+}
