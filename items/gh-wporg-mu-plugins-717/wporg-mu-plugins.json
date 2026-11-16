@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The footer social icons are a core/social-links flex list where text-wrap: balance does not apply; the maintainer tried markup and CSS changes without success and no approach is agreed yet.",
+  "updated": "2026-11-16T22:20:23Z"
+}
