@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "pattern-directory",
-  "run": "cse_01YBAW4sQwMAHNmnMK7veiSY",
-  "updated": "2026-11-16T04:27:54Z"
+  "pr": "https://github.com/WordPress/pattern-directory/pull/817",
+  "risk": "low",
+  "props": [
+    "ryelle"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-16T04:42:09Z"
 }
