@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "filter-endpoints.js calls response.forEach() on every /wp/v2/posts response, but core-data fetches paginated records with parse:false (a Response object), so the middleware throws and the Latest Posts block never resolves.",
+  "updated": "2026-11-16T04:27:48Z"
+}
