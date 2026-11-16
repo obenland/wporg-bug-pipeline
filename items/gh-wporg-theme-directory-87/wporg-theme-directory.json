@@ -1,0 +1,5 @@
+{
+  "status": "skip",
+  "reason": "On hold by the preview author: changing history behavior needs the Navigation API, and the current Back link was kept on purpose (closed PR #114).",
+  "updated": "2026-11-16T02:16:57Z"
+}
