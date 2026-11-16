@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The design is still under discussion; the preview author asked to wait for wider feedback before collapsing the list.",
+  "question": "Should the theme page collapse its translations list into a See all N link in the meta details, as the plugin directory does?",
+  "updated": "2026-11-16T02:16:59Z"
+}
