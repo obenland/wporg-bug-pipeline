@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "SetupForm in settings/src/components/totp.js only submits on click or Enter; auto-run handleEnable once six digits are entered, failing silently as the thread specified.",
+  "updated": "2026-11-16T05:25:15Z"
+}
