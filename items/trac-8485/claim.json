@@ -1,5 +1,6 @@
 {
-  "status": "pr-open",
+  "status": "merged",
+  "outcome": "merged",
   "repo": "wordpress.org",
   "pr": "https://github.com/WordPress/wordpress.org/pull/1320",
   "risk": "low",
@@ -7,5 +8,6 @@
     "jonsurrell"
   ],
   "props_verified": false,
-  "updated": "2026-11-15T07:33:41Z"
+  "changeset": "https://meta.trac.wordpress.org/changeset/15599",
+  "updated": "2026-11-16T19:53:35Z"
 }
