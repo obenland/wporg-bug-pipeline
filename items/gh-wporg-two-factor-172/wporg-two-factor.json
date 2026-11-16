@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "load_webauthn_plugin() now bails early with a warning when the WebAuthn plugin class is missing, as suggested in the thread.",
+  "evidence": "The class_exists() guard and E_USER_WARNING in load_webauthn_plugin() in wporg-two-factor.php (present since 9cac7f8); updating other repos local environments is outside this repo.",
+  "updated": "2026-11-16T05:24:28Z"
+}
