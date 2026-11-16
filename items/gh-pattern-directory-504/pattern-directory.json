@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Showing every optional block support panel by default is a product choice about the creator UI, not a defect.",
+  "question": "Should the pattern creator show all optional block settings (typography, dimensions, spacing) by default for every block?",
+  "updated": "2026-11-16T04:27:29Z"
+}
