@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The copy button (copy-button/render.php) copies the raw post_content, so production still copies cover/image IDs like \"id\":334 even though the API strips them via decode_pattern_content() since #804.",
+  "updated": "2026-11-16T04:27:45Z"
+}
