@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "In screen-navigation.scss the Back link is absolutely positioned at left 24px over a centered h3 with no padding or breakpoint, so long titles run under it on narrow screens; stack it or reserve space on small widths.",
+  "updated": "2026-11-16T05:25:11Z"
+}
