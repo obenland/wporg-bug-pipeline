@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Adding previous and next links to the pattern page needs a choice of what sequence they follow.",
+  "question": "Should previous/next on a pattern page follow publish date across all patterns, or stay within the pattern's category or author?",
+  "updated": "2026-11-16T04:27:30Z"
+}
