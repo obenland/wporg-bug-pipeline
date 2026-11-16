@@ -1,0 +1,5 @@
+{
+  "status": "skip",
+  "reason": "Labeled [Status] Blocked on Gutenberg #28734; the JS registrations also supply each block's editor UI, so there is nothing to remove until Core can register them server-side.",
+  "updated": "2026-11-16T22:20:20Z"
+}
