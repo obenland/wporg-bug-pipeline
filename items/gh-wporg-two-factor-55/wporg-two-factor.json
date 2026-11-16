@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Upstream Two_Factor_Backup_Codes::admin_notices() links to get_edit_user_link() (profile.php, where this plugin removes the 2FA UI); point it at the custom UI backup-codes screen, mirroring the existing enable-2FA notice in wporg-two-factor.php.",
+  "updated": "2026-11-16T05:25:13Z"
+}
