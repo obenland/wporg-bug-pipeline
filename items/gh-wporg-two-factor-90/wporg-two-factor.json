@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "handleFormSubmit in settings/src/components/password.js only sets a global notice after saving, leaving the user on the password form; show a Password changed step with a Done button that navigates home.",
+  "updated": "2026-11-16T05:25:17Z"
+}
