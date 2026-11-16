@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The local environment now runs the settings UI under the wporg-support-2024 block theme, and the UI is rendered as a block.",
+  "evidence": "cc9dc22 (#336) switched .wp-env.json to wporg-support-2024; the settings UI is registered with register_block_type() in settings/settings.php.",
+  "updated": "2026-11-16T05:24:35Z"
+}
