@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Read the creator header and the maintainer trace (ComplementaryAreaToggle keeps isSelected true after close) but did not reproduce it in a browser this run; #803 fixed a similar sub-registry state split for the inserter, so it should be re-checked against trunk in wp-env.",
+  "updated": "2026-11-16T04:27:36Z"
+}
