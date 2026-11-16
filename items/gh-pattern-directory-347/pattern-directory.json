@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Search results mix locales because the locale is a small boost rather than a sort; the reporter asks whether relevance should still win in search.",
+  "question": "In search results, should patterns in the requested locale always rank above en_US ones (a sort), or should relevance be allowed to outrank locale (a stronger boost)?",
+  "updated": "2026-11-16T04:27:10Z"
+}
