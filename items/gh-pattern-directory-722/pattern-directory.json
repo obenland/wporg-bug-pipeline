@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The example pattern (ID 531856) now has the title Our Experience on production, and no creator or directory code derives a title or description from the URL-encoded slug, so the encoded title looks like what the author typed; nothing left to reproduce.",
+  "updated": "2026-11-16T04:27:08Z"
+}
