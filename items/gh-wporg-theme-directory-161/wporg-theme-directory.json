@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The variation cards are screenshots of the wp-themes.com style-variations plugin card view (views/card.php) in WordPress/wordpress.org, which picks the colors; this theme only embeds the screenshots.",
+  "updated": "2026-11-16T02:17:07Z"
+}
