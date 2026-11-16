@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wporg-main-2022",
   "pr": "https://github.com/WordPress/wporg-main-2022/pull/786",
   "risk": "needs-review",
@@ -7,5 +7,6 @@
     "ryelle"
   ],
   "props_verified": null,
-  "updated": "2026-11-15T23:47:26Z"
+  "updated": "2026-11-16T21:39:37Z",
+  "outcome": "merged"
 }
