@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Learn is not a Rosetta site, so blocks.php never takes the is_rosetta_site() menu path; a fix needs a locale-to-Rosetta-root-site lookup through the dotorg-only Rosetta_Sites code, which cannot be loaded or verified outside production.",
+  "updated": "2026-11-16T22:20:25Z"
+}
