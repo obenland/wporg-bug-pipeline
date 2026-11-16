@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The Openverse grid renders item.thumbnail with no onError handler, so failed thumbnails show as gray boxes; the Openverse maintainer suggested falling back to the full image (item.url).",
+  "updated": "2026-11-16T04:27:47Z"
+}
