@@ -1,0 +1,9 @@
+{
+  "repo": "wordpress.org",
+  "status": "routed",
+  "summary": "Theme previews flagged \"not available due to PHP Fatal Error\" - Twenty Twenty-Five, Spectra One, Frost and perhaps others",
+  "path": "wp-themes.com/public_html/wp-content",
+  "reason": "wp-themes.com preview code (mu-plugins/pub, style-variations, pattern-page) lives in wordpress.org/wp-themes.com; the wp_die message string is not in any checkout (likely private dotorg code), so the worker should check whether the flag-latching/expiry can be addressed here.",
+  "ticket_updated": "2026-11-16T00:00:00Z",
+  "updated": "2026-11-16T06:53:04Z"
+}
