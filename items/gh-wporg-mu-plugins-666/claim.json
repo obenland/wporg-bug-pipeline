@@ -1,6 +1,12 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-mu-plugins",
-  "run": "cse_01YBAW4qrUT1Zvbr2rWzhz9B",
-  "updated": "2026-11-16T22:20:39Z"
+  "pr": "https://github.com/WordPress/wporg-mu-plugins/pull/808",
+  "risk": "needs-review",
+  "props": [
+    "fcoveram",
+    "ryelle"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-16T22:45:35Z"
 }
