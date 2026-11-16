@@ -1,0 +1,8 @@
+{
+  "repo": null,
+  "status": "skip",
+  "summary": "Plugin Directory: Search result count changes when paging through API results",
+  "reason": "has an open PR",
+  "pr": "https://github.com/WordPress/wordpress.org/pull/1325",
+  "updated": "2026-11-16T12:51:49Z"
+}
