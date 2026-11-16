@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Core assigns no slug to draft or pending posts and builds it from the title at publish, so a never-published pattern gets the new title; the stale slug needs a pattern that already had one, and the example (post 32415) is admin-only, so I could not confirm which path it took.",
+  "updated": "2026-11-16T04:27:32Z"
+}
