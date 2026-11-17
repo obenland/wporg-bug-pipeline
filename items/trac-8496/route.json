@@ -1,9 +1,9 @@
 {
-  "repo": null,
-  "status": "skip",
+  "repo": "wordpress.org",
+  "status": "routed",
   "summary": "Duplicate Search Widgets Displayed in the Sidebar on Make WordPress Design Page",
-  "path": "",
-  "reason": "out of scope",
-  "ticket_updated": "2026-11-11T00:00:00Z",
-  "updated": "2026-11-11T12:52:29Z"
+  "path": "wordpress.org/public_html/wp-content/themes/pub/wporg-breathe-2024/sidebar.php",
+  "reason": "Make sites render sidebar-1 via dynamic_sidebar() in the breathe-2024 theme; live page shows a block search widget and a classic widget_search both in that sidebar, so the fix is in that theme (or is Design-site widget config the worker may find is DB-only).",
+  "ticket_updated": "2026-11-17T07:51:58Z",
+  "updated": "2026-11-17T12:52:27Z"
 }
