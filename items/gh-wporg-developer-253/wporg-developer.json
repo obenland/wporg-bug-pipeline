@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "get_signature() prints parameter defaults in a span that wptexturize processes with the block template, so '' renders as a curly double quote; wrapping the default in code (as the Parameters section does) keeps it literal.",
+  "updated": "2026-11-17T00:19:40Z"
+}
