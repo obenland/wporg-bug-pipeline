@@ -159,10 +159,17 @@ fi
 # ── Dependencies ────────────────────────────────────────────────────────────
 platform_args=()
 (( php_minor >= 804 )) || platform_args=(--ignore-platform-req=php)
-if [[ -f $wt/composer.lock ]]; then
+# Repos without a composer.lock (wporg-developer) resolve on install, as their CI does.
+# The proxy answers GitHub's zipball URLs with 403, so GitHub packages are cloned from source
+# rather than failing over one by one, and it times out some CONNECTs under Composer's parallel
+# downloads; a second attempt picks up what the first left behind.
+if [[ -f $wt/composer.json ]]; then
 	log "composer install in $repo"
-	# Sessions run as root, where Composer skips plugins unless told otherwise, and the phpcs installer is one.
-	(cd "$wt" && COMPOSER_ALLOW_SUPERUSER=1 composer install -q --no-interaction --no-progress "${platform_args[@]+"${platform_args[@]}"}") || log "composer install failed"
+	for attempt in 1 2; do
+		# Sessions run as root, where Composer skips plugins unless told otherwise, and the phpcs installer is one.
+		(cd "$wt" && COMPOSER_ALLOW_SUPERUSER=1 timeout 600 composer install -q --no-interaction --no-progress --prefer-install=source "${platform_args[@]+"${platform_args[@]}"}") && break
+		(( attempt == 2 )) && log "composer install failed twice in $repo"
+	done
 fi
 for lock in "$wt/package-lock.json" "$wt/environments/package-lock.json"; do
 	[[ -f $lock ]] || continue
