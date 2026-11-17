@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "pattern-directory",
-  "run": "cse_01YBAW4qoeXMBLmmMJxuCC7d",
-  "updated": "2026-11-17T04:29:15Z"
+  "pr": "https://github.com/WordPress/pattern-directory/pull/819",
+  "risk": "needs-review",
+  "props": [
+    "richtabor"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-17T04:50:19Z"
 }
