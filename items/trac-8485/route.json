@@ -1,9 +1,9 @@
 {
-  "repo": "wordpress.org",
-  "status": "routed",
+  "repo": null,
+  "status": "skip",
   "summary": "Trac: Incorrect URL in ticket RSS feed",
-  "path": "trac.wordpress.org/templates",
-  "reason": "Re-routed: Trac UI is overridden in wordpress.org (trac.wordpress.org templates, style/trac/wp-trac.js).",
-  "ticket_updated": "2026-11-03T00:00:00Z",
-  "updated": "2026-11-15T01:57:14Z"
+  "path": "",
+  "reason": "closed: fixed in changeset 15599",
+  "ticket_updated": "2026-11-16T19:52:05Z",
+  "updated": "2026-11-17T00:52:42Z"
 }
