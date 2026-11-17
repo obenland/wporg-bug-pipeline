@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Blog post titles and categories share the same style on the mobile homepage, so wrapped titles read as two items; the issue is labeled Needs Design.",
+  "question": "How should post titles be set apart from their category in the homepage blog list on mobile (weight, color, size, or punctuation)?",
+  "updated": "2026-11-17T00:19:12Z"
+}

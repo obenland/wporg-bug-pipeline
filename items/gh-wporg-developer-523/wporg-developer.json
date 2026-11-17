@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The fatal is a duplicate scb_init() declaration between the scb-framework bundled in phpdoc-parser's vendor and the copy in Posts 2 Posts; the guard belongs in WordPress/phpdoc-parser (see its issue #112).",
+  "updated": "2026-11-17T00:19:12Z"
+}

@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The invalid lang=\"php\" attribute comes from the Code Syntax Block plugin; a maintainer suggested a render_block_core/code filter in WordPress/wporg-mu-plugins since the developer blog is affected too.",
+  "updated": "2026-11-17T00:19:12Z"
+}

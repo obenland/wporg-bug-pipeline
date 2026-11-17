@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Headings inside user-edited More Information content can outsize the section heading; the thread raised the type scale and parameter definition lists without settling on sizes.",
+  "question": "Should headings inside More Information be scaled down relative to the section heading (and definition lists set to body size), and to what sizes?",
+  "updated": "2026-11-17T00:19:12Z"
+}

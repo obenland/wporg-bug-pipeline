@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The count() fatal in DevHub_Search::redirect_empty_search() on filtered empty searches no longer happens: post_type is now cast to an array.",
+  "evidence": "cfeec77 Search: Fix fatal error on empty filtered searches (#601)",
+  "updated": "2026-11-17T00:19:12Z"
+}

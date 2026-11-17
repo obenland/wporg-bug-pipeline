@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Generic parameter types now render as text in the title and Parameters section of wp_ai_client_prompt().",
+  "evidence": "Merged PR #598 (Code Reference: Escape parameter types before output); live page shows list&lt;...&gt; escaped and no stray span markup. The namespace-backslash stripping noted in the thread is a separate issue.",
+  "updated": "2026-11-17T00:19:12Z"
+}
