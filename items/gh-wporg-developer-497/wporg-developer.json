@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Could not reproduce: the example page's headings no longer contain links and its table of contents lists and nests every heading correctly; the ToC block lives in wporg-mu-plugins, and retesting needs a page with a link inside a heading.",
+  "updated": "2026-11-17T00:26:59Z"
+}

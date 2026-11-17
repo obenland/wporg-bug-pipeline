@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The autocomplete list (.wp-block-search div.awesomplete > ul in src/style/style.scss) has no max width and its entries cannot wrap, so long names push past a phone screen; capping the width and letting entries wrap fixes it.",
+  "updated": "2026-11-17T00:26:59Z"
+}

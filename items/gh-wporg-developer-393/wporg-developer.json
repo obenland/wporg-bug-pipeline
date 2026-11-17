@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Could not reproduce: Code Reference archives and searches now top out at 49 pages, /reference/functions/page/334/ is a 404, and two-digit pagination renders fine at 390px; pagination styles live in wporg-parent-2021 if it returns.",
+  "updated": "2026-11-17T00:26:59Z"
+}

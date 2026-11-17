@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "code-short-title/style.scss centers the type label vertically (align-items: center at min-width 350px), so it floats beside wrapped long titles on mobile; aligning to the start fixes it.",
+  "updated": "2026-11-17T00:26:59Z"
+}

@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "js/function-reference.js adds the source file path label to every .wp-block-code on a reference page, including examples in the description; it should only label the source code block.",
+  "updated": "2026-11-17T00:26:59Z"
+}

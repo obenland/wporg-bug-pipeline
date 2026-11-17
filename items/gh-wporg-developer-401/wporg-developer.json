@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "At 1212px the links now fit, but long titles still wrap awkwardly near 1000px; the previous/next styles and breakpoint live in WordPress/wporg-parent-2021.",
+  "updated": "2026-11-17T00:26:59Z"
+}

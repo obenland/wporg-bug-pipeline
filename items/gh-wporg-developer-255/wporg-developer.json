@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The chapter list is collapsed by the pub-sync chapter-list block script on window load; the fix belongs in WordPress/wporg-mu-plugins (mu-plugins/pub-sync/blocks/chapter-list).",
+  "updated": "2026-11-17T00:26:59Z"
+}

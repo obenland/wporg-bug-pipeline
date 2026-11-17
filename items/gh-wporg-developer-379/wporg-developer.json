@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The is-style-toggle button styles come from WordPress/wporg-parent-2021, whose :hover background overrides the pressed/checked colors; this theme only outputs the markup.",
+  "updated": "2026-11-17T00:26:59Z"
+}
