@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-mu-plugins",
-  "run": "cse_01YBAW4uEMAujKvDPYjF1oak",
-  "updated": "2026-11-17T22:11:59Z"
+  "pr": "https://github.com/WordPress/wporg-mu-plugins/pull/809",
+  "risk": "needs-review",
+  "props": [
+    "adamwood"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-17T22:36:44Z"
 }
