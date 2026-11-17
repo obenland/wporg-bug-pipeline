@@ -55,6 +55,40 @@ php_minor=$(php -r 'echo PHP_MAJOR_VERSION * 100 + PHP_MINOR_VERSION;' 2>/dev/nu
 (( node_major >= 24 )) || log "Node $(node -v 2>/dev/null) is older than 24; the environment setup script should install it"
 (( php_minor >= 804 )) || log "PHP $(php -r 'echo PHP_VERSION;' 2>/dev/null) is older than 8.4; the environment setup script should install it"
 
+# ── Subversion ──────────────────────────────────────────────────────────────
+# Composer checks out the meta.svn packages with svn, which reads neither HTTPS_PROXY nor
+# SSL_CERT_FILE, so point it at the session's proxy and trust the proxy's CA. svn loads only
+# the first certificate in each ssl-authority-files entry, so the bundle is split one per file.
+ca_bundle=${SSL_CERT_FILE:-/etc/ssl/certs/ca-certificates.crt}
+command -v svn >/dev/null || apt-get install -y -qq subversion >/dev/null 2>&1 || log "subversion install failed; the environment setup script should install it"
+proxy=${HTTPS_PROXY:-${https_proxy:-}}
+if command -v svn >/dev/null && [[ -n $proxy && -f $ca_bundle ]]; then
+	proxy=${proxy#*://}
+	proxy=${proxy##*@}
+	proxy=${proxy%%/*}
+	svn_dir=$HOME/.subversion
+	ca_dir=$svn_dir/proxy-ca
+	rm -rf "$ca_dir"
+	mkdir -p "$ca_dir"
+	awk -v dir="$ca_dir" '
+		/-BEGIN CERTIFICATE-/ { f = sprintf("%s/%04d.pem", dir, ++n) }
+		f { print > f }
+		/-END CERTIFICATE-/ { close(f); f = "" }
+	' "$ca_bundle"
+	cat > "$svn_dir/servers" <<-SERVERS
+		[global]
+		http-proxy-host = ${proxy%:*}
+		http-proxy-port = ${proxy##*:}
+		http-proxy-exceptions = localhost, 127.0.0.1
+		ssl-authority-files = $(find "$ca_dir" -name '*.pem' | sort | paste -sd';' -)
+	SERVERS
+	if timeout 30 svn info --non-interactive https://meta.svn.wordpress.org/sites/trunk/ >/dev/null 2>&1; then
+		log "svn reaches meta.svn.wordpress.org"
+	else
+		log "svn cannot reach meta.svn.wordpress.org"
+	fi
+fi
+
 [[ -n $repo ]] || exit 0
 
 # ── Docker ──────────────────────────────────────────────────────────────────
@@ -79,7 +113,6 @@ wt="$HOME_DIR/$repo"
 # WP_CLI_ALLOW_ROOT is set, and Apache refuses to serve as root (APACHE_RUN_USER=#0) and exits,
 # so Apache falls back to the image's own www-data. wp-env puts /home/<user>/.composer/vendor/bin
 # on PATH and mounts that home, but root's own home is /root, so Composer's home moves there.
-ca_bundle=${SSL_CERT_FILE:-/etc/ssl/certs/ca-certificates.crt}
 wp_env_configs=$(find "$wt" -name '.wp-env*.json' -not -path '*/node_modules/*' 2>/dev/null)
 if [[ -n $wp_env_configs ]] && docker info >/dev/null 2>&1 && [[ -f $ca_bundle ]]; then
 	ctx=$(mktemp -d)

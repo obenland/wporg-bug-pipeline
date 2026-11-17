@@ -34,6 +34,9 @@ fi
 
 command -v jq >/dev/null || apt-get install -y -qq jq || warn "jq install failed"
 
+# Subversion: several repos require-dev packages straight from meta.svn.wordpress.org.
+command -v svn >/dev/null || apt-get install -y -qq subversion || warn "subversion install failed"
+
 # Playwright's Chromium and the libraries it needs, for bin/screenshot's before/after shots.
 npm install -g -s playwright@1.64.1 && playwright install --with-deps chromium >/dev/null || warn "Playwright Chromium install failed; PRs say screenshots could not be taken"
 
