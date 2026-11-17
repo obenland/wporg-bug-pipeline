@@ -1,0 +1,9 @@
+{
+  "repo": null,
+  "status": "skip",
+  "summary": "Active install counts for a group of themes don’t match real-world usage, and they distort the Popular themes list",
+  "path": "",
+  "reason": "out of scope",
+  "ticket_updated": "2026-11-17T08:10:11Z",
+  "updated": "2026-11-17T12:52:25Z"
+}
