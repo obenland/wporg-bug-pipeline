@@ -14,6 +14,7 @@ production.cloudflare.docker.com
 dl-cdn.alpinelinux.org
 deb.debian.org
 getcomposer.org
+wpackagist.org
 composer.github.io
 *.wordpress.org
 *.wordcamp.org
