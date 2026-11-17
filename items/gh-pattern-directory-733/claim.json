@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "pattern-directory",
   "pr": "https://github.com/WordPress/pattern-directory/pull/818",
   "risk": "needs-review",
@@ -8,5 +8,6 @@
     "amitdholiya"
   ],
   "props_verified": null,
-  "updated": "2026-11-17T04:45:40Z"
+  "updated": "2026-11-17T18:41:09Z",
+  "outcome": "merged"
 }
