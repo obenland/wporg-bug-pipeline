@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-developer",
-  "run": "cse_01YBAW4s4jRFtucK1NvFJuNh",
-  "updated": "2026-11-17T00:20:01Z"
+  "pr": "https://github.com/WordPress/wporg-developer/pull/618",
+  "risk": "needs-review",
+  "props": [
+    "gh:outdoor2kode"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-17T00:33:28Z"
 }
