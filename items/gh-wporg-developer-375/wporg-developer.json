@@ -1,5 +1,6 @@
 {
-  "status": "ready",
-  "reason": "composer.json pulls three packages from meta.svn, so setup fails without svn; a maintainer said svn should be listed, and the readme prerequisites still omit it.",
-  "updated": "2026-11-17T00:19:40Z"
+  "status": "skip",
+  "reason": "has an open PR",
+  "pr": "https://github.com/WordPress/wporg-developer/pull/618",
+  "updated": "2026-11-18T00:15:22Z"
 }
