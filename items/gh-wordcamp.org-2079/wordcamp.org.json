@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Sponsor invoices now CC the event email address in QBO.",
+  "evidence": "f7a209b (#2187) sets BillEmailCc to the event email in wordcamp-qbo.php, covered by tests/test-invoice-payload.php.",
+  "updated": "2026-11-18T07:30:34Z"
+}

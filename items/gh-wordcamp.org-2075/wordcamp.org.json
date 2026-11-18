@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The issue says scope and where the integration lives must be decided before implementation.",
+  "question": "Should Groups speaker and volunteer roles post WordPress.org profile activity, and does that integration live in wordcamp.org or in the WordPress.org profiles code?",
+  "updated": "2026-11-18T07:30:34Z"
+}

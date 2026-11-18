@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Pages and posts with a featured image now use it as og:image.",
+  "evidence": "Read-only check on 2026-11-18: philippines.wordcamp.org/2026 /volunteers/, /faq/ and two posts print their featured image as og:image; the front page has no featured image and uses a content image, not the logo.",
+  "updated": "2026-11-18T07:30:34Z"
+}
