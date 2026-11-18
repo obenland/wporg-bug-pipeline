@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Could not reproduce: /lessons/page/65/ no longer exists and no current lesson title or excerpt is long enough to stretch a row; the card grid deliberately uses equal-height rows (grid-auto-rows: 1fr), so one tall card sets every row height.",
+  "updated": "2026-11-18T08:32:34Z"
+}
