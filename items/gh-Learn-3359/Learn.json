@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The reporter found other quizzes update the grade on retake, pointing at this quiz's Sensei settings rather than code; reproducing needs a logged-in quiz attempt on production.",
+  "updated": "2026-11-18T08:32:40Z"
+}
