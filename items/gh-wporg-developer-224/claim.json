@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-developer",
-  "run": "cse_01YBAW4sH36H8hDQCK4LJARe",
-  "updated": "2026-11-18T00:35:47Z"
+  "pr": "https://github.com/WordPress/wporg-developer/pull/621",
+  "risk": "needs-review",
+  "props": [
+    "dufresnesteven"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-18T00:39:13Z"
 }
