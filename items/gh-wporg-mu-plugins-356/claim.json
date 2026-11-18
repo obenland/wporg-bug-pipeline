@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-mu-plugins",
-  "run": "cse_01YBAW4rxBGB8pb9qEewaad6",
-  "updated": "2026-11-18T22:19:33Z"
+  "pr": "https://github.com/WordPress/wporg-mu-plugins/pull/811",
+  "risk": "needs-review",
+  "props": [
+    "dufresnesteven"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-18T22:36:10Z"
 }
