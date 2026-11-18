@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The homepage list comes from the events feed (get_discussion_events) while the calendar renders meeting posts via the wporg-meeting-calendar block; the July 14, 2026 workshop is past, so the mismatch cannot be checked and likely reflects missing calendar data rather than code in this repo.",
+  "updated": "2026-11-18T08:32:36Z"
+}
