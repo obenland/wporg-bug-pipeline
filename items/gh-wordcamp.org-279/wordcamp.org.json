@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Add a tracks attribute with a track picker to the Live Schedule block (mu-plugins/blocks live-schedule), saved as data-tracks and used to filter getCurrentSessions(); empty keeps all tracks.",
+  "updated": "2026-11-18T07:30:47Z"
+}

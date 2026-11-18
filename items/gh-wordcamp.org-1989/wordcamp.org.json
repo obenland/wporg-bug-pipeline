@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The Notify segment template renders the Purchase date value as a bare text input; add a YYYY-MM-DD placeholder, helper text and the existing yy-mm-dd jQuery UI datepicker in class-camptix-admin-tools.php and admin.js SegmentView.",
+  "updated": "2026-11-18T07:30:47Z"
+}
