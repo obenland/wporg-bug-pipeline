@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Mixing languages is how the archive is built: wporg_query_prioritize_locale shows every lesson with the visitor's locale first, so a locale with no lessons (Gujarati) shows all languages in date order.",
+  "question": "When the visitor's locale has few or no lessons, should lesson archives show only the visitor's language plus English instead of every language?",
+  "updated": "2026-11-18T08:32:43Z"
+}
