@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The code block toolbar now has an 8px gap between the Copy and Expand code buttons, and a Training team member could not reproduce it.",
+  "evidence": "Commit 3446738 (Fixed source code button layout issue, #3070) added gap: 8px to .wp-block-buttons in the theme code block styles.",
+  "updated": "2026-11-18T08:32:42Z"
+}
