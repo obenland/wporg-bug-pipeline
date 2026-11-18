@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Reproducing needs a logged-in quiz attempt on production, which read-only checks cannot do, and the thread names no setting or code path; the quiz prerequisite logic is Sensei behavior or per-quiz configuration.",
+  "updated": "2026-11-18T08:32:38Z"
+}
