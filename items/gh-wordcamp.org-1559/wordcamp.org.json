@@ -1,0 +1,5 @@
+{
+  "status": "skip",
+  "reason": "A maintainer (dd32) prefers one issue per concrete automation, with its trigger and payload, over generic tracker webhooks.",
+  "updated": "2026-11-19T07:28:48Z"
+}
