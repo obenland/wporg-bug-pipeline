@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "pattern-directory",
   "pr": "https://github.com/WordPress/pattern-directory/pull/821",
   "risk": "needs-review",
@@ -9,5 +9,6 @@
     "joen"
   ],
   "props_verified": null,
-  "updated": "2026-11-18T04:47:52Z"
+  "updated": "2026-11-19T15:39:58Z",
+  "outcome": "merged"
 }
