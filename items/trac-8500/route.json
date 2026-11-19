@@ -1,9 +1,8 @@
 {
   "repo": null,
-  "status": "unknown",
+  "status": "skip",
   "summary": "Incorrect Tooltip Text Displayed on the Close Block (X) Icon",
-  "path": "",
-  "reason": "No \"Add Block\"/\"Close Block\" string in any checkout; the inserter toggle tooltip is most likely Gutenberg/core editor UI, and the ticket does not say which site or screen.",
-  "ticket_updated": "2026-11-13T11:20:45Z",
-  "updated": "2026-11-13T12:57:47Z"
+  "reason": "has an open PR",
+  "pr": "https://github.com/WordPress/gutenberg/pull/87056",
+  "updated": "2026-11-19T06:51:22Z"
 }
