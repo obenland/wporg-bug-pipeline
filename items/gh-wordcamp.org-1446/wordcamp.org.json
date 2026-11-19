@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The spec (a prefilled GitHub-issue button plus a tracker-link field on the application edit screen) depends on the Community-Team GitHub tracker workflow, whose value dd32 questioned in #1559, and the issue template/labels live in an external bookmarklet.",
+  "question": "Should central application edit screens link out to Community-Team GitHub issues, and if so with which title, body template, and labels?",
+  "updated": "2026-11-19T07:28:55Z"
+}
