@@ -1,5 +1,5 @@
 {
-  "status": "skip",
-  "reason": "out of scope",
-  "updated": "2026-11-18T07:30:34Z"
+  "status": "ready",
+  "reason": "Narrowed by obenland to the French half only: in camptix-visa-letters, when Canadian mode is on, render the gettext-wrapped letter body again under switch_to_locale(fr_CA) after the English half (render_letter_html / visa-letter-template.php), testable in tests/test-letter-template.php; French copy depends on fr_CA translations existing.",
+  "updated": "2026-11-19T07:29:03Z"
 }
