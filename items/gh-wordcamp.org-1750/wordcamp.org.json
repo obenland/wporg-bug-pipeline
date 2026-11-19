@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "In WordCamp_Budget_Tool::_get_default_budget() (wordcamp-payments/includes/budget-tool.php), use the note \"Community Sponsorships (Max $300 USD per campus x [# of Campuses])\" when the event_subtype is campusconnect; only affects budgets created after the change.",
+  "updated": "2026-11-19T07:29:05Z"
+}
