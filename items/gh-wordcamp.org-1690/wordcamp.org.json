@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Maintainers said event-local time is intentional and the schedule block already has a visitor-time setting; dd32 and ryelle like an accessible hover/focus tooltip with the visitor time, but where it applies is open.",
+  "question": "Should the visitor-local-time tooltip go on the schedule block only, or also on session pages (and free-text tables, which hold no machine-readable time)?",
+  "updated": "2026-11-19T07:28:52Z"
+}
