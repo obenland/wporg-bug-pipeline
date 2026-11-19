@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The sidebar-meta-list block still computes get_courses_average_grade() during the page request on a cold object cache (up to 30s), and the legacy course-data block in the plugin calls it uncached; store the average as course postmeta refreshed by a scheduled event and only read it on render, as dd32 proposed.",
+  "updated": "2026-11-19T08:30:28Z"
+}

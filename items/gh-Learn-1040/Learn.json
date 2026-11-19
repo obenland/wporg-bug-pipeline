@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "The warnings came from the old theme importing wporg/css/tools/_kube.scss.",
+  "evidence": "That theme was replaced by wporg-learn-2024; no SCSS in the repo references kube or $grid-columns any more, and a contributor confirmed in April 2025 the warnings no longer appear.",
+  "updated": "2026-11-19T08:30:28Z"
+}

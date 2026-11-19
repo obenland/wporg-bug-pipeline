@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "On the Polylang test site the course archive shows both the Polylang header switcher and the theme's course language filter, and the filter returns no courses.",
+  "question": "When Polylang drives the site language, should the course archive's own language filter be removed, or kept and made to work with Polylang?",
+  "updated": "2026-11-19T08:30:28Z"
+}

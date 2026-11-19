@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "The lesson editor padding came from a 2022 Learn theme customization.",
+  "evidence": "That theme was replaced by wporg-learn-2024, and BhargavBhandari90 could not reproduce the layout bug when editing lessons in March 2025.",
+  "updated": "2026-11-19T08:30:28Z"
+}

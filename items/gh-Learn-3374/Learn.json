@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The black-on-black module header text comes from Sensei styles on header.wp-block-sensei-lms-course-outline-module__header, as dd32 traced in the thread; it belongs in Automattic/sensei.",
+  "updated": "2026-11-19T08:30:28Z"
+}

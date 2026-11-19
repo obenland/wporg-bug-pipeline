@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The Learn home page Subscribe form is the Jetpack Subscriptions block (wp-block-jetpack-subscriptions), not code in this repo; server-side validation belongs in Automattic/jetpack.",
+  "updated": "2026-11-19T08:30:28Z"
+}

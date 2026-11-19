@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Could not reproduce: rjekic saved Audience and Experience Level fine, and the plugin grants Editors edit_lesson_plans (the assign_terms cap for both taxonomies) via set_post_type_caps; confirming the reporter's failure needs a production editor login.",
+  "updated": "2026-11-19T08:30:28Z"
+}
