@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "WordCamp budgets already offer the per-day link (budget-tool.php _get_real_value); Events (next-gen) budgets keep the Days field but budget-tool.js deliberately deletes the per-day option for them.",
+  "question": "Should Events (next-gen) budgets get the per-day link option back, which budget-tool.js currently removes on purpose?",
+  "updated": "2026-11-19T07:28:50Z"
+}
