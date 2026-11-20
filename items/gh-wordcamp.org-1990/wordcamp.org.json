@@ -1,5 +1,5 @@
 {
   "status": "ready",
   "reason": "render_html_emails() in camptix-tweaks always uses the WordPress logo; add an email banner attachment field to CampTix Setup and show it in html-mail-header.php, keeping the current header when unset.",
-  "updated": "2026-11-18T07:30:56Z"
+  "updated": "2026-11-20T07:47:22Z"
 }
