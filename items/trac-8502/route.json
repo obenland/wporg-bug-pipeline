@@ -1,9 +1,9 @@
 {
-  "repo": "wordpress.org",
-  "status": "routed",
+  "repo": null,
+  "status": "skip",
   "summary": "Trac notification emails use trac@localhost as Reply-To",
-  "path": "trac.wordpress.org/conf/notifications.ini",
-  "reason": "Shared Trac notification config lacks an explicit reply-to/smtp_replyto setting, so Trac default trac@localhost is used.",
-  "ticket_updated": "2026-11-14T00:00:00Z",
-  "updated": "2026-11-14T18:51:56Z"
+  "path": "",
+  "reason": "Ticket is closed (fixed in changeset 15658).",
+  "ticket_updated": "2026-11-19T21:39:54Z",
+  "updated": "2026-11-20T00:51:05Z"
 }
