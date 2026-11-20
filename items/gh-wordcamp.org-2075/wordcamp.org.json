@@ -1,6 +1,6 @@
 {
   "status": "needs-decision",
-  "reason": "The issue says scope and where the integration lives must be decided before implementation.",
-  "question": "Should Groups speaker and volunteer roles post WordPress.org profile activity, and does that integration live in wordcamp.org or in the WordPress.org profiles code?",
-  "updated": "2026-11-18T07:30:34Z"
+  "reason": "A detailed v1 plan is proposed on the issue, but it spans wordcamp.org and the Profiles activity handler and has not been signed off.",
+  "question": "Is the proposed v1 plan (speakers only, cron-reconciled activity POSTs to a new groups case in the Profiles handler) approved, and does the Profiles side land first?",
+  "updated": "2026-11-20T07:47:20Z"
 }
