@@ -1,0 +1,8 @@
+{
+  "repo": null,
+  "status": "skip",
+  "summary": "Photo Directory: Record moderation activity on WordPress.org profiles",
+  "reason": "has an open PR",
+  "pr": "https://github.com/WordPress/wordpress.org/pull/1343",
+  "updated": "2026-11-20T12:51:40Z"
+}
