@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wordcamp.org",
-  "run": "cse_01YBAW4tB2xqUSP1uMJmCyTx",
-  "updated": "2026-11-20T07:43:56Z"
+  "pr": "https://github.com/WordPress/wordcamp.org/pull/2411",
+  "risk": "needs-review",
+  "props": [
+    "raicem"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-20T08:05:45Z"
 }
