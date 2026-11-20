@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The overlap only appears after a Report Content Feedback submission with validation errors, which a read-only check cannot trigger; the theme CSS has no fix yet, PR #3065 (height: auto on the Jetpack button link) was closed unmerged, and a tester on that PR could no longer reproduce it.",
+  "updated": "2026-11-20T08:31:06Z"
+}

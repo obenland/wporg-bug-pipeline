@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Akismet already runs on the Learn forms; maintainers were split on whether a captcha would help or hinder legitimate submitters.",
+  "question": "Should the Learn feedback and application forms add an (invisible) captcha on top of Akismet, and if so which service?",
+  "updated": "2026-11-20T08:31:06Z"
+}

@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Maintainers endorsed a lesson meta row (published date, updated date, WordPress version x.x and newer, contributors) but left open what counts as an update and how credits are shown.",
+  "question": "Should the Updated date come from post_modified or only change when the lesson WordPress version is bumped, and should presenters be listed separately from contributors?",
+  "updated": "2026-11-20T08:31:06Z"
+}

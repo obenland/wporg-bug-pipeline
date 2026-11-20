@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Course enrollment failures are tied to specific production accounts and their Sensei enrollment records; the maintainer could not reproduce it, and a read-only logged-out check cannot reach lesson access, so no code path is identified.",
+  "updated": "2026-11-20T08:31:06Z"
+}
