@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "About 34 files hard-code WordCamp in shared strings that also show on non-WordCamp event sites; the fix is a wording sweep whose direction is unsettled.",
+  "question": "Should shared CampTix and event-site strings say a generic event (or the site name) instead of WordCamp on every site, or switch wording only on non-WordCamp event sites?",
+  "updated": "2026-11-20T07:47:29Z"
+}
