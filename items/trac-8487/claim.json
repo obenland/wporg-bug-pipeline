@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wordpress.org",
   "pr": "https://github.com/WordPress/wordpress.org/pull/1322",
   "risk": "needs-review",
@@ -7,5 +7,6 @@
     "jdembowski"
   ],
   "props_verified": true,
-  "updated": "2026-11-19T18:48:19Z"
+  "updated": "2026-11-20T00:39:53Z",
+  "outcome": "closed"
 }
