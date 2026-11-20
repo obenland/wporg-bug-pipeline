@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "pattern-directory",
-  "run": "cse_01YBAW4uPNeNA57WznboJHe2",
-  "updated": "2026-11-20T04:42:18Z"
+  "pr": "https://github.com/WordPress/pattern-directory/pull/824",
+  "risk": "needs-review",
+  "props": [
+    "zackkrida"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-20T04:54:33Z"
 }
