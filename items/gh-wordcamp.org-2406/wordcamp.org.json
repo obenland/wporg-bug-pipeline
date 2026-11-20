@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Context::selector() shows the series-ended notice whenever the viewed occurrence has ended; it now checks for a remaining scheduled date.",
+  "updated": "2026-11-20T08:05:47Z"
+}
