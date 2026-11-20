@@ -1,5 +1,5 @@
 {
   "status": "wrong-repo",
-  "reason": "The Contributions tab is part of WordPress.org profiles, not wordcamp.org; the issue says it is largely outside this repo.",
-  "updated": "2026-11-18T07:30:34Z"
+  "reason": "The Contributions timeline is rendered by WordPress.org Profiles (wporg_profiles_activity_category()), not wordcamp.org; the plan on the issue is Profiles-side only.",
+  "updated": "2026-11-20T07:47:18Z"
 }
