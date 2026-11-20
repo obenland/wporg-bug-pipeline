@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The footer pattern hardcodes the English Documentation and Support Forums URLs; wrapping them in translatable strings (esc_url( __( url ) )) lets each locale point to its own documentation site and forum, while Developer Resources has no localized version.",
+  "updated": "2026-11-20T08:31:12Z"
+}
