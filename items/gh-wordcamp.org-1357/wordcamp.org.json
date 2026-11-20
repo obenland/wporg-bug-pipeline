@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The Session Date & Time block edit.js offers only a fixed SelectControl of formats while the saved format attribute and wp_date() in controller.php accept any string; add a custom-format option like the core Post Date block (e.g. its DateFormatPicker).",
+  "updated": "2026-11-20T07:47:37Z"
+}
