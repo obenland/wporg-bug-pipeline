@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The issue asks which fields should stop being required for the extra attendees in a multi-ticket purchase; only first name, last name and email are optional today.",
+  "question": "Should every attendee question become optional for the additional tickets in a multi-ticket purchase, or only some (and which)?",
+  "updated": "2026-11-20T07:47:25Z"
+}
