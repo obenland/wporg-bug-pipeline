@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Only the camptix_max_tickets_per_order filter limits tickets per order today; the thread proposes a setting at several levels without settling on one.",
+  "question": "Where should the per-transaction ticket limit be set: per ticket type, per coupon/reservation, per event, or several of these?",
+  "updated": "2026-11-20T07:47:27Z"
+}
