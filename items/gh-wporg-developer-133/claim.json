@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wporg-developer",
   "pr": "https://github.com/WordPress/wporg-developer/pull/617",
   "risk": "needs-review",
@@ -8,5 +8,6 @@
     "gh:theMikeD"
   ],
   "props_verified": null,
-  "updated": "2026-11-16T00:22:38Z"
+  "updated": "2026-11-20T21:39:17Z",
+  "outcome": "merged"
 }
