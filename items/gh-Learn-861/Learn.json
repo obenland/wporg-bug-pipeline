@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "sanitize_meta_input() in bin/import-test-content.php wraps the REST meta object in array( $meta ), so no postmeta (video_url, language) is saved on import, leaving imported tutorials without their video embed and out of the locale-joined archive query; casting with (array) $meta fixes it.",
+  "updated": "2026-11-20T08:31:26Z"
+}
