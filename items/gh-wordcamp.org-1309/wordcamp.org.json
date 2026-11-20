@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The star-color bug in the thread targets older dashicon-font markup; favorite-sessions.css now styles the block schedule svg star (.wcb-favourite-session svg.dashicons-star-filled), and without a reproduction on a current schedule the rest of the item is open-ended design ideas.",
+  "updated": "2026-11-20T07:47:31Z"
+}
