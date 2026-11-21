@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Search works on translated locales; the empty result was missing translated content at the time, as a project contributor found in the thread.",
+  "evidence": "On 2026-11-21, a read-only GET of https://learn.wordpress.org/?s=playground&locale=fr_FR returns 5 results (109 in English), so search runs on fr_FR and results track the translated content available.",
+  "updated": "2026-11-21T08:30:29Z"
+}
