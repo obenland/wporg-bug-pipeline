@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Admin flags already show on Attendance UI cards via camptix-admin-flags; the ticket date is still missing, so add an optional \"Show ticket date\" setting that adds the attendee post_date to the extras in _make_object().",
+  "updated": "2026-11-21T07:30:04Z"
+}
