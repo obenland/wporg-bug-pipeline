@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Map of groups needs a source for marker coordinates, which groups do not store, and the issue leaves that open.",
+  "question": "Where should group marker positions come from: geocoding the city when the location is saved, coordinates from the Meetup import, or the group's recent/upcoming venues (and should online-only groups get a marker at all)?",
+  "updated": "2026-11-21T07:26:49Z"
+}
