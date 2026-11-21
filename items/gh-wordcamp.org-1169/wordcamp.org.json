@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The country filter is still alphabetical; pinning the visitor's country needs IP geolocation, and the thread also floated a searchable filter instead.",
+  "question": "Should the Country filter pin the visitor's geolocated country to the top, or is a searchable filter the preferred fix?",
+  "updated": "2026-11-21T07:29:46Z"
+}

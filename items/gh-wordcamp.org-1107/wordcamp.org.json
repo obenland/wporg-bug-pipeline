@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "CampTix has no attendee import tool (only Attendance Import, which marks attendance); the issue does not say which import path (likely WXR via the WordPress Importer) to block, so the change cannot be pinned down.",
+  "updated": "2026-11-21T07:29:46Z"
+}

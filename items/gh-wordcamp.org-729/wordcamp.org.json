@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The thread offers three approaches to avoid false profile activity on import and picks none.",
+  "question": "On speaker/organizer import, should the WordPress.org username be dropped, notifications be suppressed, or posts be imported as drafts?",
+  "updated": "2026-11-21T07:29:46Z"
+}

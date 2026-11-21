@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "A committer noted single fields on the meetup post would rewrite past reports when venue support changes.",
+  "question": "Should venue support be stored as fields on the meetup post, or as a separate dated log that reports read from?",
+  "updated": "2026-11-21T07:29:46Z"
+}

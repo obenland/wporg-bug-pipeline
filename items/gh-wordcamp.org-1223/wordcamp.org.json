@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "City landing pages still render their own incomplete list; the thread agreed on reusing the Upcoming Events page with filters, but there is no city filter to apply.",
+  "question": "Should city landing pages redirect to (or render) the Upcoming Events list with a filter, which needs a new city facet, and should they be linked or added to the sitemap?",
+  "updated": "2026-11-21T07:29:46Z"
+}

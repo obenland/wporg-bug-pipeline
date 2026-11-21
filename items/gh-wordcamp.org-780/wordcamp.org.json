@@ -1,0 +1,5 @@
+{
+  "status": "skip",
+  "reason": "A committer said the fix belongs in Core as a filter; it waits on https://core.trac.wordpress.org/ticket/58862.",
+  "updated": "2026-11-21T07:29:46Z"
+}

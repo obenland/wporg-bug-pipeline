@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Search still only matches event text, not country names; a committer later said the country filter makes this less important.",
+  "question": "Is matching country names in events search still wanted now that the Country filter exists, and if so via a geonames JOIN or a code-to-name map?",
+  "updated": "2026-11-21T07:29:46Z"
+}
