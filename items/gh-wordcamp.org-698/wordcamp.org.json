@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Schedule block appends the zone abbreviation as plain text in sessions.js; render it separately as a subtle link to a time-zone converter (converter URL format is a judgment call).",
+  "updated": "2026-11-21T07:29:58Z"
+}

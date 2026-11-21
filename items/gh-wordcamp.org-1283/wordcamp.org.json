@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Organizers block (controller.php, view.php, inspector-controls.js) has no option to show the linked WordPress.org username; add an off-by-default toggle that prints the _wcpt_user_id user linked to their profile (Speakers block has the same gap).",
+  "updated": "2026-11-21T07:29:58Z"
+}

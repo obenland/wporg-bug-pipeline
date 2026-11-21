@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Sessions List variation (variations/sessions-list) and the session REST query filter take no speaker; add a speaker query attribute and picker mapped to a _wcpt_speaker_id meta_query.",
+  "updated": "2026-11-21T07:29:58Z"
+}

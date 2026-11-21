@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "CampTix attendee screen has no way to invalidate a leaked edit link; add a nonce-protected admin button in metabox_attendee_submitdiv() that regenerates tix_edit_token (the order-wide tix_access_token is the judgment call).",
+  "updated": "2026-11-21T07:29:58Z"
+}

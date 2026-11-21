@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Committer specified a deputy-only flagship flag on wordcamp posts checked when creating Multi-Event Sponsor stubs (wordcamp-new-site.php) and sending the global sponsors reminder (wcor-mailer.php); the existing MES Flagships group may be the source of truth.",
+  "updated": "2026-11-21T07:29:58Z"
+}
