@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Of the listed problems only the columns bug is a defect, and it is unspecified: tix-columns-N sets fixed percentage widths, so fewer attendees than columns only leaves empty space; the rest are proposals (JS rendering, a block, flexbox).",
+  "updated": "2026-11-22T07:29:51Z"
+}
