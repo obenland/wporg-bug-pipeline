@@ -1,0 +1,5 @@
+{
+  "status": "skip",
+  "reason": "A maintainer (coreymckrill) noted per-load random order conflicts with WordCamp page caching and asked for the use case, which was never given.",
+  "updated": "2026-11-22T07:29:40Z"
+}
