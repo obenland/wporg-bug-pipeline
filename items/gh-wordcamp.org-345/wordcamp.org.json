@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "camptix-admin-flags only toggles flags one attendee at a time over AJAX; add per-flag enable/disable bulk actions on the tix_attendee list with a manage_attendees check (auto-flagging from search is left out).",
+  "updated": "2026-11-22T07:30:09Z"
+}
