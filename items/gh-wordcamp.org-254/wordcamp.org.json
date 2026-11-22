@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The Sponsors block (blocks/sponsors/view.php and controller.php) outputs no sponsor level; add each sponsor's level slugs to its item and the selected levels to the container in level mode (classes vs data attributes is a judgment call both maintainers accepted).",
+  "updated": "2026-11-22T07:30:04Z"
+}
