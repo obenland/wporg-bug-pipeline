@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The target look for the lesson-list Preview badge is only in a Figma image with no textual spec, and it overlaps the wording change in #2829.",
+  "updated": "2026-11-22T08:31:55Z"
+}
