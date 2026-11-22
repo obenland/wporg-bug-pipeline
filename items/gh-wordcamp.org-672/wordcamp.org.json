@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The Remote CSS help tab already links the Fonts tool (views/help-tips.php); the remaining ask is a line on the screen itself, which a maintainer only wanted as a conditional notice.",
+  "question": "Should the Remote CSS screen always show a line pointing to Appearance > Fonts, or only a notice when the cached CSS references a font service that is disabled?",
+  "updated": "2026-11-22T07:29:47Z"
+}
