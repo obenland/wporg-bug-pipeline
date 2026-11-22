@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "A maintainer invited a GitLab platform for Remote CSS; add platforms/gitlab.php modeled on github.php that trusts gitlab.com only and converts /-/blob/ URLs to raw/API URLs, and update the GitHub-only help text.",
+  "updated": "2026-11-22T07:30:11Z"
+}
