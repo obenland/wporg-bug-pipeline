@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "The Playground block and its header order styles live in WordPress/playground-tools, not this repo; tracked there as playground-tools#344.",
+  "updated": "2026-11-22T08:31:42Z"
+}
