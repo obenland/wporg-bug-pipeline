@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The Schedule block already lists sessions per day, and the thread never settled whether the Sessions block needs its own day filter.",
+  "question": "Is a day filter still wanted on the Sessions block now that the Schedule block shows sessions by day (and if so, should days follow the site timezone)?",
+  "updated": "2026-11-22T07:29:44Z"
+}
