@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The CampTix Notify tool's Purchase date segment field (class-camptix-admin-tools.php) is a bare text input passed to date_query/strtotime; add a placeholder showing the accepted format, e.g. YYYY-MM-DD.",
+  "updated": "2026-11-22T07:30:15Z"
+}
