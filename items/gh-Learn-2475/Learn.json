@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Blocked on WordPress/meeting-calendar#153, which must expose a featured image for workshop events before the cards can show one.",
+  "updated": "2026-11-22T08:32:01Z"
+}
