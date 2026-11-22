@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Maintainers disagree on removing the locale suggestion banner versus keeping it or adding a not-yet-translated notice.",
+  "question": "Should Learn keep showing the locale suggestion banner while most course content is untranslated, remove it, or change it to say content is not yet translated?",
+  "updated": "2026-11-22T08:31:48Z"
+}
