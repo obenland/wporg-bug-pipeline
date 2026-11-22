@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "jetpack-tweaks/sharing.php falls back to the site icon, header image, then a generic image and never uses the site logo; add the custom logo as the first fallback behind a wcorg_skip_feature() flag so existing sites keep their current image.",
+  "updated": "2026-11-22T07:30:13Z"
+}
