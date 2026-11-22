@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "_print.scss sets @page margin-top: 0 for every printed page; scope it to @page :first so later pages keep a top margin (the vague check-other-pages part stays open).",
+  "updated": "2026-11-22T08:32:11Z"
+}
