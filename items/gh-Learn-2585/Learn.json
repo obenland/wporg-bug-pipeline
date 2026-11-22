@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The proposal needs a rule for which content counts as old before anything can be noindexed.",
+  "question": "What age or relevancy threshold (or manual flag) should mark a Learn post noindex?",
+  "updated": "2026-11-22T08:31:50Z"
+}
