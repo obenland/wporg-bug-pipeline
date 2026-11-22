@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The PWA plugin now lets each site set its manifest short_name.",
+  "evidence": "pwa-wp registers a short_name option with a field in Settings > General (WP_Web_App_Manifest::SHORT_NAME_OPTION, from xwp/pwa-wp#210), so organizers can set e.g. \"WCEU 2019\" without a wordcamp.org filter.",
+  "updated": "2026-11-22T07:29:42Z"
+}
