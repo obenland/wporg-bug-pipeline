@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Still reproduces live (search for friendly with language it_IT returns the same 3 courses), but the agreed fix moves language from post meta to the indexed language taxonomy with a data migration, which is beyond a small change.",
+  "updated": "2026-11-22T08:31:46Z"
+}
