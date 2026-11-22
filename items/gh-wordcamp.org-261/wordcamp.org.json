@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Live Schedule components/schedule.js renders one row per track, so a session assigned to several tracks repeats; group now/next entries by session id and render each once with its track names.",
+  "updated": "2026-11-22T07:30:06Z"
+}
