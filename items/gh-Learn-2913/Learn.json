@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The home and courses pages now both serve the same default s.w.org og:image, so the inconsistency is gone; the Learn-specific image exists only in Figma and needs exporting and hosting before code can point at it.",
+  "updated": "2026-11-22T08:31:51Z"
+}
