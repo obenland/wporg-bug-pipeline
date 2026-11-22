@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "fav_session_share_form() still renders the email field as an unlabeled type=text input with only a placeholder; make it type=email and required, add a visible label, pre-fill it for logged-in users, and go full-width below about 400px (leaving the dialog and tab keyboard-accessibility rework for a follow-up).",
+  "updated": "2026-11-22T07:30:02Z"
+}
