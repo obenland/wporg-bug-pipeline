@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The session picker is a native select (views/form-select-sessions.php), whose option elements can only hold text, so separate containers for title, speaker and time need a custom listbox widget rather than a markup tweak.",
+  "updated": "2026-11-22T07:29:49Z"
+}
