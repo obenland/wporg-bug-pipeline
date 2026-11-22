@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The confirmation view is Jetpack Forms markup only visible after a POST submission, which cannot be checked read-only, and a contributor reported the success-message hook did not take effect; the notice styling also needs a design choice.",
+  "updated": "2026-11-22T08:31:53Z"
+}
