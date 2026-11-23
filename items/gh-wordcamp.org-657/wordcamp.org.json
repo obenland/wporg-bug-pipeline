@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "[camptix_attendees] calls get_avatar() in addons/shortcodes.php without a default, so it always uses the site-wide Discussion default; add a default-avatar attribute passed as get_avatar()'s default argument.",
+  "updated": "2026-11-23T07:29:18Z"
+}

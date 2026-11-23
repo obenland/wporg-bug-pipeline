@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The badge generator emits badges only for attendees (template-badges.php loop and generate_csv() in indesign-badges.php); append a page's worth of blank badges/CSV rows at the end, as the committer specified.",
+  "updated": "2026-11-23T07:29:18Z"
+}

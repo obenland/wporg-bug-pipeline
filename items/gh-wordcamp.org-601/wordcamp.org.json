@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Organizer Reminders has a 'WordCamp website created' trigger (wcor-mailer.php) but none for a city's first camp; add one that fires on wcor_wordcamp_site_created only when no other site shares the new site's city, as the committer specified.",
+  "updated": "2026-11-23T07:29:18Z"
+}

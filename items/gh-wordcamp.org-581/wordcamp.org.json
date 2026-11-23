@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The main scaling work landed in r4280; what remains is reintroducing batching past 500 sites, which is blocked on a production-only transient bug noted in get_wordcamp_sites() that cannot be reproduced here.",
+  "updated": "2026-11-23T07:29:18Z"
+}

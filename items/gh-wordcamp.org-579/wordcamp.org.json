@@ -1,0 +1,6 @@
+{
+  "status": "skip",
+  "reason": "Has a patch on the Trac ticket (1110.diff), which a committer found fatals and was never refreshed.",
+  "pr": "https://meta.trac.wordpress.org/attachment/ticket/1110/1110.diff",
+  "updated": "2026-11-23T07:29:18Z"
+}

@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "A maintainer objected to exposing attendee data more easily because of scraping; a later comment proposed admin-only access.",
+  "question": "Should a CampTix attendees REST endpoint exist at all, and if so, limited to site administrators (including private attendees) or public with private attendees excluded?",
+  "updated": "2026-11-23T07:29:18Z"
+}

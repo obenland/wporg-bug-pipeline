@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Committers want to add vetted font services rather than arbitrary URLs, for security, but never chose which.",
+  "question": "Which additional free font services (e.g. Font Squirrel, League of Movable Type, Bunny Fonts) should wc-fonts allow?",
+  "updated": "2026-11-23T07:29:18Z"
+}

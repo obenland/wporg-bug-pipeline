@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "No website/Twitter fields exist on Speakers yet, but a committer preferred pulling them from WordPress.org profiles over manual fields, which needs data the sites cannot reach, and Twitter is now X.",
+  "question": "Should Speakers get manual Website and social-profile fields, or pull links from the speaker's WordPress.org profile?",
+  "updated": "2026-11-23T07:29:18Z"
+}

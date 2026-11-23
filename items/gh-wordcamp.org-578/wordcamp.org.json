@@ -1,0 +1,6 @@
+{
+  "status": "skip",
+  "reason": "Has a committer-reviewed patch on the Trac ticket (1109.2.diff) awaiting review.",
+  "pr": "https://meta.trac.wordpress.org/attachment/ticket/1109/1109.2.diff",
+  "updated": "2026-11-23T07:29:18Z"
+}

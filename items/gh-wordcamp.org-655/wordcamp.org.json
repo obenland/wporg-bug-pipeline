@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Visa templates and the sponsorship agreement already pre-fill everything except Organizer Contacts, which attendee-visa.php and speaker-visa.php default to ''; pre-fill it from the WordCamp's 'E-mail Address' meta as the committer specified.",
+  "updated": "2026-11-23T07:29:18Z"
+}

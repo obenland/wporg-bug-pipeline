@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The item names only 'Static Front Page' as an example; the destination site's pages differ from the source's, so which settings to import is undefined.",
+  "question": "Which Customizer settings should the Site Cloner copy, and how should page-based settings like the static front page map to the destination site?",
+  "updated": "2026-11-23T07:29:18Z"
+}

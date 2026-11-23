@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The Site Cloner still loads mShots screenshots without priming them, but whether mShots still drops images after 21 days could not be confirmed without the production cloner, and the fix is a network cron making hundreds of outbound requests.",
+  "updated": "2026-11-23T07:29:18Z"
+}

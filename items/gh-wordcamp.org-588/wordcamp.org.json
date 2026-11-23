@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "A committer noted QBO's PrivateNotes is deputy-only and CustomerMemo is already full, and asked for community-team input on how notes would be used.",
+  "question": "Should invoice notes be visible to sponsors (and so go in the invoice email rather than the QBO PDF), or only to deputies via PrivateNotes?",
+  "updated": "2026-11-23T07:29:18Z"
+}

@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Committers disagreed on back-compat of the markup change and later suggested reusing the Sessions block instead; no approach was settled.",
+  "question": "Should speaker pages show richer session details by changing the wc-post-types markup (keeping the ul wrapper) or by rendering the Sessions block?",
+  "updated": "2026-11-23T07:29:18Z"
+}

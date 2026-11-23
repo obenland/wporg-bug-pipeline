@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The original bug was fixed in #1405; what remains is whether to keep the temporary logged-out edit bypass in require-login.php.",
+  "question": "Should the logged-out edit bypass for tickets bought without an account be removed now or made permanent (and if permanent, fix the blank name in show_buyer_attendee_status_instead_of_edit_link())?",
+  "updated": "2026-11-23T07:29:18Z"
+}
