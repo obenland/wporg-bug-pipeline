@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "Bulk-reject feedback (one comment per rejected string) lives in GlotPress/gp-translation-helpers and mention emails come from the private notifications system; wporg-gp-discussions is an unfinished caped-only stub whose submit handlers are empty.",
+  "updated": "2026-11-23T07:12:24Z"
+}
