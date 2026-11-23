@@ -1,0 +1,9 @@
+{
+  "repo": null,
+  "status": "unknown",
+  "summary": "Repeated wporg-match emails continue after unsubscribing",
+  "path": "",
+  "reason": "Searched all checkouts for \"wporg-match\", \"(match:\", \"Plugin Mentions\", \"on Translating\", wp_mail in wporg-gp-* plugins and GlotPress discussions/slack/events plugins; no code sends this mail, likely lives in private dotorg repo or mail infrastructure.",
+  "ticket_updated": "2026-11-23T00:00:00Z",
+  "updated": "2026-11-23T00:52:15Z"
+}
