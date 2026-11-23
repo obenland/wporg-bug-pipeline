@@ -1,5 +1,5 @@
 {
-  "status": "not-ready",
-  "reason": "The lock comes from Sensei LMS core (not in this repo) checking the lesson prerequisite set on the translated course; the theme and wporg-learn plugin only call Sensei_Lesson::is_prerequisite_complete(), so the likely cause is the Spanish lesson prerequisite settings (for example pointing at an untranslated lesson or a quiz that must be passed), which needs a check of the site data or a logged-in reproduction that cannot be done read-only.",
-  "updated": "2026-11-21T08:30:31Z"
+  "status": "skip",
+  "reason": "out of scope",
+  "updated": "2026-11-23T08:31:02Z"
 }

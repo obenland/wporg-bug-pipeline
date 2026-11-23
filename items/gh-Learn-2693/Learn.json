@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Bounded REST enhancement: the lessons endpoint ignores a course filter; add a `course` collection param (rest_lesson_collection_params) mapped to a `_lesson_course` meta_query (rest_lesson_query) in the wporg-learn plugin; parameter name is a judgment call.",
+  "updated": "2026-11-23T08:31:02Z"
+}
