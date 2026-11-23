@@ -1,9 +1,7 @@
 {
-  "repo": "wordpress.org",
+  "repo": "GlotPress/gp-translation-helpers",
   "status": "routed",
   "summary": "Repeated wporg-match emails continue after unsubscribing",
-  "path": "wordpress.org/public_html/wp-content/plugins/wporg-gp-discussions",
-  "reason": "Bulk-reject feedback modal (reject reasons) in wporg-gp-discussions creates one translation comment per string, each firing a mention email; fix is to avoid per-string comments or the feedback prompt in bulk rejects.",
-  "ticket_updated": "2026-11-23T00:52:54Z",
-  "updated": "2026-11-23T06:51:55Z"
+  "reason": "rerouted by wordpress.org worker: per-string feedback comments on bulk reject are created by gp-translation-helpers, not code in Meta",
+  "updated": "2026-11-23T07:12:26Z"
 }
