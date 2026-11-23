@@ -1,9 +1,9 @@
 {
-  "repo": null,
-  "status": "unknown",
+  "repo": "wordpress.org",
+  "status": "routed",
   "summary": "Repeated wporg-match emails continue after unsubscribing",
-  "path": "",
-  "reason": "Searched all checkouts for \"wporg-match\", \"(match:\", \"Plugin Mentions\", \"on Translating\", wp_mail in wporg-gp-* plugins and GlotPress discussions/slack/events plugins; no code sends this mail, likely lives in private dotorg repo or mail infrastructure.",
-  "ticket_updated": "2026-11-23T00:00:00Z",
-  "updated": "2026-11-23T00:52:15Z"
+  "path": "wordpress.org/public_html/wp-content/plugins/wporg-gp-discussions",
+  "reason": "Bulk-reject feedback modal (reject reasons) in wporg-gp-discussions creates one translation comment per string, each firing a mention email; fix is to avoid per-string comments or the feedback prompt in bulk rejects.",
+  "ticket_updated": "2026-11-23T00:52:54Z",
+  "updated": "2026-11-23T06:51:55Z"
 }
