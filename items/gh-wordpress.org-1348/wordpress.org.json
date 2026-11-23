@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "Security-key registration and default key names come from the WebAuthn provider used by WordPress/wporg-two-factor; this repo only allowlists the webauthn_* AJAX actions on buddypress.org and has no key-naming code.",
+  "updated": "2026-11-23T13:12:01Z"
+}
