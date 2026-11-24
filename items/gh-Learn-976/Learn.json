@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Lesson plan cards and single pages in wporg-learn-2024 output titles, excerpts and content without a lang attribute, though each post has a language meta; a render_block filter in inc/block-hooks.php can add it.",
+  "updated": "2026-11-24T08:30:58Z"
+}
