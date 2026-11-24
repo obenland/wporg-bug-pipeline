@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The replacement /wporg/v1/users endpoint is not in this repo and it is unclear it is loaded on WordCamp sites, while the local /wc-post-types/v1/validation route has since gained canonical-name lookup used by the username guard; removing it needs that endpoint confirmed on WordCamp sites first.",
+  "updated": "2026-11-24T07:30:17Z"
+}
