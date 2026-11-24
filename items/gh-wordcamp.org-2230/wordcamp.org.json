@@ -1,5 +1,5 @@
 {
   "status": "not-ready",
-  "reason": "GatherPress 0.37.0 is not released yet (milestone due 2026-11-27); the upgrade can only start from the stable tag.",
-  "updated": "2026-11-23T07:29:18Z"
+  "reason": "GatherPress 0.37.0 is not released yet (due 2026-11-27); the upgrade can only start from the stable tag.",
+  "updated": "2026-11-24T07:30:05Z"
 }
