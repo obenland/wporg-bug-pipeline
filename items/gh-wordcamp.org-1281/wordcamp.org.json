@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "The Central News page no longer shows an X posts section.",
+  "evidence": "A GET of https://central.wordcamp.org/news/ on 2026-11-24 shows posts with share buttons only, no embedded X posts.",
+  "updated": "2026-11-24T07:30:37Z"
+}
