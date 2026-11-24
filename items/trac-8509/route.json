@@ -1,9 +1,9 @@
 {
   "repo": "wordpress.org",
   "status": "routed",
-  "summary": "Repeated wporg-match emails continue after unsubscribing",
+  "summary": "Avoid duplicating one translation feedback comment for every string in \"rejected/changes requested\"",
   "path": "wordpress.org/public_html/wp-content/plugins/wporg-gp-discussions",
-  "reason": "Reject-with-feedback modal (reject_reason, one comment per string on bulk reject) lives in wporg-gp-discussions; bounded fix is to skip/aggregate feedback for bulk rejects.",
-  "ticket_updated": "2026-11-23T11:24:40Z",
-  "updated": "2026-11-23T12:51:41Z"
+  "reason": "Bulk reject with feedback creates one comment per string in the translation discussions add-on (JS + class-plugin.php).",
+  "ticket_updated": "2026-11-24T16:44:10Z",
+  "updated": "2026-11-24T18:52:10Z"
 }
