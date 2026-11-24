@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wporg-mu-plugins",
   "pr": "https://github.com/WordPress/wporg-mu-plugins/pull/808",
   "risk": "needs-review",
@@ -8,5 +8,6 @@
     "ryelle"
   ],
   "props_verified": null,
-  "updated": "2026-11-16T22:45:35Z"
+  "updated": "2026-11-24T21:39:05Z",
+  "outcome": "merged"
 }
