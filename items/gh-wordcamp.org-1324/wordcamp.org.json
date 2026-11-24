@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Two asks: an error message when a file cannot be attached, and letting super admins attach any media file despite the privacy restriction; the second is a permissions call and the first is not specified beyond the Slack thread.",
+  "question": "Should super admins (or admins) be allowed to attach any media-library file to a reimbursement request, bypassing the wordcamp-payments privacy restriction?",
+  "updated": "2026-11-24T07:30:33Z"
+}
