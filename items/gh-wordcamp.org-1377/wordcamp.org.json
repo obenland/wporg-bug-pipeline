@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The issue only speculates (cron vs. caching, slack_dm in cron) without a reproducible failure; the QBO connection monitor cannot be exercised without QuickBooks credentials.",
+  "updated": "2026-11-24T07:30:28Z"
+}
