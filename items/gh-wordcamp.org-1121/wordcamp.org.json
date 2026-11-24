@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The Estimated Gender Breakdown table in wordcamp-reports/views/html/wordcamp-counts.php hard-codes Female and Male column headers; changing them to Women and Men is a two-line wording fix.",
+  "updated": "2026-11-24T07:30:48Z"
+}
