@@ -1,6 +1,12 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-mu-plugins",
-  "run": "cse_01YBAW4sQurnC4U4GwawzMio",
-  "updated": "2026-11-24T22:26:21Z"
+  "pr": "https://github.com/WordPress/wporg-mu-plugins/pull/814",
+  "risk": "needs-review",
+  "props": [
+    "joyously",
+    "ryelle"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-24T22:39:22Z"
 }
