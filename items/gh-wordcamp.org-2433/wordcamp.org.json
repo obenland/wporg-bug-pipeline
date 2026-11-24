@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The existing [ticket_url] Notify shortcode already links each attendee to the Edit Ticket page that shows their check-in QR code; what remains is whether to add more.",
+  "question": "Is pointing organizers to [ticket_url] enough, or should Notify get a [checkin_url] alias and/or an embedded [qr_code] image (which would need a hosted image, since Notify mail is plain text by default and most mail clients drop inline SVG)?",
+  "updated": "2026-11-24T07:30:01Z"
+}
