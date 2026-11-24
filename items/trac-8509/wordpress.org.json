@@ -1,5 +1,5 @@
 {
   "status": "wrong-repo",
-  "reason": "Re-checked after new comments: the per-string feedback comments on bulk reject are created by GlotPress/gp-translation-helpers and the [wporg-match] keyword emails come from the private notifications system; wporg-gp-discussions in this repo is an unfinished stub not involved.",
-  "updated": "2026-11-23T13:11:50Z"
+  "reason": "Per-string feedback comments on bulk reject are created by the GlotPress/gp-translation-helpers plugin (not in this repo); wporg-gp-discussions here is a caped-only stub whose submit handlers are empty, so the router path is not where comments come from.",
+  "updated": "2026-11-24T19:11:43Z"
 }
