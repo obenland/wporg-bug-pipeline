@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "No setup step passes --prefer-dist manually any more, and Composer already prefers dist for stable packages.",
+  "evidence": "AGENTS.md, the package.json setup script, CI workflows and the composer post-install chain all run a plain composer install; only .docker/Dockerfile.phpunit still passes --prefer-dist, on a one-off composer require. Setting preferred-install to dist would only change the dev-branch VCS packages in composer-dev.json, which need source checkouts.",
+  "updated": "2026-11-24T07:30:52Z"
+}
