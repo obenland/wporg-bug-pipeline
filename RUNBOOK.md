@@ -12,9 +12,10 @@ Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below), the
 - **Never touch the dotorg sandbox, and only read production.** Nothing you run writes to a wordpress.org site. The reads allowed are Trac through `$P/bin/trac`, the public downloads the test environments fetch, and **read-only production checks**: plain `curl` GETs (or `$P/bin/screenshot`, which sends only GETs and no cookies) of public, unauthenticated pages on wordpress.org sites, to see whether a bug still reproduces and to capture "before" screenshots. Never authenticate, POST, or send cookies to a production site.
 - **Security issues stay out.** An item that describes a vulnerability, an exploit, private data, or an account takeover is recorded `skip` with reason "out of scope" and nothing else, so the public state never marks which tickets are security-sensitive. It is never fixed in public. Never write HackerOne report numbers anywhere.
 - **Public reasons, private reasons.** Security, content, and ops skips all record "out of scope" in the state, so none stands out. The specific reason (security, content, ops, feature, external) goes only in your final report, which only the routine's owner sees.
-- **Committer direction is binding.** If a committer, a maintainer, or the owning team said in the thread not to do it, said the behavior is intended, picked an approach, or said it belongs elsewhere, follow that: skip, use their approach, or record `wrong-repo`. On GitHub, `$P/bin/maintainer <repo> <login>` tells a maintainer from everyone else; on Trac, it is a Meta committer or the component's maintainer.
+- **Committer direction is binding.** If a committer, a maintainer, or the owning team said in the thread not to do it, said the behavior is intended, picked an approach, or said it belongs elsewhere, follow that: skip, use their approach, or record `wrong-repo`. On GitHub, `$P/bin/maintainer <repo> <login>` tells a maintainer from everyone else; on Trac, it is a Meta committer or the component's maintainer. In the cloud it can only see who merged recent PRs, so an exit of 1 (not a recent merger) or 2 (cannot tell) does not rule someone out: direction against a fix from a person who plainly speaks for the project in the thread still binds.
 - **Bias toward a PR.** A maintainer would rather rework a PR than get none. When a fix involves a judgment call, make the most conventional choice, keep it easy to change, and name it in one sentence in the PR description. That covers technical trade-offs (image sizes, `srcset`, cache lifetimes, limits, timeouts) and wording (labels, messages, help text, link text in code). Only a product decision stops it: whether something should exist, who may do what, or a policy question. Record that `needs-decision` with the one open question.
 - **American English** in code, comments, commits, and PR text. WordPress coding standards. Follow each repo's `.editorconfig`, `CLAUDE.md`, and `AGENTS.md`.
+- **Comments are one line.** An in-body comment only says what the code can't: a constraint, a non-obvious why, or a gotcha. It never restates the code. Keep it to one line wherever possible, and never stack `//` lines; if it truly needs more, use one short `/* */` block. Docblocks stay required, with a one-line summary; add more only when the summary can't carry it.
 - **Smallest fix that resolves the item.** No refactors, no features, no unrelated cleanups, no new test infrastructure.
 - Read `$P/LESSONS.md` before you start; it is what earlier runs learned.
 - **Long commands run in the foreground.** `cloud-setup`, test suites, builds, and wp-env take minutes: give them the Bash tool's 600000 ms timeout. If one still moves to the background, wait for it to finish; never end the run while a command is still running.
@@ -93,7 +94,8 @@ A backlog item also needs room under the repo's cap: fix no more backlog items t
    - Re-run step 5 after the last change.
 7. **Decide the risk tier.** Ask: could this change do something a revert cannot undo, or change what happens rather than what people see? Copy, docs, tests, and display fixes are `low`. Anything that touches sign-in, permissions, user data, email, payments, caching of shared data, or code many sites load is `needs-review`. A PR whose description names a judgment call is `needs-review`.
 8. **Push and open the PR.**
-   - First run `$P/bin/existing_pr.py <key>` once more. If it prints a PR or patch, someone got there first: do not push. Record the item's decision as `skip` with `"pr":"<url>"`, release the claim with `"status":"failed"`, and say so in the report.
+   - First run `$P/bin/existing_pr.py <key>` once more. If it prints `closed`, the item was closed while you worked: do not push. Record the decision as `skip` with reason "closed", release the claim with `"status":"failed"`, and say so in the report. If it prints a PR or patch, someone got there first: the same, with `"pr":"<url>"`. `open-pr` refuses in both cases too.
+   - Then read the comments posted since you triaged the item. If a maintainer changed direction, follow the committer-direction rule before pushing.
    - Push: `fork` repos (`wordpress.org`) push to `fork`; all others push to `origin`. Always `git push -u <remote> claude/<key>`.
    - Write the body to a file and run `$P/bin/open-pr $REPO claude/<key> "<title>" <file>`.
    - **The title says why.** In `wordpress.org` it becomes the first line of the SVN commit, and elsewhere it is what people read in the log.
@@ -149,7 +151,7 @@ If anything in step 3 fails and you cannot finish, put the claim back with `{"st
 
 ## 4. Learn
 
-If a review round, a failed check, or a dead end taught something a future run should know (a repo quirk, a test command, a recurring mistake), add one line to `$P/LESSONS.md` on a branch `claude/lesson-<key>` in the pipeline repo, push it, and open a PR there with `gh api -X POST repos/<owner>/wporg-bug-pipeline/pulls`. Never push lessons to trunk. Never put ticket text into a lesson.
+If a review round, a failed check, or a dead end taught something a future run should know (a repo quirk, a test command, a recurring mistake), add one line to `$P/LESSONS.md` on a branch `claude/lesson-<key>` cut from `origin/trunk` in the pipeline repo, push it, and open a PR there with `gh api -X POST repos/<owner>/wporg-bug-pipeline/pulls -f base=trunk`. The checkout has no `origin/HEAD`, so name `trunk` rather than looking it up. Never push lessons to trunk. Never put ticket text into a lesson.
 
 ## 5. Finish
 
@@ -168,5 +170,9 @@ If a review round, a failed check, or a dead end taught something a future run s
 ### Digest
 <the digest output, unchanged>
 ```
+
+## Later activity on your PR
+
+If this session is woken later by a review, comment, or check on a PR it opened, handle it as the shepherd would: follow `$P/SHEPHERD.md` steps 2 to 12 for that PR, with `since` as the `seen` in `$P/bin/state get items/<key>/shepherd.json` (or the PR's creation when there is none) and `until` as now. End each reply with the `<!-- wporg-bug-pipeline -->` marker, and record the pass with `$P/bin/shepherd-intake --mark`, so the shepherd does not handle the same activity again.
 
 The Skips section carries the real reasons the public state hides behind "out of scope".

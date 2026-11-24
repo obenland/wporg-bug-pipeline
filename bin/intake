@@ -4,9 +4,11 @@
 #
 # Sources: open GitHub issues on WordPress/<repo> filed after the pipeline started on it, and Meta
 # Trac tickets the router sent to <repo>, newest first. The first run records the start time as the baseline.
+# An issue filed in the last FRESH seconds waits for a later run, since its reporter is often still shaping it.
 # An item is left out when another run holds its claim, when someone is assigned to it, or when this
-# repo already decided on it and nothing changed on the item since. One that someone else already has
-# an open PR or patch for is recorded as skipped, and comes back if that PR closes unmerged.
+# repo already decided on it and nothing changed on the item since. Label, type, milestone, and project
+# edits are not changes. One that someone else already has an open PR or patch for is recorded as
+# skipped, and comes back if that PR closes unmerged.
 #
 # With the repo's `backlog` enabled in repos.json, the slots new items leave fill with open issues
 # filed before the baseline, most recently updated first. Their lines carry "backlog": <mode>. An
@@ -16,7 +18,8 @@
 # The run's limit is the backlog's batch, or 8 without one.
 #
 # --dry-run records nothing and prints what it would record to stderr.
-# Prints nothing when there is nothing to do; the run can stop there.
+# Prints nothing when there is nothing to do; the run can stop there. Exits 3 after printing when a
+# source could not be read, so an outage does not pass for an empty queue.
 #
 import json
 import os
@@ -33,6 +36,10 @@ CLAIM_TTL = 4 * 3600
 LIMIT = 8
 # A run fixes at most this many items (RUNBOOK step 3).
 FIXES = 2
+FRESH = 2 * 3600
+# Timeline events that change what an item asks for; labels, types, milestones, and projects do not.
+CHANGES = {'commented', 'renamed', 'reopened', 'assigned', 'unassigned', 'cross-referenced', 'blocked_by_added', 'blocked_by_removed'}
+unavailable = []
 
 
 def parse_ts(s):
@@ -71,7 +78,18 @@ def decided_since(key, repo, item_updated, fixable=True):
 		return False
 	if d.get('pr') and existing_pr.pr_state(d['pr']) == 'closed':
 		return False
-	return parse_ts(d['updated']) >= parse_ts(item_updated)
+	if parse_ts(d['updated']) >= parse_ts(item_updated):
+		return True
+	return key.startswith('gh-') and not changed_since(key, d['updated'])
+
+
+def changed_since(key, ts):
+	"""Whether GitHub issue <key> has a timeline event that changes it after ts; True when the timeline cannot be read."""
+	repo, n = key[3:].rsplit('-', 1)
+	events = existing_pr.gh_list(f'repos/WordPress/{repo}/issues/{n}/timeline')
+	if events is None:
+		return True
+	return any(e.get('event') in CHANGES and (e.get('updated_at') or e.get('created_at') or '') > ts for e in events)
 
 
 def issue(repo, i):
@@ -92,25 +110,26 @@ def github_issues(repo, since):
 	)
 	if out.returncode != 0:
 		print(f'intake: GitHub issues for {repo} unavailable: {out.stderr.strip()}', file=sys.stderr)
+		unavailable.append('issues')
 		return []
 	for i in json.loads(out.stdout):
 		if 'pull_request' in i or i.get('assignees') or i['created_at'] <= since:
+			continue
+		if (datetime.now(timezone.utc) - parse_ts(i['created_at'])).total_seconds() < FRESH:
 			continue
 		yield issue(repo, i)
 
 
 def backlog_issues(repo, since):
 	"""Open, unassigned issues filed up to the baseline, most recently updated first, each with its label names."""
-	out = subprocess.run(
-		['gh', 'api', '--paginate', f'repos/WordPress/{repo}/issues?state=open&sort=updated&direction=desc&per_page=100',
-			'--jq', '.[] | select((.pull_request | not) and (.assignees | length) == 0) | tojson'],
-		capture_output=True, text=True,
-	)
-	if out.returncode != 0:
-		print(f'intake: GitHub backlog for {repo} unavailable: {out.stderr.strip()}', file=sys.stderr)
+	issues = existing_pr.gh_list(f'repos/WordPress/{repo}/issues?state=open&sort=updated&direction=desc')
+	if issues is None:
+		print(f'intake: GitHub backlog for {repo} unavailable', file=sys.stderr)
+		unavailable.append('backlog')
 		return []
-	for line in out.stdout.splitlines():
-		i = json.loads(line)
+	for i in issues:
+		if 'pull_request' in i or i.get('assignees'):
+			continue
 		if i['created_at'] <= since:
 			yield issue(repo, i), {l['name'] for l in i.get('labels', [])}
 
@@ -143,7 +162,10 @@ def take(items, n, repo, writes):
 			break
 		other = existing_pr.for_key(item['key'])
 		if other:
-			writes.append((f"items/{item['key']}/{repo}.json", {'status': 'skip', 'reason': other[0], 'pr': other[1]}))
+			decision = {'status': 'skip', 'reason': other[0]}
+			if other[0] != 'closed':
+				decision['pr'] = other[1]
+			writes.append((f"items/{item['key']}/{repo}.json", decision))
 			continue
 		listed.append(item)
 	return listed
@@ -216,6 +238,8 @@ def main():
 			subprocess.run([os.path.join(BIN, 'state'), 'put-many'], input=lines, capture_output=True, text=True, check=True)
 	for item in listed:
 		print(json.dumps(item))
+	if unavailable:
+		sys.exit(3)
 
 
 main()

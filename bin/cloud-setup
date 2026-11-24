@@ -165,11 +165,18 @@ platform_args=()
 # downloads; a second attempt picks up what the first left behind.
 if [[ -f $wt/composer.json ]]; then
 	log "composer install in $repo"
+	composer_log=$(mktemp)
 	for attempt in 1 2; do
 		# Sessions run as root, where Composer skips plugins unless told otherwise, and the phpcs installer is one.
-		(cd "$wt" && COMPOSER_ALLOW_SUPERUSER=1 timeout 600 composer install -q --no-interaction --no-progress --prefer-install=source "${platform_args[@]+"${platform_args[@]}"}") && break
-		(( attempt == 2 )) && log "composer install failed twice in $repo"
+		(cd "$wt" && COMPOSER_ALLOW_SUPERUSER=1 timeout 600 composer install --no-interaction --no-progress --prefer-install=source "${platform_args[@]+"${platform_args[@]}"}") >"$composer_log" 2>&1 && break
+		(( attempt == 2 )) && { log "composer install failed twice in $repo:"; tail -n 20 "$composer_log" >&2; }
 	done
+	rm -f "$composer_log"
+	# An untracked lock from the install would trip the stop hook's uncommitted-files check.
+	exclude=$(git -C "$wt" rev-parse --path-format=absolute --git-path info/exclude)
+	if ! git -C "$wt" ls-files --error-unmatch composer.lock >/dev/null 2>&1 && ! grep -qxF composer.lock "$exclude" 2>/dev/null; then
+		mkdir -p "$(dirname "$exclude")" && echo composer.lock >>"$exclude"
+	fi
 fi
 for lock in "$wt/package-lock.json" "$wt/environments/package-lock.json"; do
 	[[ -f $lock ]] || continue

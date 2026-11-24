@@ -4,7 +4,8 @@
 #
 # Installs the push guard, then asks intake whether there is any work. With none, it records the
 # run and prints IDLE as its last line, so the session can end before reading a runbook or
-# installing dependencies. Otherwise it prints the candidates and WORK.
+# installing dependencies. Otherwise it prints the candidates and WORK. When intake could not read
+# a source and found nothing else, it prints ERROR and exits 1 without recording the run.
 #
 set -euo pipefail
 
@@ -20,7 +21,13 @@ if [[ $target == router ]]; then
 elif [[ $target == shepherd ]]; then
 	work=$("$BIN/shepherd-intake" --limit 4)
 else
-	work=$("$BIN/intake" "$target")
+	status=0
+	work=$("$BIN/intake" "$target") || status=$?
+	(( status == 0 || status == 3 )) || exit "$status"
+	if (( status == 3 )) && [[ -z $work ]]; then
+		echo "ERROR: intake could not read GitHub for $target (see above), so this run cannot tell whether there is work."
+		exit 1
+	fi
 fi
 
 if [[ -z $work ]]; then
