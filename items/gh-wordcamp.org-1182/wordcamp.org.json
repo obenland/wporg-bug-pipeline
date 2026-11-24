@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "The Contact Us Message textarea now renders with no leading or trailing whitespace.",
+  "evidence": "A GET of https://central.wordcamp.org/contact-us/ on 2026-11-24 shows the g3-message textarea, rendered by the current Jetpack form block, with empty content.",
+  "updated": "2026-11-24T07:30:39Z"
+}
