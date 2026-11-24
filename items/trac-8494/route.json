@@ -1,9 +1,9 @@
 {
   "repo": null,
   "status": "skip",
-  "summary": "Add the WordPress Credits site as a project on translate.wordpress.org",
+  "summary": "Add the WordPress Credits site (wordpresseducation.org) as a project on translate.wordpress.org",
   "path": "",
   "reason": "out of scope",
-  "ticket_updated": "2026-11-12T00:00:00Z",
-  "updated": "2026-11-15T06:53:02Z"
+  "ticket_updated": "2026-11-24T18:32:10Z",
+  "updated": "2026-11-24T18:52:14Z"
 }
