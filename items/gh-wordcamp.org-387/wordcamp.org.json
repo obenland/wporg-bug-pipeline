@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "phpcs.xml.dist still enforces Squiz.Commenting.InlineComment.InvalidEndChar; two maintainers agreed to drop it, and it fits next to the other Squiz.Commenting excludes in the WordPress-Docs rule.",
+  "updated": "2026-11-24T07:30:50Z"
+}
