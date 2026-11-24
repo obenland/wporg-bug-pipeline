@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 #
 # shepherd-intake [--limit N] — the pipeline's open PRs that need another pass, one JSON object per line.
-# shepherd-intake --mark <key> --seen <ts> [--pushed] [--props] — record that a pass handled a PR's activity up to <ts>.
+# shepherd-intake --mark <key> --seen <ts> [--pushed] [--props] [--item-closed] — record that a pass handled a PR's activity up to <ts>.
 #
 # A PR needs a pass when, since the last one: a person reviewed or commented, a bot left an inline
 # review comment, a check failed on a head no pass has tried, or it stopped merging cleanly against
 # a base no pass has tried, or Props Bot's Props line lacks someone the worker credited and no pass has
-# retried that yet. Bot summaries and the pipeline's own replies do not count. A merged or
+# retried that yet, or its issue or ticket was closed and no pass has reported that yet.
+# Bot summaries and the pipeline's own replies do not count. A merged or
 # closed PR moves its claim to done. A PR the pipeline pushed to MAX_PUSHES times is left to people.
 # Prints nothing when there is nothing to do.
 #
@@ -16,6 +17,8 @@ import re
 import subprocess
 import sys
 from datetime import datetime, timezone
+
+import existing_pr
 
 BIN = os.path.dirname(os.path.abspath(__file__))
 STATE_DIR = os.environ.get('WPORG_STATE_DIR', os.path.expanduser('~/.wporg-state'))
@@ -92,6 +95,8 @@ def check(key, claim):
 	bot = next((c for c in comments if c['user']['type'] == 'Bot' and PROPS_BOT in (c.get('body') or '')), None)
 	if bot and claim.get('props') and not rec.get('props_fixed') and props_missing(claim['props'], bot['body']):
 		reasons.append('props')
+	if not rec.get('item_closed') and existing_pr.item_closed(key):
+		reasons.append('item closed')
 	# Wait for CI to finish before a pass that only has feedback to go on; the next run picks it up.
 	if reasons == ['feedback'] and any(r['status'] != 'completed' for r in runs):
 		return None
@@ -109,7 +114,7 @@ def props_missing(names, body):
 	return any(not re.search(rf'(?<![\w.-]){re.escape(n.removeprefix("gh:").lower())}(?![\w-])', body.lower() if n.startswith('gh:') else line) for n in names)
 
 
-def mark(key, seen, pushed, props):
+def mark(key, seen, pushed, props, item_closed):
 	claim = read(f'items/{key}/claim.json') or {}
 	repo, n = PR_URL.match(claim.get('pr', '')).groups()
 	pr = gh(f'repos/WordPress/{repo}/pulls/{n}') or {}
@@ -118,13 +123,14 @@ def mark(key, seen, pushed, props):
 		'head': pr.get('head', {}).get('sha'), 'base': pr.get('base', {}).get('sha'), 'seen': seen,
 		'pushes': rec.get('pushes', 0) + (1 if pushed else 0),
 		'props_fixed': rec.get('props_fixed', False) or props,
+		'item_closed': rec.get('item_closed', False) or item_closed,
 	})
 
 
 def main():
 	args = sys.argv[1:]
 	if '--mark' in args:
-		mark(args[args.index('--mark') + 1], args[args.index('--seen') + 1], '--pushed' in args, '--props' in args)
+		mark(args[args.index('--mark') + 1], args[args.index('--seen') + 1], '--pushed' in args, '--props' in args, '--item-closed' in args)
 		return
 	limit = int(args[args.index('--limit') + 1]) if '--limit' in args else 4
 	started = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')

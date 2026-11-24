@@ -3,7 +3,8 @@
 # open-pr <repo> <branch> <title> <body-file> — open the PR for a pushed claude/* branch and print its URL.
 #
 # Uses REST: the cloud's GitHub proxy blocks GraphQL, so `gh pr create` does not work there.
-# A fork repo's PR comes from <fork_owner>:<branch>. Refuses when the branch already has an open PR.
+# A fork repo's PR comes from <fork_owner>:<branch>. Refuses when the branch already has an open PR,
+# and, for a claude/<key> branch, when the item was closed or someone else opened a PR for it meanwhile.
 #
 set -euo pipefail
 
@@ -22,6 +23,12 @@ head_owner=${head%%:*}; [[ $head == *:* ]] || head_owner=$owner
 
 existing=$(gh api "repos/$owner/$repo/pulls?state=open&head=$head_owner:$branch" --jq '.[0].html_url // empty')
 [[ -z $existing ]] || { echo "open-pr: already open: $existing" >&2; echo "$existing"; exit 0; }
+
+key=${branch#claude/}
+if [[ $key =~ ^(trac-[0-9]+|gh-.+-[0-9]+)$ ]] && found=$("$PIPELINE_DIR/bin/existing_pr.py" "$key"); then
+	echo "open-pr: not opening a PR for $key: $found" >&2
+	exit 1
+fi
 
 gh api -X POST "repos/$owner/$repo/pulls" \
 	-f title="$title" -f head="$head" -f base="$base" -F body=@"$body_file" -F maintainer_can_modify=true \

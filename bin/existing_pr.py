@@ -4,9 +4,10 @@
 #
 # Trac's linkedPullRequests lags behind GitHub (a PR can be open for hours before the ticket lists
 # it), so for a ticket this also searches the WordPress org's open PRs for a reference to it, and
-# reads PR links posted in the ticket's comments. A patch on the ticket counts too.
+# reads PR links posted in the ticket's comments. A patch on the ticket counts too, and so does the
+# item being closed, which can happen while a run is still working on it.
 # Prints "<reason>\t<url>" and exits 0 when it finds one; exits 1 otherwise. intake, router-intake,
-# and digest import it; they also count the pipeline's own open PRs with it.
+# open-pr, and digest import or run it; they also count the pipeline's own open PRs with it.
 #
 import json
 import os
@@ -26,6 +27,20 @@ def gh(path):
 	return json.loads(out.stdout)
 
 
+def gh_list(path):
+	"""Every page of a GitHub list endpoint; None when a page cannot be read."""
+	# Not --paginate: its next-page links use repositories/<id>/ paths, which the cloud proxy refuses.
+	items, page = [], 1
+	while True:
+		batch = gh(f"{path}{'&' if '?' in path else '?'}per_page=100&page={page}")
+		if batch is None:
+			return None
+		items += batch
+		if len(batch) < 100:
+			return items
+		page += 1
+
+
 def pr_state(url):
 	"""Return open, merged, or closed for a WordPress PR URL; None when it cannot tell."""
 	m = PR_URL.match(url or '')
@@ -42,17 +57,11 @@ def pipeline_prs(repo):
 	with open(os.path.join(os.path.dirname(BIN), 'repos.json')) as f:
 		conf = json.load(f)
 	owners = {conf['owner'], conf['fork_owner']}
-	out = subprocess.run(
-		['gh', 'api', '--paginate', f'repos/WordPress/{repo}/pulls?state=open&per_page=100',
-			'--jq', '.[] | [.head.ref, .head.repo.owner.login // ""] | @tsv'],
-		capture_output=True, text=True,
-	)
-	if out.returncode != 0:
-		print(f'existing_pr: open PRs on {repo}: {out.stderr.strip()}', file=sys.stderr)
+	prs = gh_list(f'repos/WordPress/{repo}/pulls?state=open')
+	if prs is None:
 		return None
 	# Contributors' own Claude Code branches are claude/* too; only the pipeline's push targets count.
-	heads = [line.split('\t') for line in out.stdout.splitlines()]
-	return sum(1 for ref, owner in heads if ref.startswith('claude/') and owner in owners)
+	return sum(1 for p in prs if p['head']['ref'].startswith('claude/') and ((p['head'].get('repo') or {}).get('owner') or {}).get('login') in owners)
 
 
 def for_ticket(n):
@@ -60,6 +69,8 @@ def for_ticket(n):
 	out = subprocess.run([os.path.join(BIN, 'trac'), 'getTicket', json.dumps({'id': n, 'commentLimit': 50})], capture_output=True, text=True)
 	if out.returncode == 0:
 		meta = json.loads(out.stdout)['metadata']
+		if meta['ticket'].get('status') == 'closed':
+			return ('closed', f'https://meta.trac.wordpress.org/ticket/{n}')
 		for pr in meta.get('linkedPullRequests', []):
 			if pr.get('state') == 'open':
 				return ('has an open PR', pr['url'])
@@ -85,12 +96,26 @@ def for_ticket(n):
 
 
 def for_issue(repo, n):
-	"""Return (reason, url) for an open PR that references issue n on WordPress/<repo>, or None."""
-	for e in gh(f'repos/WordPress/{repo}/issues/{n}/timeline?per_page=100') or []:
+	"""Return (reason, url) for issue n on WordPress/<repo> when it is closed or an open PR references it, or None."""
+	i = gh(f'repos/WordPress/{repo}/issues/{n}')
+	if i and i['state'] == 'closed':
+		return ('closed', i['html_url'])
+	for e in gh_list(f'repos/WordPress/{repo}/issues/{n}/timeline') or []:
 		src = (e.get('source') or {}).get('issue') or {}
 		if e.get('event') == 'cross-referenced' and src.get('pull_request') and src.get('state') == 'open':
 			return ('has an open PR', src['html_url'])
 	return None
+
+
+def item_closed(key):
+	"""Return the item's URL when its issue or ticket is closed, or None."""
+	if key.startswith('trac-'):
+		out = subprocess.run([os.path.join(BIN, 'trac'), 'getTicket', json.dumps({'id': int(key[5:]), 'commentLimit': 1})], capture_output=True, text=True)
+		closed = out.returncode == 0 and json.loads(out.stdout)['metadata']['ticket'].get('status') == 'closed'
+		return f'https://meta.trac.wordpress.org/ticket/{key[5:]}' if closed else None
+	repo, n = key[3:].rsplit('-', 1)
+	i = gh(f'repos/WordPress/{repo}/issues/{n}')
+	return i['html_url'] if i and i['state'] == 'closed' else None
 
 
 def for_key(key):

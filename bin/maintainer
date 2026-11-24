@@ -4,7 +4,36 @@
 # merge the PR anyway. Org membership is not enough: the WordPress org is far larger than the
 # people who maintain any one wporg repository.
 #
+# The cloud proxy blocks the collaborators API, so there it falls back to a listed maintainer for a
+# repo that merges outside GitHub (wordpress.org commits through SVN), and otherwise to who merged
+# the repo's recent PRs. Exits 1 when <login> is not a maintainer, and 2 when it cannot tell.
+#
 set -euo pipefail
 [[ $# == 2 ]] || { echo "Usage: maintainer <repo> <login>" >&2; exit 2; }
-perm=$(gh api "repos/WordPress/$1/collaborators/$2/permission" --jq .permission 2>/dev/null || echo none)
-[[ $perm == admin || $perm == maintain || $perm == write ]]
+repo=$1 login=$2
+
+if perm=$(gh api "repos/WordPress/$repo/collaborators/$login/permission" --jq .permission 2>/dev/null); then
+	[[ $perm == admin || $perm == maintain || $perm == write ]]
+	exit
+fi
+
+case $repo in
+	wordpress.org) listed=dd32 ;;
+	*) listed= ;;
+esac
+if [[ -n $listed ]]; then
+	tr ' ' '\n' <<<"$listed" | grep -qixF -- "$login" && exit 0
+	echo "maintainer: $login is not $repo's listed maintainer" >&2
+	exit 1
+fi
+
+mergers=""
+for page in {1..10}; do
+	events=$(gh api "repos/WordPress/$repo/issues/events?per_page=100&page=$page") || { echo "maintainer: could not read $repo's events" >&2; exit 2; }
+	mergers+=$(jq -r '.[] | select(.event == "merged") | .actor.login' <<<"$events")$'\n'
+	grep -qixF -- "$login" <<<"$mergers" && exit 0
+	[[ $(jq length <<<"$events") == 100 ]] || break
+done
+[[ -n ${mergers//$'\n'/} ]] || { echo "maintainer: no PRs merged on GitHub in $repo, so it cannot tell" >&2; exit 2; }
+echo "maintainer: $login merged none of $repo's recent PRs" >&2
+exit 1
