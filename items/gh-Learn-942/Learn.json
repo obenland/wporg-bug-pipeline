@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "The Topic and Audience tile grid on the lesson plans landing page no longer exists.",
+  "evidence": "wporg-learn-2024 patterns/archive-lesson-plan-content.php replaces the tiles with search and query filters (language, topic, level); the 2020 functions.php ordering logic is gone with the old theme.",
+  "updated": "2026-11-24T08:30:56Z"
+}
