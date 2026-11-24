@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "trusted_deputy_has_cap() still replaces $allcaps with the administrator role caps, so caps granted to admins dynamically (administrator, install_languages, resume_plugins, resume_themes) are missing for Program Managers.",
+  "question": "Should Program Managers also receive the capabilities WordPress grants administrators dynamically (install_languages, resume_plugins, resume_themes), or is the narrower set intended?",
+  "updated": "2026-11-24T07:30:20Z"
+}
