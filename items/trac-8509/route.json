@@ -1,9 +1,8 @@
 {
-  "repo": "wordpress.org",
-  "status": "routed",
+  "repo": null,
+  "status": "wrong-repo",
   "summary": "Avoid duplicating one translation feedback comment for every string in \"rejected/changes requested\"",
-  "path": "wordpress.org/public_html/wp-content/plugins/wporg-gp-discussions",
-  "reason": "Bulk reject with feedback creates one comment per string in the translation discussions add-on (JS + class-plugin.php).",
+  "reason": "rerouted by wordpress.org worker: bulk reject feedback comments are created in GlotPress/gp-translation-helpers, which no pipeline worker covers; wporg-gp-discussions is an inactive stub.",
   "ticket_updated": "2026-11-24T16:44:10Z",
-  "updated": "2026-11-24T18:52:10Z"
+  "updated": "2026-11-24T19:11:46Z"
 }
