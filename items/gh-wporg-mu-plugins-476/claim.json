@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wporg-mu-plugins",
   "pr": "https://github.com/WordPress/wporg-mu-plugins/pull/810",
   "risk": "needs-review",
@@ -7,5 +7,6 @@
     "iandunn"
   ],
   "props_verified": null,
-  "updated": "2026-11-17T22:42:58Z"
+  "updated": "2026-11-24T21:38:59Z",
+  "outcome": "merged"
 }
