@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "The reported menu layout was in the wporg-learn-2020 theme, which has been removed from the repo.",
+  "evidence": "wp-content/themes/pub now holds only wporg-learn-2024, which uses the shared global header and has no separate Learn search form in the menu.",
+  "updated": "2026-11-24T08:30:54Z"
+}
