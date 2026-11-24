@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "A maintainer suspects a Meetup API auth problem; reproducing the zero non-unique member counts needs Meetup API credentials, which are not available here.",
+  "updated": "2026-11-24T07:30:30Z"
+}
