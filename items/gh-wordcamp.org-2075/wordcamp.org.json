@@ -1,6 +1,6 @@
 {
-  "status": "needs-decision",
-  "reason": "A detailed v1 plan is proposed on the issue, but it spans wordcamp.org and the Profiles activity handler and has not been signed off.",
-  "question": "Is the proposed v1 plan (speakers only, cron-reconciled activity POSTs to a new groups case in the Profiles handler) approved, and does the Profiles side land first?",
-  "updated": "2026-11-20T07:47:20Z"
+  "status": "skip",
+  "reason": "has an open PR",
+  "pr": "https://github.com/WordPress/wordcamp.org/pull/2425",
+  "updated": "2026-11-25T07:26:10Z"
 }
