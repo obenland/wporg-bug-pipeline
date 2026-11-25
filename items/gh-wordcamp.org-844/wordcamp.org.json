@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Rendered the live central.wordcamp.org homepage with the live CSS at 305-785px and nothing overflowed; style.css already makes the mailing-list form 100% wide under 400px, and the screenshot host is unreachable, so the reporter needs to restate the defect.",
+  "updated": "2026-11-25T07:32:21Z"
+}
