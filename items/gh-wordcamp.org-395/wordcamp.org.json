@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The QBO customer payload is JSON-encoded (non-ASCII escapes are valid), so the 2020 Lexical error may come from the DisplayName query instead; confirming needs a QBO sandbox test with a Cyrillic or Thai company name, which cannot run here.",
+  "updated": "2026-11-25T07:32:08Z"
+}
