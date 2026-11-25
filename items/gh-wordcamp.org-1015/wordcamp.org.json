@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The @media print rules in wc-post-types/css/favorite-sessions.css hide every schedule session that is not a favorite, so a schedule with no favorites prints only the times; scope the hide to schedules that have a favorite.",
+  "updated": "2026-11-25T07:31:50Z"
+}
