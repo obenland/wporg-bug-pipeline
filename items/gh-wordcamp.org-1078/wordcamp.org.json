@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "get_city_landing_sites() in wporg-events-2023/inc/city-landing-pages.php builds the REGEXP ^/city/\\d{4}/title/, so suffixed sites like /rome/2024/training-2/ never match despite the docblock saying they should; make the -N suffix optional.",
+  "updated": "2026-11-25T07:31:46Z"
+}
