@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The Speakers block front end trims content with get_trimmed_content() in mu-plugins/blocks/includes/content.php, which hard-codes an ellipsis and never applies excerpt_more, while the editor shows the REST excerpt with the theme's Continue reading link; append the filtered excerpt_more when the text is cut.",
+  "updated": "2026-11-25T07:32:04Z"
+}
