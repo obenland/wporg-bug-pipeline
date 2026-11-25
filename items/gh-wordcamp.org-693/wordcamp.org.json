@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "wc-post-types registers the Order Sponsor Levels page with edit_posts but saves through options.php, which requires manage_options, so Editors see the page and get a permissions error on save.",
+  "question": "Should Editors be able to reorder sponsor levels (filter option_page_capability_wcb_sponsor_options to edit_posts), or should the page be limited to Administrators (manage_options)?",
+  "updated": "2026-11-25T07:31:57Z"
+}
