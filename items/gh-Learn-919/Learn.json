@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "The spec targets the removed 2020 tutorial template; tutorials now redirect to lessons whose videos are not a server-rendered oEmbed iframe on the live page, so where to pass the at parameter needs re-scoping.",
+  "updated": "2026-11-25T08:31:38Z"
+}
