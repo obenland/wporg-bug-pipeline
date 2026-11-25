@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "CampTix get_segment() skips attendees with no answer before any operator runs, so no filter can match unanswered questions; add the is empty operator ryelle proposed to the question-field ops in class-camptix-admin-tools.php and handle it before that skip.",
+  "updated": "2026-11-25T07:32:03Z"
+}
