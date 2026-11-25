@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "The global Day Of template that bypassed Campsite's day-of widgets is gone.",
+  "evidence": "mu-plugins/theme-templates/ now holds only the offline template and block templates for organizer, session, speaker and sponsor posts; Campsite 2017's own templates/page-day-of.php with its day-of widget areas is what renders now.",
+  "updated": "2026-11-25T07:32:12Z"
+}
