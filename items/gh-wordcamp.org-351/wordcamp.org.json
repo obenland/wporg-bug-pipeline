@@ -1,0 +1,6 @@
+{
+  "status": "already-fixed",
+  "reason": "Embed markup is no longer stripped from the Speakers block list.",
+  "evidence": "get_all_the_content() in mu-plugins/blocks/includes/content.php now runs wp_kses_post() on the raw post_content before the_content filters, so embeds render after sanitizing (the approach agreed in #349).",
+  "updated": "2026-11-25T07:32:10Z"
+}
