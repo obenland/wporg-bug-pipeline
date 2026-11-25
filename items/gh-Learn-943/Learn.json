@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "The lesson plan landing page with Dashicon category icons is gone.",
+  "evidence": "The wporg-learn-2024 theme replaced wporg-learn-2020 and does not render the dashicon-class term meta anywhere; only the admin term field in the plugin remains.",
+  "updated": "2026-11-25T08:31:24Z"
+}
