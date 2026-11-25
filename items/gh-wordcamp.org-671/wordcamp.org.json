@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "wccsp-customizer.js builds the preview URL from protocol and hostname only, dropping the site path (e.g. /2019/), so opening the Coming Soon section manually previews a different site; pass home_url() to the script and use it.",
+  "updated": "2026-11-25T07:32:01Z"
+}
