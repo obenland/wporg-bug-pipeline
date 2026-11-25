@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The JPM wires export runs remove_accents() over the file but the ACH/NACHA export does no cleanup, and neither enforces the bank's allowed character set, so non-Latin names still break the files.",
+  "question": "Should non-bank characters be cleaned silently at export time or rejected with a notice when the request is saved, and what should happen to names in non-Latin scripts that cannot be transliterated?",
+  "updated": "2026-11-25T07:32:06Z"
+}
