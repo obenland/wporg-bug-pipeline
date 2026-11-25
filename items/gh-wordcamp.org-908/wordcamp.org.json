@@ -1,0 +1,6 @@
+{
+  "status": "skip",
+  "reason": "An open PR by dd32 records each camp's dates and uses them for the canonical redirect, replacing the hardcoded flagship date table.",
+  "pr": "https://github.com/WordPress/wordcamp.org/pull/1735",
+  "updated": "2026-11-25T07:31:52Z"
+}
