@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wordcamp.org",
-  "run": "cse_01YBAW4txVv8GD1q5YnM5JUR",
-  "updated": "2026-11-25T07:28:20Z"
+  "pr": "https://github.com/WordPress/wordcamp.org/pull/2447",
+  "risk": "needs-review",
+  "props": [
+    "mayankmajeji"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-25T07:41:57Z"
 }
