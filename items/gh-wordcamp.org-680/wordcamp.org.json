@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "submit_application() in wcpt-event/class-event-application.php creates a post whenever validation passes and the rate limit allows 3 per IP per hour, so double submits make duplicates; refuse an identical submission from the same user/IP within a few minutes, the backend check iandunn favored.",
+  "updated": "2026-11-25T07:31:59Z"
+}
