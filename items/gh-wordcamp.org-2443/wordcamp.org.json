@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The local navigation bar in groups-site pads only by edge-space (80px at wide screens), while the templates center content in a 1280px column, so at 1600px the breadcrumb starts 80px left of the content; inset the bar to the same column in custom.css.",
+  "updated": "2026-11-25T07:28:28Z"
+}
