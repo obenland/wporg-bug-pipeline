@@ -1,5 +1,5 @@
 {
   "status": "ready",
-  "reason": "WordPress post embeds (iframe.wp-embedded-content, width 600) have no max-width in wordcamp-central-2012/style.css, so they widen the page on narrow screens (616px wide at a 305px viewport on a 2022 news post); cap them at 100% next to the #content rule.",
-  "updated": "2026-11-25T07:32:24Z"
+  "reason": "WordPress post embeds (iframe.wp-embedded-content, width 600) have no max-width in wordcamp-central-2012/style.css, so they widen the page on narrow screens (616px wide at a 305px viewport on a 2022 news post); cap them at 100% next to the #content rule, and also check that the .blog/.archive #content 320px right margin is reset under 660px.",
+  "updated": "2026-11-25T07:33:28Z"
 }
