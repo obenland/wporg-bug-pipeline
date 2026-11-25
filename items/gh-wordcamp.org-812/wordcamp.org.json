@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Rendered the live central.wordcamp.org homepage at 320px and 360px with no horizontal overflow; the earlier overflow likely came from the post-embed iframe tracked in #807, and the homepage has no embeds now.",
+  "updated": "2026-11-25T07:32:22Z"
+}
