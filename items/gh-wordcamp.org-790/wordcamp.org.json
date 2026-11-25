@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "get_avatar_or_image() in wc-post-types/inc/utilities.php returns only the first speaker for a session, and the Avatar block uses it; the issue proposes two different solutions.",
+  "question": "On a session, should the Avatar block show every speaker's avatar, or should a query-loop variation loop over the session's speakers so each avatar sits next to that speaker's name?",
+  "updated": "2026-11-25T07:32:28Z"
+}
