@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "#tix-attendees li in camptix.css sets column widths but keeps the theme's li margin, so Twenty Twenty wraps the third column; reset the horizontal margin, scoped to Twenty Twenty as iandunn proposed in closed PR #715 to protect older sites' custom CSS.",
+  "updated": "2026-11-25T07:31:55Z"
+}
