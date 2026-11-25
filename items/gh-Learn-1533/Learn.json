@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Lesson videos are VideoPress embeds with no download URL in the page or post data the theme reads, so there is no source for the link without a VideoPress API lookup.",
+  "updated": "2026-11-25T08:31:39Z"
+}
