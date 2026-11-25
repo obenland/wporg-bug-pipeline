@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The Sponsors block controller runs the whole className through sanitize_html_class(), which strips the spaces between classes (the Speakers, Sessions and Organizers controllers do the same); sanitize each space-separated class on its own.",
+  "updated": "2026-11-25T07:32:26Z"
+}
