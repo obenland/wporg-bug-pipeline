@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Nothing in the repo hides the admin bar Edit item on mobile and core keeps #wp-admin-bar-edit visible below 782px; the report names no site, theme or device (only a Slack link), so it needs a concrete URL to reproduce.",
+  "updated": "2026-11-25T07:31:44Z"
+}
