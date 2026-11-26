@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "WCOR_Mailer::replace_placeholders() in wordcamp-organizer-reminders/wcor-mailer.php prepends twitter.com URLs to raw stored values that may already be full URLs or start with @ or #; strip those prefixes before building the links at display time.",
+  "updated": "2026-11-26T07:30:59Z"
+}
