@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "merged",
   "repo": "wordcamp.org",
   "pr": "https://github.com/WordPress/wordcamp.org/pull/2411",
   "risk": "needs-review",
@@ -7,5 +7,5 @@
     "raicem"
   ],
   "props_verified": null,
-  "updated": "2026-11-26T05:46:08Z"
+  "updated": "2026-11-26T10:10:53Z"
 }
