@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "AttendeeToggleView in camptix-attendance/addons/assets/attendance-ui.js only closes via its buttons; bind a document keydown on render that calls close() on Escape and unbind it in close().",
+  "updated": "2026-11-26T07:32:20Z"
+}
