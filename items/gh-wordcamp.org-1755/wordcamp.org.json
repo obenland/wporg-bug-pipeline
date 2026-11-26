@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The Meetup and WordCamp organizer application forms are rendered from wcpt/views/applications/{meetup,wordcamp}/shortcode-application.php; add the requested privacy note linking https://wordpress.org/about/privacy/ above each Submit Application button.",
+  "updated": "2026-11-26T07:31:01Z"
+}
