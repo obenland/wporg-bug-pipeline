@@ -1,7 +1,11 @@
 {
-  "status": "closed",
+  "status": "pr-open",
   "repo": "wordcamp.org",
   "pr": "https://github.com/WordPress/wordcamp.org/pull/2411",
-  "reason": "Issue #2408 closed as not planned.",
-  "updated": "2026-11-24T12:37:58Z"
+  "risk": "needs-review",
+  "props": [
+    "raicem"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-26T05:46:08Z"
 }
