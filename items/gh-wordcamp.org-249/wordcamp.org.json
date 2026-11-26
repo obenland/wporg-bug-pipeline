@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Source_Site_ID_Setting::update() in wordcamp-site-cloner writes the cloned CSS server-side, but the open Customizer keeps its stale custom_css setting, so a later save overwrites the clone; after save, push the new CSS into that setting (via customize_save_response) or reload the Customizer.",
+  "updated": "2026-11-26T07:32:11Z"
+}
