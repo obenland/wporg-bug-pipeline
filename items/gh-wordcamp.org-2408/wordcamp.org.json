@@ -1,6 +1,6 @@
 {
-  "status": "skip",
-  "reason": "Issue closed as not planned; PR #2411 closed unmerged.",
+  "status": "ready",
+  "reason": "The import already records joined_via=meetup_import; Message Groups lacked an audience for only those members. Reopened by the issue author: organizer messages skip imported members, whose emails are off.",
   "pr": "https://github.com/WordPress/wordcamp.org/pull/2411",
-  "updated": "2026-11-24T12:37:57Z"
+  "updated": "2026-11-26T05:46:06Z"
 }
