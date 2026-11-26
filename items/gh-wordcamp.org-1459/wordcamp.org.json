@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "Reject on a pending budget already sets it back to draft without notifying anyone, so the ask is really in-place editing by approvers during review.",
+  "question": "Should approvers (wcb_approve_budget) be able to edit a pending preliminary budget in place and then approve it, or is relabeling Reject as an Unlock button (back to draft) enough?",
+  "updated": "2026-11-26T07:29:03Z"
+}
