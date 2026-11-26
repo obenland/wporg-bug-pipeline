@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "WCP_Payments_Network_Dashboard::aggregate() in wordcamp-payments-network/includes/payment-requests-dashboard.php truncates the live index before refilling it blog by blog, so searches during the daily cron return nothing; fix by building into a shadow table and swapping it in with RENAME TABLE, or by upserting in place and deleting stale rows.",
+  "updated": "2026-11-26T07:29:15Z"
+}
