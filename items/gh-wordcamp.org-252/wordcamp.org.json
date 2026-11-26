@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "question_field_checkbox() in camptix/camptix.php forces $required to false for multi-value checkbox questions, so only the server validates them; mark the required group and have camptix.js keep required (or setCustomValidity) on its boxes until one is checked.",
+  "updated": "2026-11-26T07:32:09Z"
+}
