@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The .align-center rule in mu-plugins/blocks/source/components/image/edit.scss relies on text-align, which does nothing once Twenty Twenty makes img display:block; give the centered img auto side margins.",
+  "updated": "2026-11-26T07:32:13Z"
+}
