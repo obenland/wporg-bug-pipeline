@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "Retaking the final quiz/lesson resets the Sensei course to in-progress, so add_course_completed_activity() posts a new profile activity on each re-completion.",
+  "updated": "2026-11-26T08:36:03Z"
+}
