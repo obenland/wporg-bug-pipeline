@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "Learn",
-  "run": "cse_01YBAW4rsqKUMhWaXLQPx4Gh",
-  "updated": "2026-11-26T08:33:26Z"
+  "pr": "https://github.com/WordPress/Learn/pull/3773",
+  "risk": "needs-review",
+  "props": [
+    "krupajnanda"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-26T08:39:25Z"
 }
