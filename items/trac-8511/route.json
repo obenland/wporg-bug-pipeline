@@ -1,0 +1,9 @@
+{
+  "repo": "wordpress.org",
+  "status": "routed",
+  "summary": "Some users set to \"spectator\" can still post in the forums",
+  "path": "wordpress.org/public_html/wp-content/plugins/support-forums",
+  "reason": "bbPress spectator role handling lives in the support-forums plugin (inc/class-users.php, class-hooks.php, class-audit-log.php); the cause of a spectator still posting needs investigation there.",
+  "ticket_updated": "2026-11-26T00:00:00Z",
+  "updated": "2026-11-26T18:51:37Z"
+}
