@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "notify_requester_request_incomplete() in wordcamp-payments/includes/payment-request.php passes esc_html( $notes ) into a plain-text wp_mail() body, so apostrophes arrive as &#039;; drop the escaping, since notes are already tag-stripped with wp_kses() on save.",
+  "updated": "2026-11-26T07:30:55Z"
+}
