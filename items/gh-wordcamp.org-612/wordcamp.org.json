@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The absolutely positioned .tix-delete-segment-condition rule in camptix/admin.css sets no left offset, so the remove icon overlaps the Notify condition drop-downs in Firefox; add left: 0 as suggested in the thread.",
+  "updated": "2026-11-26T07:30:57Z"
+}
