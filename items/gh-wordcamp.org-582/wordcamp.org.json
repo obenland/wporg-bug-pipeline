@@ -1,0 +1,5 @@
+{
+  "status": "not-ready",
+  "reason": "Read wordcamp-site-cloner.js previewSite/setActiveSite, which still sets wcsc_source_site_id before redirecting on a theme change, but could not reproduce the confirm dialog without a live Customizer, and the Customizer has changed since the 2015 report.",
+  "updated": "2026-11-26T07:30:07Z"
+}
