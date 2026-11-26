@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "get_all_the_content() in mu-plugins/blocks/includes/content.php runs the_content for each nested item while the global $post stays the viewed page, so should_add_to_content() in wc-post-types.php appends the parent post extras to every item; swap the global $post around the filter call.",
+  "updated": "2026-11-26T07:32:14Z"
+}
