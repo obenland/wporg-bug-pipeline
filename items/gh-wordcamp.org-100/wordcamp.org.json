@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "The withSelect callbacks in the sessions, speakers, sponsors and organizers block edit.js files build a new entities object (and sessions a new mapped array) on every store change, defeating the shallow compare; return each getEntities() result as its own prop and memoize the derived data.",
+  "updated": "2026-11-26T07:32:16Z"
+}
