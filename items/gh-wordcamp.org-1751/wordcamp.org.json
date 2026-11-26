@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "A read-only REST endpoint gated by wordcamp_manage_mentors wrapping get_unmentored_camps()/get_mentors() in wcpt/mentors/dashboard.php is bounded, but adds a new external data-access path no maintainer has endorsed.",
+  "question": "Should mentor and camp assignment data be exposed through a REST endpoint an external Community Team cron reads with an Application Password?",
+  "updated": "2026-11-26T07:30:09Z"
+}
