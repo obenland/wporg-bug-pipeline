@@ -1,0 +1,5 @@
+{
+  "status": "ready",
+  "reason": "An empty sponsor state is stored as the Not Applicable placeholder to pass the required-field check, and wordcamp-qbo.php and the sponsor invoice template output it verbatim; map the placeholder to an empty string where the QuickBooks payload and invoice address are built.",
+  "updated": "2026-11-26T07:32:18Z"
+}
