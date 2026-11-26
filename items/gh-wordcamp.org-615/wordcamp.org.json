@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The favorite-sessions share UI in wc-post-types favorite-schedule-shortcode.php still uses an icon-only javascript: link and div tab links with no dialog semantics; the issue carries Needs Design.",
+  "question": "Is converting the trigger and tabs to real buttons with ARIA tab roles and an accessible name enough, or should a designed accessible dialog and new star color come first?",
+  "updated": "2026-11-26T07:30:05Z"
+}
