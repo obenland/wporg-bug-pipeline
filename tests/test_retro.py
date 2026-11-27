@@ -86,6 +86,8 @@ class RetroIntakeTest(unittest.TestCase):
 		self.ri.existing_pr.gh = lambda path: self.objects.get(path.split('?')[0], [])
 		self.maintainers = {}
 		self.ri.maintainer = lambda owner, repo, login: self.maintainers.get(login, False)
+		self.real_lessons_signal = self.ri.lessons_signal
+		self.ri.lessons_signal = lambda now: None
 
 	def tearDown(self):
 		self.state.cleanup()
@@ -238,6 +240,38 @@ class RetroIntakeTest(unittest.TestCase):
 		self.assertEqual([(s['signal'], s['url']) for s in self.signals()], [('closed-unmerged', url)])
 
 
+class LessonsSignalTest(unittest.TestCase):
+	def setUp(self):
+		self.state = StateRepo()
+		self.pipeline = tempfile.TemporaryDirectory()
+		subprocess.run(['git', 'init', '-q', '-b', 'trunk', self.pipeline.name], check=True)
+		with open(os.path.join(self.pipeline.name, 'LESSONS.md'), 'w') as f:
+			f.write('# Lessons\n\nIntro.\n\n- a: one\n- b: two\n')
+		git(self.pipeline.name, 'add', '-A')
+		git(self.pipeline.name, 'commit', '-q', '-m', 'lessons')
+		self.blob = git(self.pipeline.name, 'rev-parse', 'HEAD:LESSONS.md').strip()
+		self.ri = load('retro_intake_lessons', 'retro-intake')
+		self.ri.STATE_DIR, self.ri.ROOT = self.state.dir, self.pipeline.name
+		self.ri.OWNER, self.ri.REPO = 'owner', 'wporg-bug-pipeline'
+
+	def tearDown(self):
+		self.state.cleanup()
+		self.pipeline.cleanup()
+
+	def test_unreviewed_lessons_are_a_signal(self):
+		s = self.ri.lessons_signal(ts('2026-11-27T00:00:00Z'))
+		self.assertEqual((s['signal'], s['blob'], s['detail']), ('lessons-changed', self.blob, '2 lessons; never reviewed'))
+		self.assertEqual(s['url'], 'https://github.com/owner/wporg-bug-pipeline/blob/trunk/LESSONS.md')
+
+	def test_reviewed_lessons_are_not(self):
+		self.state.put('runs/retro.json', {'last_run': '2026-11-26T00:00:00Z', 'lessons': self.blob}, '2026-11-26T00:00:00Z')
+		self.assertIsNone(self.ri.lessons_signal(ts('2026-11-27T00:00:00Z')))
+
+	def test_new_lessons_after_a_review_are_a_signal(self):
+		self.state.put('runs/retro.json', {'lessons': '0' * 40}, '2026-11-26T00:00:00Z')
+		self.assertIn('changed since the last review', self.ri.lessons_signal(ts('2026-11-27T00:00:00Z'))['detail'])
+
+
 class RetroIntakeCliTest(unittest.TestCase):
 	def setUp(self):
 		self.state = StateRepo()
@@ -279,6 +313,17 @@ class RetroIntakeCliTest(unittest.TestCase):
 		self.assertEqual(out.returncode, 0, out.stderr)
 		self.assertIn('reads this window again', out.stdout)
 		self.assertEqual(self.last_run()['last_run'], '2026-11-20T00:00:00Z')
+
+	def test_done_records_reviewed_lessons_only_when_asked(self):
+		rec = {'last_run': '2026-11-20T00:00:00Z', 'lessons': 'old', 'pending': '2026-11-21T00:00:00Z', 'complete': True, 'pending_lessons': 'new'}
+		self.state.put('runs/retro.json', rec, '2026-11-21T00:00:00Z')
+		self.assertEqual(self.run_intake('--done').returncode, 0)
+		self.assertEqual(self.last_run()['lessons'], 'old')
+		self.state.put('runs/retro.json', {**rec, 'complete': False}, '2026-11-22T00:00:00Z')
+		self.assertEqual(self.run_intake('--done', '--lessons').returncode, 0)
+		got = self.last_run()
+		self.assertEqual((got['lessons'], got['last_run']), ('new', '2026-11-20T00:00:00Z'))
+		self.assertNotIn('pending_lessons', got)
 
 	def test_done_without_a_pending_window_fails(self):
 		self.state.put('runs/retro.json', {'last_run': '2026-11-20T00:00:00Z'}, '2026-11-21T00:00:00Z')

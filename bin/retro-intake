@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 #
 # retro-intake [--since <ts>] — how the pipeline's work fared since the last retro, one JSON object per signal.
-# retro-intake --done — the retro's last step: move the window past the signals preflight listed, if all were read.
+# retro-intake --done [--lessons] — the retro's last step: move the window past the signals preflight listed, if all
+#   were read, and with --lessons, record that it reviewed the LESSONS.md the lessons-changed signal named.
 #
 # Signals, each with a link:
 #   failed-claim     a claim released as failed (or closed) since <ts>, with its reason, from the claude/state history
@@ -13,6 +14,7 @@
 #   needs-person     an item a run reported under "Needs a person", from the saved reports, or an item closed
 #                    under an open PR, from the shepherd's record
 #   report-failed    a "Failed:" line in a saved run report that no failed-claim signal covers
+#   lessons-changed  LESSONS.md on trunk differs from the version a retro last reviewed (runs/retro.json's lessons)
 #
 # <ts> defaults to the end of the last finished retro (runs/retro.json's last_run), or 24 hours ago.
 # Read-only without --done, so a retro may run it again with an earlier --since to look further back.
@@ -311,6 +313,26 @@ def report_entries(text):
 			label = None
 
 
+def lessons_signal(now):
+	"""A lessons-changed signal when trunk's LESSONS.md is not the version a retro last reviewed, or None."""
+	blob = None
+	for ref in ('origin/trunk', 'HEAD'):
+		out = subprocess.run(['git', '-C', ROOT, 'rev-parse', '-q', '--verify', f'{ref}:LESSONS.md'], capture_output=True, text=True)
+		if out.returncode == 0:
+			blob = out.stdout.strip()
+			break
+	if not blob:
+		unavailable.append('LESSONS.md')
+		return None
+	reviewed = (read('runs/retro.json') or {}).get('lessons')
+	if blob == reviewed:
+		return None
+	text = subprocess.run(['git', '-C', ROOT, 'cat-file', 'blob', blob], capture_output=True, text=True).stdout
+	count = sum(1 for line in text.splitlines() if line.startswith('- '))
+	return {'signal': 'lessons-changed', 'when': iso(now), 'url': f'https://github.com/{OWNER}/{REPO}/blob/trunk/LESSONS.md',
+		'blob': blob, 'detail': f"{count} lessons; {'changed since the last review' if reviewed else 'never reviewed'}"}
+
+
 def collect(since, now):
 	"""Every signal after since, oldest first."""
 	versions = history(since - CLAIM_TTL)
@@ -330,16 +352,20 @@ def collect(since, now):
 	needs_urls = {s['url'] for s in reported if s['signal'] == 'needs-person'}
 	signals = [s for s in signals if not (s['signal'] == 'needs-person' and s['url'] in needs_urls)]
 	signals += [s for s in reported if s['signal'] != 'report-failed' or not any(k in s['detail'] for k in failed_keys)]
+	if (lessons := lessons_signal(now)):
+		signals.append(lessons)
 	return sorted(signals, key=lambda s: s['when'])
 
 
-def done():
-	"""Make the pending window end the last run when preflight read every source; drop it either way."""
+def done(lessons_reviewed):
+	"""Make the pending window end the last run when preflight read every source, and the pending LESSONS.md the reviewed one when asked."""
 	rec = read('runs/retro.json') or {}
 	if not rec.get('pending'):
 		sys.exit('retro-intake: no pending retro window; preflight retro records one on WORK')
 	last = rec['pending'] if rec.get('complete') else rec.get('last_run')
-	if subprocess.run([os.path.join(BIN, 'state'), 'put', 'runs/retro.json', json.dumps({'last_run': last} if last else {})]).returncode:
+	lessons = rec.get('pending_lessons') if lessons_reviewed and rec.get('pending_lessons') else rec.get('lessons')
+	out = {k: v for k, v in (('last_run', last), ('lessons', lessons)) if v}
+	if subprocess.run([os.path.join(BIN, 'state'), 'put', 'runs/retro.json', json.dumps(out)]).returncode:
 		sys.exit('retro-intake: could not record the window; the next retro reads it again')
 	if rec.get('complete'):
 		print(f'retro-intake: next window starts at {last}')
@@ -349,11 +375,11 @@ def done():
 
 def main():
 	args = sys.argv[1:]
-	usage = 'Usage: retro-intake [--since <ts>] | retro-intake --done'
+	usage = 'Usage: retro-intake [--since <ts>] | retro-intake --done [--lessons]'
 	now = datetime.now(timezone.utc)
 	subprocess.run([os.path.join(BIN, 'state'), 'ls', 'runs'], capture_output=True, check=True)
-	if args == ['--done']:
-		return done()
+	if args in (['--done'], ['--done', '--lessons']):
+		return done('--lessons' in args)
 	if args and (args[0] != '--since' or len(args) != 2):
 		sys.exit(usage)
 	if args:
