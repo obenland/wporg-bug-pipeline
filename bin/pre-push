@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# pre-push <remote> <url> — the push guard bin/cloud-setup copies into every checkout's .git/hooks.
+#
+# The pipeline only ever pushes claude/* branches, and never deletes one. A claude/retro-* branch goes
+# only to the pipeline repo and changes only the four files the retro may edit. In a retro session
+# (preflight retro leaves ~/.wporg-pipeline-retro), that and bin/state's claude/state are the only pushes allowed.
+#
+url=${2:-}
+retro_files='LESSONS.md|RUNBOOK.md|SHEPHERD.md|review-policy.md'
+refuse() { echo "pre-push: refusing to push $remote_ref: $*" >&2; exit 1; }
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+	[[ $remote_ref == refs/heads/claude/* ]] || refuse "only claude/* branches"
+	[[ $local_sha =~ ^0+$ ]] && refuse "deletions are not allowed"
+	if [[ -e $HOME/.wporg-pipeline-retro && $remote_ref != refs/heads/claude/retro-* && $remote_ref != refs/heads/claude/state ]]; then
+		refuse "a retro session pushes only claude/retro-* branches"
+	fi
+	pipeline=0; [[ $url =~ [/:]wporg-bug-pipeline(\.git)?/?$ ]] && pipeline=1
+	if [[ -e $HOME/.wporg-pipeline-retro && $remote_ref == refs/heads/claude/state ]]; then
+		(( pipeline )) || refuse "a retro session records state only on the pipeline repo, not $url"
+	fi
+	[[ $remote_ref == refs/heads/claude/retro-* ]] || continue
+	(( pipeline )) || refuse "claude/retro-* branches go only to the pipeline repo, not $url"
+	changed=$(git diff --name-only "origin/trunk...$local_sha") || refuse "cannot diff against origin/trunk"
+	other=$(grep -vxE "$retro_files" <<<"$changed")
+	[[ -z $other ]] || refuse "a retro changes only $retro_files, not: $(tr '\n' ' ' <<<"$other")"
+done
+exit 0

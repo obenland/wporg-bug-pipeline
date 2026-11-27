@@ -6,8 +6,9 @@
 # run and prints IDLE as its last line, so the session can end before reading a runbook or
 # installing dependencies. Otherwise it prints the candidates and WORK. When intake could not read
 # a source and found nothing else, it prints ERROR and exits 1 without recording the run.
-# The retro records its run on WORK too, since its window is the signals since the last one; it
-# passes --since to retro-intake.
+# The retro passes --since to retro-intake. Its window only advances once a run finishes: on WORK,
+# preflight records the window's end as pending, and RETRO.md's last step, retro-intake --done, makes it
+# the last run unless a source could not be read. A retro session also gets the retro-only push guard.
 #
 set -euo pipefail
 
@@ -30,7 +31,15 @@ elif [[ $target == retro ]]; then
 		echo "ERROR: retro-intake could not read a source (see above), so this run cannot tell whether there are signals."
 		exit 1
 	fi
-	"$BIN/state" put runs/retro.json "$(jq -n --arg ts "$now" '{last_run: $ts}')"
+	# The pre-push hook reads this: a retro session pushes only its claude/retro-* branch, to this repo.
+	touch "$HOME/.wporg-pipeline-retro"
+	if [[ -z $work ]]; then
+		"$BIN/state" put runs/retro.json "$(jq -n --arg ts "$now" '{last_run: $ts}')"
+	else
+		last=$("$BIN/state" get runs/retro.json | jq -r '.last_run // empty')
+		"$BIN/state" put runs/retro.json "$(jq -n --arg last "$last" --arg ts "$now" --argjson complete "$(( status == 0 ))" \
+			'{pending: $ts, complete: ($complete == 1)} + (if $last == "" then {} else {last_run: $last} end)')"
+	fi
 else
 	status=0
 	work=$("$BIN/intake" "$target") || status=$?

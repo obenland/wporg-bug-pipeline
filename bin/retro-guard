@@ -1,0 +1,140 @@
+#!/usr/bin/env python3
+#
+# retro-guard — a PreToolUse hook (.claude/settings.json) that holds a retro session to reading, plus its one PR.
+#
+# Inert unless preflight retro left ~/.wporg-pipeline-retro. Then it blocks, with exit 2:
+#   - every gh subcommand but `gh api`, and every `gh api` call that writes, except opening the retro PR on
+#     this repo from claude/retro-* into trunk, with its body read from BODY and no other file;
+#   - curl and wget with options that send data or pick a method;
+#   - git's hook bypasses (--no-verify, core.hooksPath) and edits to .git/ or the retro marker.
+# It reads the command's words, so it stops plain and nested calls (bash -c, $(...)), not a program that
+# talks to GitHub itself; the GitHub proxy and the pre-push guard stay the boundary.
+#
+import json
+import os
+import re
+import shlex
+import subprocess
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MARKER = os.path.expanduser('~/.wporg-pipeline-retro')
+BODY = '/home/user/retro-pr.md'
+SEPARATORS = {'&&', '||', ';', '|', '&', '|&', ';;', '(', ')', '\n'}
+GH_VALUE_FLAGS = {'-X', '--method', '-f', '--raw-field', '-F', '--field', '-H', '--header', '-q', '--jq', '-t', '--template',
+	'--input', '--hostname', '--cache', '-p', '--preview'}
+CURL_WRITES = re.compile(r'^(-X|--request|-d|--data.*|-F|--form.*|-T|--upload-file|--json|-K|--config)(=|$)|^-[A-Za-z]*[XdFTK]')
+WGET_WRITES = re.compile(r'^--(method|post-data|post-file|body-data|body-file)(=|$)')
+
+
+def pipeline_owner():
+	url = subprocess.run(['git', '-C', ROOT, 'remote', 'get-url', 'origin'], capture_output=True, text=True).stdout.strip()
+	return url.rstrip('/').removesuffix('.git').split('/')[-2].split(':')[-1]
+
+
+def words(command):
+	try:
+		lex = shlex.shlex(command, posix=True, punctuation_chars=True)
+		lex.whitespace_split = True
+		return list(lex)
+	except ValueError:
+		return command.split()
+
+
+def segments(command):
+	"""Each simple command's words, nested ones (bash -c, $(...), backticks) included."""
+	seg = []
+	for w in words(command):
+		if w in SEPARATORS:
+			if seg:
+				yield seg
+			seg = []
+			continue
+		seg.append(w)
+		for inner in re.findall(r'\$\((.*)\)|`([^`]*)`', w):
+			yield from segments(inner[0] or inner[1])
+		if ' ' in w and re.search(r'\b(gh|curl|wget|git)\b', w):
+			yield from segments(w)
+	if seg:
+		yield seg
+
+
+def gh_api(args):
+	"""(method, endpoint, fields, inputs) for `gh api` arguments."""
+	method, endpoint, fields, inputs = None, None, [], []
+	i = 0
+	while i < len(args):
+		a = args[i]
+		if a.startswith('--'):
+			flag, eq, inline = a.partition('=')
+			attached = bool(eq)
+		elif re.match(r'^-[A-Za-z].', a):
+			flag, inline, attached = a[:2], a[2:], True
+		else:
+			flag, inline, attached = a, '', False
+		if flag in GH_VALUE_FLAGS:
+			value = inline if attached else (args[i + 1] if i + 1 < len(args) else '')
+			i += 1 if attached else 2
+			if flag in ('-X', '--method'):
+				method = value.upper()
+			elif flag in ('-f', '--raw-field', '-F', '--field'):
+				fields.append(value)
+			elif flag == '--input':
+				inputs.append(value)
+			continue
+		if not a.startswith('-') and endpoint is None:
+			endpoint = a.lstrip('/')
+		i += 1
+	return method or ('POST' if fields or inputs else 'GET'), endpoint, fields, inputs
+
+
+def check_gh(seg, owner):
+	sub = next((w for w in seg[1:] if not w.startswith('-')), None)
+	if sub != 'api':
+		return f'a retro session uses only `gh api` reads, not `gh {sub}`'
+	method, endpoint, fields, inputs = gh_api(seg[seg.index('api') + 1:])
+	if method == 'GET':
+		return None
+	pairs = dict(f.partition('=')[::2] for f in fields)
+	if (method == 'POST' and endpoint == f'repos/{owner}/wporg-bug-pipeline/pulls' and not inputs
+			and set(pairs) <= {'title', 'head', 'base', 'body'} and pairs.get('base') == 'trunk'
+			and pairs.get('head', '').startswith('claude/retro-') and pairs.get('body') == f'@{BODY}'
+			and not any(v.startswith('@') for k, v in pairs.items() if k != 'body')):
+		return None
+	return (f'a retro session writes to GitHub only to open its PR: gh api -X POST repos/{owner}/wporg-bug-pipeline/pulls '
+		f'-f base=trunk -f head=claude/retro-<date> -f title=... -F body=@{BODY}')
+
+
+def check(command, owner):
+	for seg in segments(command):
+		prog = os.path.basename(seg[0])
+		if prog == 'gh' and (reason := check_gh(seg, owner)):
+			return reason
+		if prog == 'curl' and any(CURL_WRITES.match(w) for w in seg[1:]):
+			return 'a retro session sends no data with curl'
+		if prog == 'wget' and any(WGET_WRITES.match(w) for w in seg[1:]):
+			return 'a retro session sends no data with wget'
+		if prog == 'git' and any(w == '--no-verify' or 'hooksPath' in w for w in seg):
+			return 'a retro session never bypasses the push guard'
+	if re.search(r'\.git/hooks|\.wporg-pipeline-retro', command):
+		return 'a retro session leaves the push guard and its marker alone'
+	return None
+
+
+def main():
+	if not os.path.exists(MARKER):
+		return
+	event = json.load(sys.stdin)
+	tool, args = event.get('tool_name'), event.get('tool_input') or {}
+	if tool == 'Bash':
+		reason = check(args.get('command', ''), pipeline_owner())
+	else:
+		path = args.get('file_path') or args.get('notebook_path') or ''
+		reason = 'a retro session leaves .git/ and its marker alone' if re.search(r'(^|/)\.git(/|$)|\.wporg-pipeline-retro', path) else None
+	if reason:
+		print(f'retro-guard: {reason}.', file=sys.stderr)
+		sys.exit(2)
+
+
+if __name__ == '__main__':
+	main()

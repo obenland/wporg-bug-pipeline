@@ -2,7 +2,7 @@
 #
 # cloud-setup [<repo>] — per-session setup inside a Claude Code cloud VM, run first by every routine.
 #
-# - Guards every checkout with a pre-push hook that refuses any ref outside claude/*.
+# - Guards every checkout with bin/pre-push, which refuses any ref outside claude/* and limits the retro's pushes.
 # - For <repo>: starts dockerd (the environment's snapshot keeps files, not processes), adds the fork remote where the repo pushes to a fork, and installs dependencies.
 #
 # Safe to run more than once.
@@ -24,20 +24,8 @@ log() { echo "▸ $*" >&2; }
 # ── Push guard ──────────────────────────────────────────────────────────────
 for git_dir in "$HOME_DIR"/*/.git; do
 	[[ -d $git_dir ]] || continue
-	cat > "$git_dir/hooks/pre-push" <<'HOOK'
-#!/usr/bin/env bash
-# Installed by wporg-bug-pipeline: the pipeline only ever pushes claude/* branches.
-while read -r local_ref local_sha remote_ref remote_sha; do
-	if [[ $remote_ref != refs/heads/claude/* ]]; then
-		echo "pre-push: refusing to push $remote_ref; only claude/* branches." >&2
-		exit 1
-	fi
-	if [[ $local_sha =~ ^0+$ ]]; then
-		echo "pre-push: refusing to delete $remote_ref." >&2
-		exit 1
-	fi
-done
-HOOK
+	# A copy, not a link: a checkout's own files can change during a run, the installed guard cannot.
+	cp "$PIPELINE_DIR/bin/pre-push" "$git_dir/hooks/pre-push"
 	chmod +x "$git_dir/hooks/pre-push"
 done
 log "pre-push guard installed in $(ls -d "$HOME_DIR"/*/.git 2>/dev/null | wc -l | tr -d ' ') checkouts"

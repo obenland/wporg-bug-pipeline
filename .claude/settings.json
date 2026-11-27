@@ -1,0 +1,15 @@
+{
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Bash|Edit|Write|NotebookEdit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "f=/home/user/wporg-bug-pipeline/bin/retro-guard; [ -x \"$f\" ] || exit 0; exec \"$f\""
+					}
+				]
+			}
+		]
+	}
+}

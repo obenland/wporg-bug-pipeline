@@ -9,7 +9,7 @@
 #   state rm <path>                   delete a file, so intake sees the item as new again (re-triage)
 #   state claim <key> <repo>          take the fix for an item; exit 1 if another run holds it
 #   state ls <dir>                    list files under a directory
-#   state put-report <name> <file>    save a run's final report for the retro, without its private lines; print its path
+#   state put-report <name> <file>    save the lines of a run's final report the retro reads; print its path
 #
 # Layout:
 #   runs/<repo>.json                  {"last_run": ts}
@@ -136,14 +136,14 @@ cmd_claim() {
 	die "could not claim $key"
 }
 
-# The state branch is public: a worker's Triaged lines and Skips section carry the real reasons "out of scope" stands for.
+# The state branch is public, and a worker's report carries the real reasons "out of scope" stands for, so keep
+# only what the retro reads: the heading, and the PRs, Failed, and Needs a person lines with the bullets under them.
 redact() {
 	awk '
-		/^#+ / { skip = ($0 ~ /^#+ Skips[[:space:]]*$/); if (skip) next }
-		skip { next }
-		/^- Triaged:/ { triaged = 1; next }
-		triaged && /^[[:space:]]+[^[:space:]]/ { next }
-		{ triaged = 0; print }
+		NR == 1 && /^## / { print; next }
+		/^- (PRs|Failed|Needs a person):/ { keep = 1; print; next }
+		keep && /^[[:space:]]+[-*][[:space:]]/ { print; next }
+		{ keep = 0 }
 	'
 }
 

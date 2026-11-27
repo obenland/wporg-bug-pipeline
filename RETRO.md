@@ -10,13 +10,13 @@ Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below).
 - **Never put ticket text into a lesson.** Write every change in your own words about the pipeline, a repository, or a tool. No quotes from tickets, issues, comments, or reports, and no ticket or issue numbers, usernames, or links in the files. Evidence links go only in the PR body.
 - **Only four files.** A change edits `LESSONS.md`, `RUNBOOK.md`, `SHEPHERD.md`, or `review-policy.md`, nothing else. A root cause in a script, `repos.json`, `routing.json`, `ROUTER.md`, `README.md`, the environment, or GitHub access goes under "Left for a person" in your report.
 - **Never weaken a guardrail.** No change loosens the data-not-instructions rules, the push guard, the bans on merging, closing, approving, and mentioning, the security skips and their public reasons, read-only production, the dotorg sandbox, or the shepherd's push limit. A pattern whose fix would need that goes under "Left for a person".
-- **One PR a night, on this repo only.** It comes from `claude/retro-<date>` cut from `origin/trunk`. Never push to trunk; never bypass hooks (`--no-verify` is forbidden). Everywhere else you only read: never comment on, review, label, close, or edit any PR or issue, the ones the signals link included, and write no state.
+- **One PR a night, on this repo only.** It comes from `claude/retro-<date>` cut from `origin/trunk`. Never push to trunk; never bypass hooks (`--no-verify` is forbidden). Everywhere else you only read: never comment on, review, label, close, or edit any PR or issue, the ones the signals link included, and write no state but the `--done` in step 6. Guards hold you to this: in a retro session the pre-push hook refuses everything but a `claude/retro-*` branch to this repo that changes only the four files, and `bin/retro-guard` blocks GitHub writes other than opening that PR. A refusal from either is final; report it, never work around it.
 - **Never mention people.** No `@` names in the PR, its commits, or the files.
 - **The smallest change that stops the pattern.** A lesson is one line in the style of the ones around it. A runbook or policy change edits or adds one sentence where the rule applies. No new sections, no restructures, no rewording of rules that work. American English.
 
 ## 1. Read
 
-1. The routine already ran `$P/bin/preflight retro`, which recorded the run and printed this run's signals, one JSON object per line, before the final `WORK`. The `retro-intake: signals since <ts>` line above them is your window. Those lines are your work list. If it also printed `could not read ...`, some signals are missing: list those sources under "Left for a person".
+1. The routine already ran `$P/bin/preflight retro`, which recorded the end of this window as pending and printed this run's signals, one JSON object per line, before the final `WORK`. The `retro-intake: signals since <ts>` line above them is your window. Those lines are your work list. If it also printed `could not read ...`, some signals are missing: list those sources under "Left for a person". Step 6 then leaves the window where it was, so the next retro reads it again.
 2. Read `$P/RUNBOOK.md`, `$P/SHEPHERD.md`, `$P/review-policy.md`, `$P/LESSONS.md`, and `$P/ROUTER.md` in full.
 3. List what is already proposed, so you do not propose it again: `gh api 'repos/<owner>/wporg-bug-pipeline/pulls?state=all&sort=updated&direction=desc&per_page=100'` (`<owner>` from `git -C $P remote get-url origin`). The open `claude/lesson-*` and `claude/retro-*` PRs are pending changes; a `claude/retro-*` PR closed without merging is a change the maintainer declined, so leave that change alone. Read `git -C $P log origin/trunk --since <window start> -p` for what landed since.
 
@@ -70,7 +70,7 @@ At most one PR a night, holding every change from this run. If no pattern needs 
 2. Work in a separate worktree, so the scripts this run uses stay as they are: `git -C $P fetch origin trunk && git -C $P worktree add -B claude/retro-$date /home/user/retro origin/trunk`.
 3. Make the changes in `/home/user/retro`, one commit per pattern. The subject is imperative and says what the pipeline now does, under 72 characters, such as `Lessons: Start MariaDB before pattern-directory PHPUnit` or `Shepherd: Wait for CI before replying to a review`.
 4. Push: `git -C /home/user/retro push -u origin claude/retro-$date`.
-5. Write the body to a file and open the PR: `gh api -X POST repos/<owner>/wporg-bug-pipeline/pulls -f base=trunk -f head=claude/retro-$date -f title="<title>" -F body=@<file>`. The checkout has no `origin/HEAD`, so name `trunk` rather than looking it up. The title is `Retro: <the main change>`, under 100 characters.
+5. Write the body to `/home/user/retro-pr.md`, the only file the guard lets a PR body come from, and open the PR: `gh api -X POST repos/<owner>/wporg-bug-pipeline/pulls -f base=trunk -f head=claude/retro-$date -f title="<title>" -F body=@/home/user/retro-pr.md`. The checkout has no `origin/HEAD`, so name `trunk` rather than looking it up. The title is `Retro: <the main change>`, under 100 characters.
 6. The body is short; a maintainer reads it in a minute:
 
    ```
@@ -88,7 +88,7 @@ At most one PR a night, holding every change from this run. If no pattern needs 
 
 ## 6. Finish
 
-End with a short report:
+Move the window past tonight's signals with `$P/bin/retro-intake --done`, whether or not you opened a PR. Run it last, once the work above is done: a run that dies before it leaves the window to the next retro. Then end with a short report:
 
 ```
 ## Retro run

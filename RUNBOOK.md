@@ -171,7 +171,7 @@ If a review round, a failed check, or a dead end taught something a future run s
 <the digest output, unchanged>
 ```
 
-Before you end, save the report for the nightly retro: write it to a file and run `$P/bin/state put-report $REPO <file>`. The state branch is public, so it leaves out the Triaged lines and the Skips section.
+Before you end, save the report for the nightly retro: write it to a file and run `$P/bin/state put-report $REPO <file>`. The state branch is public, so it keeps only the heading and the PRs, Failed, and Needs a person lines.
 
 ## Later activity on your PR
 
