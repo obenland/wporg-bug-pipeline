@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The reporter asks for agreement before any spec; the Budget Tool has one ticket price times attendees income line.",
+  "question": "Should the Budget Tool replace the single ticket-price income line with one line per ticket type (price and quantity each), and should it pull actual sales counts from CampTix?",
+  "updated": "2026-11-27T07:27:57Z"
+}
