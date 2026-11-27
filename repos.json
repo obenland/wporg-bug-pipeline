@@ -1,7 +1,7 @@
 {
 	"owner": "WordPress",
 	"fork_owner": "obenland",
-	"_profile": "Per repo: branch (default), push (fork or branch), cadence (hours), site (the public URL it serves), props (bot when its workflows run Props Bot, else line), ticket_ref (how a commit body cites Meta Trac ticket {N}), links (dependency directories a fresh local worktree borrows from the main checkout; empty when the checks install their own), checks (what CI runs on a PR, in order, from the repo root or dir; bin/check runs them), backlog (open issues filed before the baseline: enabled; mode triage records decisions only, fix also fixes the ready ones; skip_labels are recorded skip \"out of scope\" with no model run; max_open_prs stops backlog fixes while the repo has that many open claude/* PRs; batch is the run's triage limit, new items first).",
+	"_profile": "Per repo: branch (default), push (fork or branch), cadence (hours), site (the public URL it serves), props (bot when its workflows run Props Bot, else line), ticket_ref (how a commit body cites Meta Trac ticket {N}), links (dependency directories a fresh local worktree borrows from the main checkout; empty when the checks install their own), services (what bin/check starts before the checks: mariadb runs mariadb:lts on 127.0.0.1:3306, root/root, with its databases), checks (what CI runs on a PR, in order, from the repo root or dir; bin/check runs them), backlog (open issues filed before the baseline: enabled; mode triage records decisions only, fix also fixes the ready ones; skip_labels are recorded skip \"out of scope\" with no model run; max_open_prs stops backlog fixes while the repo has that many open claude/* PRs; batch is the run's triage limit, new items first).",
 	"repos": {
 		"wordpress.org": {
 			"branch": "trunk",
@@ -211,6 +211,13 @@
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
 			"links": [],
+			"services": {
+				"mariadb": {
+					"databases": [
+						"wordpress_test"
+					]
+				}
+			},
 			"checks": [
 				{
 					"name": "composer install",
@@ -247,6 +254,11 @@
 					"note": "as CI's Install WordPress step; PHPUnit also needs MySQL at 127.0.0.1 (root/root) with a wordpress_test database"
 				},
 				{
+					"name": "Place wporg-mu-plugins",
+					"run": "test -d source/wp-content/mu-plugins/wporg-mu-plugins || { mkdir -p source/wp-content/mu-plugins && cp -R vendor/wporg/wporg-mu-plugins source/wp-content/mu-plugins/; }",
+					"note": "the test bootstrap loads the global fonts mu-plugin from composer/installers' path, but with Composer plugins off the package stays in vendor/"
+				},
+				{
 					"name": "PHPUnit",
 					"run": "WP_CORE_DIR=/tmp/wordpress WP_TESTS_DIR=/tmp/wordpress-develop/tests/phpunit WP_TESTS_CONFIG_FILE_PATH=\"$PWD/.github/wp-tests-config.php\" vendor/bin/phpunit",
 					"note": "not wp-env: CI uses the runner's MySQL (root/root@127.0.0.1, db wordpress_test), the nightly WordPress zip unpacked to /tmp/wordpress and a sparse wordpress-develop checkout (tests/phpunit/includes + data) at /tmp/wordpress-develop. Path-filtered to source/**, phpunit.xml.dist, composer.*, .github/wp-tests-config.php"
@@ -268,6 +280,13 @@
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
 			"links": [],
+			"services": {
+				"mariadb": {
+					"databases": [
+						"wordpress_test"
+					]
+				}
+			},
 			"checks": [
 				{
 					"name": "composer install",
@@ -397,6 +416,13 @@
 			"props": "line",
 			"ticket_ref": "See https://meta.trac.wordpress.org/ticket/{N}.",
 			"links": [],
+			"services": {
+				"mariadb": {
+					"databases": [
+						"wcorg_test"
+					]
+				}
+			},
 			"checks": [
 				{
 					"name": "composer install",
@@ -433,8 +459,8 @@
 				},
 				{
 					"name": "Install WP test suite",
-					"run": "bash .docker/bin/install-wp-tests.sh wcorg_test root root 127.0.0.1:3306 latest true",
-					"note": "needs a local MariaDB/MySQL (CI uses a mariadb:lts service, root/root, db wcorg_test, on a mapped port)"
+					"run": "TMPDIR=/tmp/wp bash .docker/bin/install-wp-tests.sh wcorg_test root root 127.0.0.1:3306 latest true",
+					"note": "bin/check starts MariaDB and creates wcorg_test (the trailing `true` skips that); the installer puts the test lib under $TMPDIR, and phpunit-bootstrap.php reads $TMPDIR/wp/wordpress-tests-lib, hence /tmp/wp here and /tmp for PHPUnit"
 				},
 				{
 					"name": "Install GatherPress",
@@ -442,7 +468,7 @@
 				},
 				{
 					"name": "PHPUnit",
-					"run": "./public_html/wp-content/mu-plugins/vendor/bin/phpunit -c phpunit.xml.dist",
+					"run": "TMPDIR=/tmp ./public_html/wp-content/mu-plugins/vendor/bin/phpunit -c phpunit.xml.dist",
 					"note": "CI shards by --testsuite across PHP 8.3/8.4/8.5 ('WordCamp Groups' / 'WordCamp Groups Network,WordCamp MU Plugins' / all others); no --testsuite runs them all. Needs wporg-groups-frontend built (covered by the Build step)"
 				}
 			],

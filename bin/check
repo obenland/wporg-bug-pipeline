@@ -7,6 +7,11 @@
 # reports each one; it keeps going after a failure so one run shows them all, and exits 1 if any failed.
 # The default checkout is the sibling of this repo named <repo>.
 #
+# Before the checks it restarts dockerd through cloud-setup when a check needs Docker and the daemon is
+# gone (a container restart), and starts the profile's `services`: `mariadb` runs mariadb:lts on
+# 127.0.0.1:3306 (root/root) with its `databases`. Afterwards it puts back tracked files the checks
+# rewrote (a build's output, a lock file), so they never end up in a fix's commit.
+#
 set -euo pipefail
 
 PIPELINE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -31,6 +36,33 @@ if (( count == 0 )); then
 	exit 0
 fi
 
+profile=$(jq -c --arg r "$repo" '.repos[$r]' "$PIPELINE_DIR/repos.json")
+
+if jq -e '(.services // {} | length > 0) or any(.checks[]; .run | test("wp-env|docker"))' <<<"$profile" >/dev/null && ! docker info >/dev/null 2>&1; then
+	log "dockerd is not running (the container restarted?); running cloud-setup $repo"
+	"$PIPELINE_DIR/bin/cloud-setup" "$repo" >&2 || true
+	docker info >/dev/null 2>&1 || die "Docker is still unavailable; see /tmp/dockerd.log."
+fi
+
+# mysql_do <sql> — run one statement as root on 127.0.0.1:3306, through PHP's mysqli, which every profile's PHP has.
+mysql_do() { php -r 'mysqli_report(MYSQLI_REPORT_OFF); $db = @new mysqli("127.0.0.1", "root", "root", "", 3306); exit($db->connect_errno || ($argv[1] !== "" && !$db->query($argv[1])) ? 1 : 0);' "$1"; }
+
+if jq -e '.services.mariadb' <<<"$profile" >/dev/null; then
+	if ! mysql_do ''; then
+		log "Starting mariadb:lts on 127.0.0.1:3306"
+		docker rm -f wporg-mariadb >/dev/null 2>&1 || true
+		docker run -d --name wporg-mariadb -p 127.0.0.1:3306:3306 -e MARIADB_ROOT_PASSWORD=root mariadb:lts >/dev/null || die "Could not start mariadb:lts."
+		for _ in $(seq 60); do mysql_do '' && break; sleep 2; done
+		mysql_do '' || die "MariaDB did not come up on 127.0.0.1:3306; see docker logs wporg-mariadb."
+	fi
+	for db in $(jq -r '.services.mariadb.databases // [] | .[]' <<<"$profile"); do
+		[[ $db =~ ^[A-Za-z0-9_]+$ ]] || die "Bad database name: $db"
+		mysql_do "CREATE DATABASE IF NOT EXISTS \`$db\`" || die "Could not create database $db."
+	done
+	ok "MariaDB ready: $(jq -r '.services.mariadb.databases // [] | join(", ")' <<<"$profile")"
+fi
+
+dirty_before=$(git -C "$wt" diff --name-only HEAD)
 log "Checkout: $wt ($(git -C "$wt" branch --show-current))"
 rc=0
 for (( i = 0; i < count; i++ )); do
@@ -45,6 +77,12 @@ for (( i = 0; i < count; i++ )); do
 		warn "$name failed"; rc=1
 	fi
 done
+
+rewritten=$(comm -13 <(sort <<<"$dirty_before") <(git -C "$wt" diff --name-only HEAD | sort) | grep . || true)
+if [[ -n $rewritten ]]; then
+	while read -r f; do git -C "$wt" checkout -q HEAD -- "$f" 2>/dev/null || true; done <<<"$rewritten"
+	log "Put back files the checks rewrote: $(tr '\n' ' ' <<<"$rewritten")"
+fi
 
 if [[ $rc == 0 ]]; then ok "All checks passed for $repo."; else warn "Checks failed for $repo; see above."; fi
 exit $rc
