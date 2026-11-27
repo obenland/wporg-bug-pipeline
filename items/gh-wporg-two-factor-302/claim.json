@@ -1,6 +1,12 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-two-factor",
-  "run": "cse_01YBAW4qvwKq9D8XRKXiUx55",
-  "updated": "2026-11-27T05:41:36Z"
+  "pr": "https://github.com/WordPress/wporg-two-factor/pull/359",
+  "risk": "needs-review",
+  "props": [
+    "paulkevan",
+    "dufresnesteven"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-27T05:45:29Z"
 }
