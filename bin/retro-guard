@@ -1,30 +1,171 @@
 #!/usr/bin/env python3
 #
-# retro-guard — a PreToolUse hook (.claude/settings.json) that holds a retro session to reading, plus its one PR.
+# retro-guard — a PreToolUse hook (.claude/settings.json) that holds a retro session to an allowlist.
 #
-# Inert unless preflight retro left ~/.wporg-pipeline-retro. Then it blocks, with exit 2:
-#   - every gh subcommand but `gh api`, and every `gh api` call that writes, except opening the retro PR on
-#     this repo from claude/retro-* into trunk, with its body read from BODY and no other file;
-#   - curl and wget with options that send data or pick a method;
-#   - git's hook bypasses (--no-verify, core.hooksPath) and edits to .git/ or the retro marker.
-# It reads the command's words, so it stops plain and nested calls (bash -c, $(...)), not a program that
-# talks to GitHub itself; the GitHub proxy and the pre-push guard stay the boundary.
+# Inert unless preflight retro left ~/.wporg-pipeline-retro. Then a tool call passes only when:
+#   - the tool is one the retro needs (Bash, Read, Glob, Grep, Edit, Write, and the task list);
+#   - an Edit or Write targets one of the four files in the retro worktree, or the PR body file;
+#   - every simple command in a Bash call, nested $(...) and `...` included, runs a listed program
+#     with a known shape: read-only tools, the git and gh calls RETRO.md names, and the pipeline's
+#     read-only scripts. No VAR=value prefixes, wrappers (env, xargs, bash -c, ...), subshells, heredocs,
+#     unquoted globs or brace expansions, variables in git or gh arguments, or output redirects other
+#     than to /dev/null.
+# Everything else exits 2 with the reason, which the session sees. The pre-push guard and the
+# GitHub proxy stay in place behind it.
 #
 import json
 import os
 import re
-import shlex
 import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MARKER = os.path.expanduser('~/.wporg-pipeline-retro')
+WORKTREE = '/home/user/retro'
 BODY = '/home/user/retro-pr.md'
-SEPARATORS = {'&&', '||', ';', '|', '&', '|&', ';;', '(', ')', '\n'}
+EDITABLE = {f'{WORKTREE}/{f}' for f in ('LESSONS.md', 'RUNBOOK.md', 'SHEPHERD.md', 'review-policy.md')} | {BODY}
+TOOLS = {'Bash', 'Read', 'Glob', 'Grep', 'Edit', 'Write', 'MultiEdit', 'TodoWrite', 'TaskCreate', 'TaskUpdate', 'TaskList', 'TaskGet', 'ToolSearch'}
+SCRIPTS = {f'{ROOT}/bin/{name}' for name in ('retro-intake', 'state', 'maintainer')}
+READ_TOOLS = {'cat', 'head', 'tail', 'grep', 'jq', 'ls', 'wc', 'sort', 'diff', 'date', 'echo', 'tr', 'cut', 'basename', 'dirname', 'pwd', 'cd', 'true'}
+# Options that make a listed tool write, run a program, or change state.
+READ_TOOL_DENY = {'sort': re.compile(r'^(-o|--output|--compress-program)'), 'date': re.compile(r'^(-s|--set)')}
+# Global options are only -C and --no-pager; these are refused anywhere after them.
+GIT_DENY = re.compile(r'^(--no-verify|--output|--upload-pack|--receive-pack|--exec|--ext-diff|--textconv)(=|$)')
+GIT_READS = {'status', 'log', 'show', 'diff', 'rev-parse', 'ls-remote', 'ls-files', 'cat-file', 'blame', 'merge-base'}
 GH_VALUE_FLAGS = {'-X', '--method', '-f', '--raw-field', '-F', '--field', '-H', '--header', '-q', '--jq', '-t', '--template',
 	'--input', '--hostname', '--cache', '-p', '--preview'}
-CURL_WRITES = re.compile(r'^(-X|--request|-d|--data.*|-F|--form.*|-T|--upload-file|--json|-K|--config)(=|$)|^-[A-Za-z]*[XdFTK]')
-WGET_WRITES = re.compile(r'^--(method|post-data|post-file|body-data|body-file)(=|$)')
+OPERATORS = ('&&', '||', ';;', '|&', '&>>', '&>', '>>', '>|', '>&', '<&', '<<<', '<<', '<>', ';', '|', '&', '>', '<', '(', ')', '\n')
+REDIRECTS = {'>', '>>', '>|', '&>', '&>>', '>&', '<&', '<', '<>', '<<', '<<<'}
+
+
+class Word:
+	def __init__(self):
+		self.text, self.glob, self.var, self.nested = '', False, False, []
+
+
+def closing(s, i, open_, close):
+	"""Index just past the bracket that closes the one before s[i], skipping quoted text."""
+	depth = 1
+	while i < len(s):
+		c = s[i]
+		if c == '\\':
+			i += 2
+			continue
+		if c in '\'"':
+			j = s.find(c, i + 1)
+			i = len(s) if j < 0 else j + 1
+			continue
+		depth += (c == open_) - (c == close)
+		i += 1
+		if depth == 0:
+			return i
+	raise ValueError('unclosed ' + open_)
+
+
+def lex(s):
+	"""Shell tokens: ('op', text) or ('word', Word), with quoting, nested commands, globs, and variables tracked."""
+	tokens, i = [], 0
+	while i < len(s):
+		c = s[i]
+		if c in ' \t':
+			i += 1
+			continue
+		if c == '#' :
+			j = s.find('\n', i)
+			i = len(s) if j < 0 else j
+			continue
+		op = next((o for o in OPERATORS if s.startswith(o, i)), None)
+		if op:
+			tokens.append(('op', op))
+			i += len(op)
+			continue
+		w = Word()
+		while i < len(s) and s[i] not in ' \t\n' and not any(s.startswith(o, i) for o in OPERATORS):
+			c = s[i]
+			if c == '\\':
+				w.text += s[i + 1:i + 2]
+				i += 2
+			elif c == "'":
+				j = s.find("'", i + 1)
+				if j < 0:
+					raise ValueError('unclosed quote')
+				w.text += s[i + 1:j]
+				i = j + 1
+			elif c == '"':
+				i += 1
+				while i < len(s) and s[i] != '"':
+					if s[i] == '\\' and i + 1 < len(s):
+						w.text += s[i + 1]
+						i += 2
+					elif s.startswith('$(', i):
+						j = closing(s, i + 2, '(', ')')
+						w.nested.append(s[i + 2:j - 1])
+						i = j
+					elif s[i] == '`':
+						j = s.find('`', i + 1)
+						w.nested.append(s[i + 1:j])
+						i = j + 1
+					elif s[i] == '$' and i + 1 < len(s) and re.match(r'[\w{@*#?!$-]', s[i + 1]):
+						w.var = True
+						w.text += s[i]
+						i += 1
+					else:
+						w.text += s[i]
+						i += 1
+				if i >= len(s):
+					raise ValueError('unclosed quote')
+				i += 1
+			elif s.startswith('$(', i):
+				j = closing(s, i + 2, '(', ')')
+				w.nested.append(s[i + 2:j - 1])
+				i = j
+			elif c == '`':
+				j = s.find('`', i + 1)
+				if j < 0:
+					raise ValueError('unclosed backtick')
+				w.nested.append(s[i + 1:j])
+				i = j + 1
+			else:
+				if c == '$' and i + 1 < len(s) and re.match(r'[\w{@*#?!$-]', s[i + 1]):
+					w.var = True
+				if c in '*?[{':
+					w.glob = True
+				w.text += c
+				i += 1
+		tokens.append(('word', w))
+	return tokens
+
+
+def commands(s):
+	"""Simple commands as (words, redirects), or raise ValueError for shell forms the retro never needs."""
+	out, words, redirects = [], [], []
+	tokens = lex(s)
+	k = 0
+	while k < len(tokens):
+		kind, value = tokens[k]
+		if kind == 'op' and value in REDIRECTS:
+			if value in ('<<', '<<<'):
+				raise ValueError('no heredocs or here-strings')
+			if k + 1 >= len(tokens) or tokens[k + 1][0] != 'word':
+				raise ValueError('a redirect needs a target')
+			# A file descriptor written before the operator (2>) is not an argument.
+			if words and re.fullmatch(r'\d', words[-1].text) and not words[-1].glob:
+				words.pop()
+			redirects.append((value, tokens[k + 1][1]))
+			k += 2
+			continue
+		if kind == 'op':
+			if value in ('(', ')'):
+				raise ValueError('no subshells or process substitution')
+			if words or redirects:
+				out.append((words, redirects))
+			words, redirects = [], []
+		else:
+			words.append(value)
+		k += 1
+	if words or redirects:
+		out.append((words, redirects))
+	return out
 
 
 def pipeline_owner():
@@ -32,36 +173,9 @@ def pipeline_owner():
 	return url.rstrip('/').removesuffix('.git').split('/')[-2].split(':')[-1]
 
 
-def words(command):
-	try:
-		lex = shlex.shlex(command, posix=True, punctuation_chars=True)
-		lex.whitespace_split = True
-		return list(lex)
-	except ValueError:
-		return command.split()
-
-
-def segments(command):
-	"""Each simple command's words, nested ones (bash -c, $(...), backticks) included."""
-	seg = []
-	for w in words(command):
-		if w in SEPARATORS:
-			if seg:
-				yield seg
-			seg = []
-			continue
-		seg.append(w)
-		for inner in re.findall(r'\$\((.*)\)|`([^`]*)`', w):
-			yield from segments(inner[0] or inner[1])
-		if ' ' in w and re.search(r'\b(gh|curl|wget|git)\b', w):
-			yield from segments(w)
-	if seg:
-		yield seg
-
-
 def gh_api(args):
-	"""(method, endpoint, fields, inputs) for `gh api` arguments."""
-	method, endpoint, fields, inputs = None, None, [], []
+	"""(method, endpoint, fields, inputs, hostname) for `gh api` arguments."""
+	method, endpoint, fields, inputs, hostname = None, None, [], [], False
 	i = 0
 	while i < len(args):
 		a = args[i]
@@ -78,59 +192,157 @@ def gh_api(args):
 			if flag in ('-X', '--method'):
 				method = value.upper()
 			elif flag in ('-f', '--raw-field', '-F', '--field'):
-				fields.append(value)
+				fields.append((flag, value))
 			elif flag == '--input':
 				inputs.append(value)
+			elif flag == '--hostname':
+				hostname = True
 			continue
 		if not a.startswith('-') and endpoint is None:
 			endpoint = a.lstrip('/')
 		i += 1
-	return method or ('POST' if fields or inputs else 'GET'), endpoint, fields, inputs
+	return method or ('POST' if fields or inputs else 'GET'), endpoint, fields, inputs, hostname
 
 
-def check_gh(seg, owner):
-	sub = next((w for w in seg[1:] if not w.startswith('-')), None)
-	if sub != 'api':
-		return f'a retro session uses only `gh api` reads, not `gh {sub}`'
-	method, endpoint, fields, inputs = gh_api(seg[seg.index('api') + 1:])
+def check_gh(args, owner):
+	if not args or args[0] != 'api':
+		return 'gh runs only as `gh api`'
+	method, endpoint, fields, inputs, hostname = gh_api(args[1:])
+	if inputs or hostname:
+		return 'gh api takes no --input or --hostname here'
+	# -F name=@file sends the file's contents, even on a GET; only the PR body may come from a file.
+	files = [v.partition('=')[2] for f, v in fields if f in ('-F', '--field') and v.partition('=')[2].startswith('@')]
 	if method == 'GET':
+		return 'gh api reads send no files' if files else None
+	pairs = dict(v.partition('=')[::2] for _, v in fields)
+	if (method == 'POST' and endpoint == f'repos/{owner}/wporg-bug-pipeline/pulls' and set(pairs) == {'title', 'head', 'base', 'body'}
+			and pairs['base'] == 'trunk' and re.fullmatch(r'claude/retro-\d{4}-\d{2}-\d{2}', pairs['head'])
+			and pairs['body'] == f'@{BODY}' and files == [f'@{BODY}']):
 		return None
-	pairs = dict(f.partition('=')[::2] for f in fields)
-	if (method == 'POST' and endpoint == f'repos/{owner}/wporg-bug-pipeline/pulls' and not inputs
-			and set(pairs) <= {'title', 'head', 'base', 'body'} and pairs.get('base') == 'trunk'
-			and pairs.get('head', '').startswith('claude/retro-') and pairs.get('body') == f'@{BODY}'
-			and not any(v.startswith('@') for k, v in pairs.items() if k != 'body')):
-		return None
-	return (f'a retro session writes to GitHub only to open its PR: gh api -X POST repos/{owner}/wporg-bug-pipeline/pulls '
+	return (f'gh api writes only to open the retro PR: gh api -X POST repos/{owner}/wporg-bug-pipeline/pulls '
 		f'-f base=trunk -f head=claude/retro-<date> -f title=... -F body=@{BODY}')
 
 
+def check_git(args):
+	while args and args[0] in ('-C', '--no-pager'):
+		args = args[2:] if args[0] == '-C' else args[1:]
+	if not args or args[0].startswith('-'):
+		return 'git takes only -C and --no-pager before its subcommand (no -c, --git-dir, or --work-tree)'
+	if any(GIT_DENY.match(a) for a in args):
+		return 'git takes no hook bypasses or output, upload, or external diff options here'
+	sub, rest = args[0], args[1:]
+	if sub in GIT_READS:
+		return None
+	if sub == 'remote' and rest in (['get-url', 'origin'], ['-v']):
+		return None
+	if sub == 'branch' and set(rest) <= {'--show-current', '-a', '-r', '--list'}:
+		return None
+	if sub == 'worktree' and (rest == ['list'] or (len(rest) == 5 and rest[0] == 'add' and rest[1] == '-B'
+			and re.fullmatch(r'claude/retro-\d{4}-\d{2}-\d{2}', rest[2]) and rest[3] == WORKTREE and rest[4] == 'origin/trunk')):
+		return None
+	if sub == 'fetch' and all(a in ('-q', '--quiet', 'origin', 'trunk', 'claude/state') for a in rest):
+		return None
+	if sub == 'add' and all(not a.startswith('-') or a in ('-A', '--all', '-u') for a in rest):
+		return None
+	if sub == 'commit' and commit_args_ok(rest):
+		return None
+	if sub == 'push':
+		opts, refs = [a for a in rest if a.startswith('-')], [a for a in rest if not a.startswith('-')]
+		if set(opts) <= {'-u', '--set-upstream', '-q', '--quiet'} and len(refs) == 2 and refs[0] == 'origin' \
+				and re.fullmatch(r'claude/retro-\d{4}-\d{2}-\d{2}', refs[1]):
+			return None
+	return f'git {sub} runs here only in the forms RETRO.md names'
+
+
+def commit_args_ok(args):
+	i = 0
+	while i < len(args):
+		if args[i] in ('-m', '--message', '-F', '--file'):
+			i += 2
+		elif args[i] in ('-q', '--quiet', '-a', '--all') or args[i].startswith(('--message=', '-m')):
+			i += 1
+		else:
+			return False
+	return True
+
+
+def check_script(path, args):
+	name = os.path.basename(path)
+	if name == 'retro-intake' and (args in ([], ['--done'], ['--done', '--lessons']) or (len(args) == 2 and args[0] == '--since')):
+		return None
+	if name == 'state' and args[:1] in (['get'], ['ls']) and len(args) <= 2:
+		return None
+	if name == 'maintainer' and len(args) == 2:
+		return None
+	return f'{name} runs here only read-only, or as retro-intake --done'
+
+
+def check_command(words, redirects, owner):
+	for w in words:
+		for inner in w.nested:
+			if (reason := check(inner, owner)):
+				return reason
+	for op, target in redirects:
+		for inner in target.nested:
+			if (reason := check(inner, owner)):
+				return reason
+		if target.glob or target.var:
+			return 'redirect targets are plain paths'
+		if op in ('>&', '<&') and not re.fullmatch(r'\d|-', target.text):
+			return 'only fd duplication like 2>&1'
+		if op in ('>', '>>', '>|', '&>', '&>>', '<>') and target.text != '/dev/null':
+			return 'output goes to /dev/null or the tool result; files change only through Edit and Write'
+	if not words:
+		return None
+	if re.match(r'^[A-Za-z_]\w*=', words[0].text):
+		return 'no VAR=value assignments or prefixes'
+	if any(w.glob for w in words):
+		return 'quote globs, brackets, and braces; unquoted ones expand to paths the guard cannot see'
+	prog, args = words[0].text, [w.text for w in words[1:]]
+	if words[0].var:
+		return 'the program is named literally'
+	if prog in READ_TOOLS:
+		deny = READ_TOOL_DENY.get(prog)
+		return f'{prog} {next(a for a in args if deny.match(a))} is not read-only' if deny and any(deny.match(a) for a in args) else None
+	if prog in ('git', 'gh'):
+		if any(w.var for w in words[1:]):
+			return f'{prog} arguments are written out, without variables'
+		return check_git(args) if prog == 'git' else check_gh(args, owner)
+	if prog in SCRIPTS:
+		return check_script(prog, args)
+	return (f'{prog} is not on the retro allowlist: read-only tools ({", ".join(sorted(READ_TOOLS))}), '
+		'the git and gh calls RETRO.md names, and bin/retro-intake, bin/state get|ls, bin/maintainer')
+
+
 def check(command, owner):
-	for seg in segments(command):
-		prog = os.path.basename(seg[0])
-		if prog == 'gh' and (reason := check_gh(seg, owner)):
+	try:
+		parsed = commands(command)
+	except ValueError as e:
+		return str(e)
+	for words, redirects in parsed:
+		if (reason := check_command(words, redirects, owner)):
 			return reason
-		if prog == 'curl' and any(CURL_WRITES.match(w) for w in seg[1:]):
-			return 'a retro session sends no data with curl'
-		if prog == 'wget' and any(WGET_WRITES.match(w) for w in seg[1:]):
-			return 'a retro session sends no data with wget'
-		if prog == 'git' and any(w == '--no-verify' or 'hooksPath' in w for w in seg):
-			return 'a retro session never bypasses the push guard'
-	if re.search(r'\.git/hooks|\.wporg-pipeline-retro', command):
-		return 'a retro session leaves the push guard and its marker alone'
 	return None
+
+
+def check_path(path):
+	real = os.path.realpath(path) if path else ''
+	return None if real in EDITABLE else f'files change only in {WORKTREE} (LESSONS.md, RUNBOOK.md, SHEPHERD.md, review-policy.md) and {BODY}'
 
 
 def main():
 	if not os.path.exists(MARKER):
 		return
 	event = json.load(sys.stdin)
-	tool, args = event.get('tool_name'), event.get('tool_input') or {}
-	if tool == 'Bash':
+	tool, args = event.get('tool_name', ''), event.get('tool_input') or {}
+	if tool not in TOOLS:
+		reason = f'{tool} is not a retro tool'
+	elif tool == 'Bash':
 		reason = check(args.get('command', ''), pipeline_owner())
+	elif tool in ('Edit', 'Write', 'MultiEdit'):
+		reason = check_path(args.get('file_path', ''))
 	else:
-		path = args.get('file_path') or args.get('notebook_path') or ''
-		reason = 'a retro session leaves .git/ and its marker alone' if re.search(r'(^|/)\.git(/|$)|\.wporg-pipeline-retro', path) else None
+		reason = None
 	if reason:
 		print(f'retro-guard: {reason}.', file=sys.stderr)
 		sys.exit(2)

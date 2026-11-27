@@ -1,28 +1,36 @@
 #!/usr/bin/env bash
 #
-# pre-push <remote> <url> — the push guard bin/cloud-setup copies into every checkout's .git/hooks.
+# pre-push <remote> <url> — the push guard bin/cloud-setup installs into every checkout's .git/hooks.
 #
 # The pipeline only ever pushes claude/* branches, and never deletes one. A claude/retro-* branch goes
-# only to the pipeline repo and changes only the four files the retro may edit. In a retro session
-# (preflight retro leaves ~/.wporg-pipeline-retro), that and bin/state's claude/state are the only pushes allowed.
+# only to the pipeline repo and changes only the four files the retro may edit, compared with trunk as
+# the remote has it. In a retro session (preflight retro leaves ~/.wporg-pipeline-retro), that and
+# bin/state's claude/state, to the pipeline repo, are the only pushes allowed.
 #
-url=${2:-}
+# cloud-setup writes the pipeline repo's origin URL into the next line; left empty, retro pushes are refused.
+pipeline_remote=
+remote=${1:-} url=${2:-}
 retro_files='LESSONS.md|RUNBOOK.md|SHEPHERD.md|review-policy.md'
 refuse() { echo "pre-push: refusing to push $remote_ref: $*" >&2; exit 1; }
+# Same repo, whatever the credentials, case, or .git suffix.
+norm() { local u=${1,,}; u=${u%/}; u=${u%.git}; sed -E 's#^([a-z]+://)[^/@]*@#\1#' <<<"$u"; }
+is_pipeline() { [[ -n $pipeline_remote && $(norm "$url") == "$(norm "$pipeline_remote")" ]]; }
 
 while read -r local_ref local_sha remote_ref remote_sha; do
 	[[ $remote_ref == refs/heads/claude/* ]] || refuse "only claude/* branches"
 	[[ $local_sha =~ ^0+$ ]] && refuse "deletions are not allowed"
-	if [[ -e $HOME/.wporg-pipeline-retro && $remote_ref != refs/heads/claude/retro-* && $remote_ref != refs/heads/claude/state ]]; then
-		refuse "a retro session pushes only claude/retro-* branches"
-	fi
-	pipeline=0; [[ $url =~ [/:]wporg-bug-pipeline(\.git)?/?$ ]] && pipeline=1
-	if [[ -e $HOME/.wporg-pipeline-retro && $remote_ref == refs/heads/claude/state ]]; then
-		(( pipeline )) || refuse "a retro session records state only on the pipeline repo, not $url"
+	if [[ -e $HOME/.wporg-pipeline-retro ]]; then
+		[[ $remote_ref == refs/heads/claude/retro-* || $remote_ref == refs/heads/claude/state ]] \
+			|| refuse "a retro session pushes only claude/retro-* branches"
+		is_pipeline || refuse "a retro session pushes only to the pipeline repo, not $url"
 	fi
 	[[ $remote_ref == refs/heads/claude/retro-* ]] || continue
-	(( pipeline )) || refuse "claude/retro-* branches go only to the pipeline repo, not $url"
-	changed=$(git diff --name-only "origin/trunk...$local_sha") || refuse "cannot diff against origin/trunk"
+	is_pipeline || refuse "claude/retro-* branches go only to the pipeline repo, not $url"
+	# The remote's trunk, not origin/trunk, which a session could move to hide files.
+	trunk=$(git ls-remote "$remote" refs/heads/trunk | cut -f1)
+	[[ -n $trunk ]] || refuse "cannot read trunk on $url"
+	git cat-file -e "$trunk^{commit}" 2>/dev/null || git fetch -q "$remote" refs/heads/trunk || refuse "cannot fetch trunk"
+	changed=$(git diff --name-only "$trunk...$local_sha") || refuse "cannot diff against trunk"
 	other=$(grep -vxE "$retro_files" <<<"$changed")
 	[[ -z $other ]] || refuse "a retro changes only $retro_files, not: $(tr '\n' ' ' <<<"$other")"
 done

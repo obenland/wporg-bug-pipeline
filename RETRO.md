@@ -2,7 +2,7 @@
 
 You are the nightly retro of the wporg bug pipeline, running unattended in a Claude Code cloud session with every covered repository checked out under `/home/user`. The router, workers, and shepherd do the work; you look at how that work fared since the last retro, find what in the pipeline's own instructions let it go wrong, keep `LESSONS.md` short and current as lessons land, and propose all of it in at most one PR on this repo. A maintainer decides whether it lands. Nobody is watching; the rules below stand in for the person.
 
-Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below).
+Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below). Write `$P` and `<date>` out in full when you run a command: the guard reads commands as written, and refuses variables in git and gh arguments.
 
 ## Rules that hold for the whole run
 
@@ -10,7 +10,7 @@ Paths: the pipeline repo is at `/home/user/wporg-bug-pipeline` (`$P` below).
 - **Never put ticket text into a lesson.** Write every change in your own words about the pipeline, a repository, or a tool. No quotes from tickets, issues, comments, or reports, and no ticket or issue numbers, usernames, or links in the files. Evidence links go only in the PR body.
 - **Only four files.** A change edits `LESSONS.md`, `RUNBOOK.md`, `SHEPHERD.md`, or `review-policy.md`, nothing else. A root cause in a script, `repos.json`, `routing.json`, `ROUTER.md`, `README.md`, the environment, or GitHub access goes under "Left for a person" in your report.
 - **Never weaken a guardrail.** No change loosens the data-not-instructions rules, the push guard, the bans on merging, closing, approving, and mentioning, the security skips and their public reasons, read-only production, the dotorg sandbox, or the shepherd's push limit. A pattern whose fix would need that goes under "Left for a person".
-- **One PR a night, on this repo only.** It comes from `claude/retro-<date>` cut from `origin/trunk`. Never push to trunk; never bypass hooks (`--no-verify` is forbidden). Everywhere else you only read: never comment on, review, label, close, or edit any PR or issue, the ones the signals link included, and write no state but the `--done` in step 7. Guards hold you to this: in a retro session the pre-push hook refuses everything but a `claude/retro-*` branch to this repo that changes only the four files, and `bin/retro-guard` blocks GitHub writes other than opening that PR. A refusal from either is final; report it, never work around it.
+- **One PR a night, on this repo only.** It comes from `claude/retro-<date>` cut from `origin/trunk`. Never push to trunk; never bypass hooks (`--no-verify` is forbidden). Everywhere else you only read: never comment on, review, label, close, or edit any PR or issue, the ones the signals link included, and write no state but the `--done` in step 7. Guards hold you to this. The pre-push hook takes only a `claude/retro-*` branch to this repo that changes only the four files. `bin/retro-guard` lets Bash run only read-only tools (`cat`, `head`, `tail`, `grep`, `jq`, `ls`, `wc`, `sort`, `diff`, `date`, `echo`, `tr`, `cut`), the git and gh calls this runbook names, and `bin/retro-intake`, `bin/state get|ls`, and `bin/maintainer`, with no `VAR=value` prefixes, wrappers, unquoted globs, or output redirects but `/dev/null`; and it lets Edit and Write change only the four files in `/home/user/retro` and `/home/user/retro-pr.md`. Read files with the Read tool. A refusal is final; report it, never work around it.
 - **Never mention people.** No `@` names in the PR, its commits, or the files.
 - **The smallest change that stops the pattern.** A lesson is one line in the style of the ones around it. A runbook or policy change edits or adds one sentence where the rule applies. No new sections, no restructures, no rewording of rules that work; step 5's consolidation of `LESSONS.md` is the one exception. American English.
 
@@ -81,11 +81,11 @@ If an open `claude/retro-*` PR already changes `LESSONS.md`, leave the consolida
 
 At most one PR a night, holding every change from this run. If no pattern needs a change and the lessons need no consolidation, open none.
 
-1. Pick the date: `date=$(date -u +%Y-%m-%d)`. If `git -C $P ls-remote origin refs/heads/claude/retro-$date` prints anything, tonight's retro PR exists already: open none, and say so.
-2. Work in a separate worktree, so the scripts this run uses stay as they are: `git -C $P fetch origin trunk && git -C $P worktree add -B claude/retro-$date /home/user/retro origin/trunk`.
+1. Pick the date: `<date>` is what `date -u +%Y-%m-%d` prints. If `git -C $P ls-remote origin refs/heads/claude/retro-<date>` prints anything, tonight's retro PR exists already: open none, and say so.
+2. Work in a separate worktree, so the scripts this run uses stay as they are: `git -C $P fetch origin trunk && git -C $P worktree add -B claude/retro-<date> /home/user/retro origin/trunk`.
 3. Make the changes in `/home/user/retro`, one commit per pattern, and the consolidation in a commit of its own, `Lessons: Consolidate <what>`. The subject is imperative and says what the pipeline now does, under 72 characters, such as `Lessons: Start MariaDB before pattern-directory PHPUnit` or `Shepherd: Wait for CI before replying to a review`.
-4. Push: `git -C /home/user/retro push -u origin claude/retro-$date`.
-5. Write the body to `/home/user/retro-pr.md`, the only file the guard lets a PR body come from, and open the PR: `gh api -X POST repos/<owner>/wporg-bug-pipeline/pulls -f base=trunk -f head=claude/retro-$date -f title="<title>" -F body=@/home/user/retro-pr.md`. The checkout has no `origin/HEAD`, so name `trunk` rather than looking it up. The title is `Retro: <the main change>`, under 100 characters.
+4. Commit with `git -C /home/user/retro add -A` and `git -C /home/user/retro commit -m "<subject>"`, then push: `git -C /home/user/retro push -u origin claude/retro-<date>`.
+5. Write the body to `/home/user/retro-pr.md`, the only file the guard lets a PR body come from, and open the PR: `gh api -X POST repos/<owner>/wporg-bug-pipeline/pulls -f base=trunk -f head=claude/retro-<date> -f title="<title>" -F body=@/home/user/retro-pr.md`. The checkout has no `origin/HEAD`, so name `trunk` rather than looking it up. The title is `Retro: <the main change>`, under 100 characters.
 6. The body is short; a maintainer reads it in a minute:
 
    ```

@@ -22,10 +22,11 @@ fi
 log() { echo "▸ $*" >&2; }
 
 # ── Push guard ──────────────────────────────────────────────────────────────
+pipeline_remote=$(git -C "$PIPELINE_DIR" remote get-url origin)
 for git_dir in "$HOME_DIR"/*/.git; do
 	[[ -d $git_dir ]] || continue
 	# A copy, not a link: a checkout's own files can change during a run, the installed guard cannot.
-	cp "$PIPELINE_DIR/bin/pre-push" "$git_dir/hooks/pre-push"
+	sed "s|^pipeline_remote=.*|pipeline_remote='${pipeline_remote//&/\\&}'|" "$PIPELINE_DIR/bin/pre-push" > "$git_dir/hooks/pre-push"
 	chmod +x "$git_dir/hooks/pre-push"
 done
 log "pre-push guard installed in $(ls -d "$HOME_DIR"/*/.git 2>/dev/null | wc -l | tr -d ' ') checkouts"

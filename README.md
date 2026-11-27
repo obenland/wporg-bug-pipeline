@@ -22,7 +22,7 @@ Nothing here merges, commits to SVN, comments on tickets, or touches the dotorg 
 - A second, independent subagent locates the fix before any code is written; it has no veto, and disagreements go to the more conventional reading.
 - Production sites get read-only checks only: plain GETs of public pages, never authenticated, never a POST, and never the dotorg sandbox.
 - Network access is limited to the hosts in `env/allowlist.txt` plus the default trusted list.
-- Lessons, and the retro's changes to the runbooks and the review policy, reach trunk only through PRs a maintainer merges. In a retro session, the pre-push hook takes only a `claude/retro-*` branch to this repo that changes `LESSONS.md`, `RUNBOOK.md`, `SHEPHERD.md`, or `review-policy.md`, and `bin/retro-guard` (a PreToolUse hook) blocks GitHub writes other than opening that PR.
+- Lessons, and the retro's changes to the runbooks and the review policy, reach trunk only through PRs a maintainer merges. In a retro session, the pre-push hook takes only a `claude/retro-*` branch to this repo that changes `LESSONS.md`, `RUNBOOK.md`, `SHEPHERD.md`, or `review-policy.md`, compared with the remote's trunk. `bin/retro-guard` (a PreToolUse hook) holds the session to an allowlist: read-only tools, the git and gh calls `RETRO.md` names, and edits to those four files and the PR body.
 
 ## Setup
 
