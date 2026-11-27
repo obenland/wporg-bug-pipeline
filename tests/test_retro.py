@@ -267,6 +267,10 @@ class LessonsSignalTest(unittest.TestCase):
 		self.state.put('runs/retro.json', {'last_run': '2026-11-26T00:00:00Z', 'lessons': self.blob}, '2026-11-26T00:00:00Z')
 		self.assertIsNone(self.ri.lessons_signal(ts('2026-11-27T00:00:00Z')))
 
+	def test_the_proposed_version_counts_as_reviewed(self):
+		self.state.put('runs/retro.json', {'lessons': '0' * 40, 'lessons_proposed': self.blob}, '2026-11-26T00:00:00Z')
+		self.assertIsNone(self.ri.lessons_signal(ts('2026-11-27T00:00:00Z')))
+
 	def test_new_lessons_after_a_review_are_a_signal(self):
 		self.state.put('runs/retro.json', {'lessons': '0' * 40}, '2026-11-26T00:00:00Z')
 		self.assertIn('changed since the last review', self.ri.lessons_signal(ts('2026-11-27T00:00:00Z'))['detail'])
@@ -325,6 +329,25 @@ class RetroIntakeCliTest(unittest.TestCase):
 		self.assertEqual((got['lessons'], got['last_run']), ('new', '2026-11-20T00:00:00Z'))
 		self.assertNotIn('pending_lessons', got)
 
+	def test_done_records_the_proposed_lessons(self):
+		worktree = os.path.join(self.state.tmp.name, 'retro')
+		os.makedirs(worktree)
+		with open(os.path.join(worktree, 'LESSONS.md'), 'w') as f:
+			f.write('consolidated\n')
+		proposed = subprocess.run(['git', 'hash-object', os.path.join(worktree, 'LESSONS.md')], capture_output=True, text=True).stdout.strip()
+		rec = {'last_run': '2026-11-20T00:00:00Z', 'lessons': 'old', 'pending': '2026-11-21T00:00:00Z', 'complete': True, 'pending_lessons': 'new'}
+		self.state.put('runs/retro.json', rec, '2026-11-21T00:00:00Z')
+		script = os.path.join(self.state.tmp.name, 'retro-intake')
+		with open(os.path.join(BIN, 'retro-intake')) as f:
+			code = f.read().replace("WORKTREE = '/home/user/retro'", f"WORKTREE = {worktree!r}")
+		with open(script, 'w') as f:
+			f.write(code.replace("BIN = os.path.dirname(os.path.abspath(__file__))", f"BIN = {BIN!r}"))
+		env = {**self.env, 'PYTHONPATH': BIN}
+		out = subprocess.run([sys.executable, script, '--done', '--lessons'], capture_output=True, text=True, env=env)
+		self.assertEqual(out.returncode, 0, out.stderr)
+		got = self.last_run()
+		self.assertEqual((got['lessons'], got['lessons_proposed']), ('new', proposed))
+
 	def test_done_without_a_pending_window_fails(self):
 		self.state.put('runs/retro.json', {'last_run': '2026-11-20T00:00:00Z'}, '2026-11-21T00:00:00Z')
 		self.assertNotEqual(self.run_intake('--done').returncode, 0)
@@ -367,6 +390,8 @@ class RetroGuardTest(unittest.TestCase):
 				'git -C /home/user/retro log -n 5 --oneline',
 				'grep -n "Props" /home/user/wporg-bug-pipeline/RUNBOOK.md | head -5',
 				'echo "$(date -u +%Y-%m-%d)"',
+				f'sed -n 160,185p {P}/repos.json',
+				f'sed -n \'1,$p\' {P}/bin/check',
 				self.CREATE):
 			self.assertIsNone(self.reason(c), c)
 
@@ -397,6 +422,7 @@ class RetroGuardTest(unittest.TestCase):
 				'true && gh pr merge 1', 'true; rm x', 'true | sh', 'true & rm x'],
 			'variables': ['$X push origin claude/retro-2026-11-27', 'git $CMD', 'git -C $HOME push origin claude/retro-2026-11-27',
 				'gh api "$URL"'],
+			'sed': ['sed -i s/a/b/ LESSONS.md', 'sed s/a/b/ f', 'sed -n 1w/tmp/x f', 'sed -n 1e f', 'sed -n 1,5p -i f', 'sed -e 1p f'],
 			'git': ['git -c core.hooksPath=/dev/null push origin claude/retro-2026-11-27', 'git --git-dir=/tmp/x status',
 				'git push --no-verify origin claude/retro-2026-11-27', 'git push origin claude/retro-2026-11-27:refs/heads/trunk',
 				'git push origin claude/x', 'git push fork claude/retro-2026-11-27', 'git push origin --delete claude/retro-2026-11-27',
@@ -435,6 +461,7 @@ class RetroGuardTest(unittest.TestCase):
 		out = self.hook({'tool_name': 'Bash', 'tool_input': {'command': 'gh pr merge 1'}}, True)
 		self.assertEqual(out.returncode, 2)
 		self.assertIn('retro-guard:', out.stderr)
+		self.assertEqual(self.hook({'tool_name': 'PushNotification', 'tool_input': {'message': 'x'}}, True).returncode, 0)
 		for tool in ('WebFetch', 'NotebookEdit', 'Agent', 'mcp__github__create_issue'):
 			self.assertEqual(self.hook({'tool_name': tool, 'tool_input': {}}, True).returncode, 2, tool)
 		for path, code in (('/home/user/retro/LESSONS.md', 0), ('/home/user/retro-pr.md', 0), ('/home/user/retro/bin/state', 2),

@@ -33,15 +33,15 @@ elif [[ $target == retro ]]; then
 	fi
 	# The pre-push hook reads this: a retro session pushes only its claude/retro-* branch, to this repo.
 	touch "$HOME/.wporg-pipeline-retro"
-	# Keeps last_run and lessons (the LESSONS.md version a retro last reviewed) until --done replaces them.
+	# Keeps last_run, lessons, and lessons_proposed (the LESSONS.md versions a retro reviewed and proposed) until --done replaces them.
 	rec=$("$BIN/state" get runs/retro.json)
 	rec=${rec:-'{}'}
 	if [[ -z $work ]]; then
-		"$BIN/state" put runs/retro.json "$(jq -c --arg ts "$now" '{last_run: $ts} + (if .lessons then {lessons} else {} end)' <<<"$rec")"
+		"$BIN/state" put runs/retro.json "$(jq -c --arg ts "$now" '{last_run: $ts} + (if .lessons then {lessons} else {} end) + (if .lessons_proposed then {lessons_proposed} else {} end)' <<<"$rec")"
 	else
 		blob=$(jq -r 'select(.signal == "lessons-changed") | .blob' <<<"$work" | head -1)
 		"$BIN/state" put runs/retro.json "$(jq -c --arg ts "$now" --arg blob "$blob" --argjson complete "$(( status == 0 ))" \
-			'{pending: $ts, complete: ($complete == 1)} + (if .last_run then {last_run} else {} end) + (if .lessons then {lessons} else {} end)
+			'{pending: $ts, complete: ($complete == 1)} + (if .last_run then {last_run} else {} end) + (if .lessons then {lessons} else {} end) + (if .lessons_proposed then {lessons_proposed} else {} end)
 			+ (if $blob == "" then {} else {pending_lessons: $blob} end)' <<<"$rec")"
 	fi
 else

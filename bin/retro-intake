@@ -14,7 +14,8 @@
 #   needs-person     an item a run reported under "Needs a person", from the saved reports, or an item closed
 #                    under an open PR, from the shepherd's record
 #   report-failed    a "Failed:" line in a saved run report that no failed-claim signal covers
-#   lessons-changed  LESSONS.md on trunk differs from the version a retro last reviewed (runs/retro.json's lessons)
+#   lessons-changed  LESSONS.md on trunk differs from the version a retro last reviewed or proposed (runs/retro.json's
+#                    lessons and lessons_proposed)
 #
 # <ts> defaults to the end of the last finished retro (runs/retro.json's last_run), or 24 hours ago.
 # Read-only without --done, so a retro may run it again with an earlier --since to look further back.
@@ -36,6 +37,8 @@ import existing_pr
 
 BIN = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BIN)
+# RETRO.md's worktree, where a retro's consolidated LESSONS.md waits for its PR to merge.
+WORKTREE = '/home/user/retro'
 STATE_DIR = os.environ.get('WPORG_STATE_DIR', os.path.expanduser('~/.wporg-state'))
 MARKER = '<!-- wporg-bug-pipeline -->'
 # bin/state's CLAIM_TTL and shepherd-intake's MAX_PUSHES.
@@ -324,8 +327,10 @@ def lessons_signal(now):
 	if not blob:
 		unavailable.append('LESSONS.md')
 		return None
-	reviewed = (read('runs/retro.json') or {}).get('lessons')
-	if blob == reviewed:
+	rec = read('runs/retro.json') or {}
+	reviewed = rec.get('lessons')
+	# The version a retro proposed counts as reviewed, so merging its own consolidation does not start another.
+	if blob in (reviewed, rec.get('lessons_proposed')):
 		return None
 	text = subprocess.run(['git', '-C', ROOT, 'cat-file', 'blob', blob], capture_output=True, text=True).stdout
 	count = sum(1 for line in text.splitlines() if line.startswith('- '))
@@ -363,8 +368,14 @@ def done(lessons_reviewed):
 	if not rec.get('pending'):
 		sys.exit('retro-intake: no pending retro window; preflight retro records one on WORK')
 	last = rec['pending'] if rec.get('complete') else rec.get('last_run')
-	lessons = rec.get('pending_lessons') if lessons_reviewed and rec.get('pending_lessons') else rec.get('lessons')
-	out = {k: v for k, v in (('last_run', last), ('lessons', lessons)) if v}
+	lessons, proposed = rec.get('lessons'), rec.get('lessons_proposed')
+	if lessons_reviewed and rec.get('pending_lessons'):
+		lessons, proposed = rec['pending_lessons'], None
+		mine = os.path.join(WORKTREE, 'LESSONS.md')
+		if os.path.isfile(mine):
+			blob = subprocess.run(['git', 'hash-object', mine], capture_output=True, text=True).stdout.strip()
+			proposed = blob if blob and blob != lessons else None
+	out = {k: v for k, v in (('last_run', last), ('lessons', lessons), ('lessons_proposed', proposed)) if v}
 	if subprocess.run([os.path.join(BIN, 'state'), 'put', 'runs/retro.json', json.dumps(out)]).returncode:
 		sys.exit('retro-intake: could not record the window; the next retro reads it again')
 	if rec.get('complete'):
