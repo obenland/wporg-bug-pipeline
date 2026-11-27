@@ -1,0 +1,9 @@
+{
+  "repo": "wordpress.org",
+  "status": "routed",
+  "summary": "Theme SVN commit forbidden for theme author (verba)",
+  "path": "wordpress.org/public_html/wp-content/plugins/theme-directory",
+  "reason": "Theme SVN write access/commit pipeline (SVN import job, upload, internal REST) lives in the theme-directory plugin; worker should check whether author commit access is intended or a bug.",
+  "ticket_updated": "2026-11-27T00:00:00Z",
+  "updated": "2026-11-27T07:52:27Z"
+}
