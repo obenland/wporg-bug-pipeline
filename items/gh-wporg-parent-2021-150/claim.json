@@ -1,6 +1,7 @@
 {
   "status": "failed",
   "repo": "wporg-parent-2021",
-  "reason": "Push to WordPress/wporg-parent-2021 was refused with 403: the Claude GitHub App has no access to the repository for this organization.",
-  "updated": "2026-11-15T03:37:11Z"
+  "reason": "Not re-pushed: an existing open PR (#171) covers the item.",
+  "pr": "https://github.com/WordPress/wporg-parent-2021/pull/171",
+  "updated": "2026-11-27T18:19:48Z"
 }
