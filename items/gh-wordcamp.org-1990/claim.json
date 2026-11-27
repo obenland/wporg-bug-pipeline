@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wordcamp.org",
-  "run": "cse_01YBAW4sjATkCZci5pqYrKCF",
-  "updated": "2026-11-27T07:28:12Z"
+  "pr": "https://github.com/WordPress/wordcamp.org/pull/2467",
+  "risk": "needs-review",
+  "props": [
+    "rollybueno"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-27T08:21:08Z"
 }
