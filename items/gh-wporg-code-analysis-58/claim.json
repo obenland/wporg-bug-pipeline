@@ -1,6 +1,6 @@
 {
-  "status": "working",
+  "status": "failed",
   "repo": "wporg-code-analysis",
-  "run": "cse_01YBAW4rFcyV7haZEQyVmp29",
-  "updated": "2026-11-27T16:45:34Z"
+  "reason": "Push to WordPress/wporg-code-analysis was refused (403: Claude GitHub App has no access to the repository); fix commit is ready locally.",
+  "updated": "2026-11-27T16:55:25Z"
 }
