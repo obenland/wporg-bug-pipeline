@@ -1,0 +1,5 @@
+{
+  "status": "wrong-repo",
+  "reason": "CSS custom properties are stripped by Jetpack's csstidy-based Custom CSS sanitizer, which a committer said to track upstream in Automattic/jetpack#19669; replacing the sanitizer with core's is an open proposal.",
+  "updated": "2026-11-27T07:28:03Z"
+}
