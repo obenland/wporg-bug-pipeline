@@ -1,5 +1,6 @@
 {
-  "status": "ready",
-  "reason": "Korean headings break mid-word because Hangul may break between any syllables; the ko_KR locale CSS in inc/rosetta-styles.php needs word-break: keep-all on headings.",
-  "updated": "2026-11-15T03:27:36Z"
+  "status": "skip",
+  "reason": "A maintainer already has an open PR for it (#171).",
+  "pr": "https://github.com/WordPress/wporg-parent-2021/pull/171",
+  "updated": "2026-11-27T18:19:46Z"
 }
