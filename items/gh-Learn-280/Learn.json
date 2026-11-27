@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The upcoming-online-workshops block still reads Meetup events from the wporg_events table, and the meeting post type it would switch to is not registered in this repo, so the source and its fields are unknown here.",
+  "question": "Are online workshops still published as meeting posts on Learn (and from which plugin), and should the homepage Upcoming online workshops block read them instead of the Meetup events table?",
+  "updated": "2026-11-27T08:29:08Z"
+}
