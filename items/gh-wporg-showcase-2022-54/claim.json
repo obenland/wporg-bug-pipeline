@@ -1,6 +1,12 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-showcase-2022",
-  "run": "cse_01YBAW4vAehaA9zFwFLsRbiq",
-  "updated": "2026-11-27T20:59:28Z"
+  "pr": "https://github.com/WordPress/wporg-showcase-2022/pull/288",
+  "risk": "needs-review",
+  "props": [
+    "dufresnesteven",
+    "dd32"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-27T21:10:37Z"
 }
