@@ -345,8 +345,9 @@
 			],
 			"backlog": {
 				"enabled": true,
-				"mode": "triage",
+				"mode": "fix",
 				"skip_labels": [],
+				"max_open_prs": 5,
 				"batch": 25
 			}
 		},
@@ -448,10 +449,11 @@
 			"checks_note": "The Playwright E2E workflow needs a scripted Docker environment and is left out; it runs only for changes under the groups code.",
 			"backlog": {
 				"enabled": true,
-				"mode": "triage",
+				"mode": "fix",
 				"skip_labels": [
 					"[Type] Operation"
 				],
+				"max_open_prs": 5,
 				"batch": 25
 			}
 		},
@@ -494,7 +496,7 @@
 			],
 			"backlog": {
 				"enabled": true,
-				"mode": "triage",
+				"mode": "fix",
 				"skip_labels": [
 					"[Admin] Agenda",
 					"[Admin] Handbook",
@@ -510,6 +512,7 @@
 					"[Content] Translation",
 					"Office Hours"
 				],
+				"max_open_prs": 5,
 				"batch": 25
 			}
 		},
@@ -748,8 +751,9 @@
 			],
 			"backlog": {
 				"enabled": true,
-				"mode": "triage",
+				"mode": "fix",
 				"skip_labels": [],
+				"max_open_prs": 5,
 				"batch": 25
 			}
 		},
@@ -774,8 +778,9 @@
 			],
 			"backlog": {
 				"enabled": true,
-				"mode": "triage",
+				"mode": "fix",
 				"skip_labels": [],
+				"max_open_prs": 5,
 				"batch": 25
 			}
 		},
@@ -791,8 +796,9 @@
 			"checks_note": "No workflows.",
 			"backlog": {
 				"enabled": true,
-				"mode": "triage",
+				"mode": "fix",
 				"skip_labels": [],
+				"max_open_prs": 5,
 				"batch": 25
 			}
 		},
@@ -826,8 +832,9 @@
 			"checks_note": "No workflows.",
 			"backlog": {
 				"enabled": true,
-				"mode": "triage",
+				"mode": "fix",
 				"skip_labels": [],
+				"max_open_prs": 5,
 				"batch": 25
 			}
 		},
@@ -871,8 +878,9 @@
 			],
 			"backlog": {
 				"enabled": true,
-				"mode": "triage",
+				"mode": "fix",
 				"skip_labels": [],
+				"max_open_prs": 5,
 				"batch": 25
 			}
 		},
@@ -888,8 +896,9 @@
 			"checks_note": "CI runs the composite actions against a staged fixture across a yarn/npm and PHP matrix; there is no command set to run from the repo root.",
 			"backlog": {
 				"enabled": true,
-				"mode": "triage",
+				"mode": "fix",
 				"skip_labels": [],
+				"max_open_prs": 5,
 				"batch": 25
 			}
 		}

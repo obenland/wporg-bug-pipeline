@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 #
-# preflight <repo|router|shepherd> — the first and, on most runs, only thing a routine does.
+# preflight <repo|router|shepherd|retro> [--since <ts>] — the first and, on most runs, only thing a routine does.
 #
 # Installs the push guard, then asks intake whether there is any work. With none, it records the
 # run and prints IDLE as its last line, so the session can end before reading a runbook or
 # installing dependencies. Otherwise it prints the candidates and WORK. When intake could not read
 # a source and found nothing else, it prints ERROR and exits 1 without recording the run.
+# The retro passes --since to retro-intake. Its window only advances once a run finishes: on WORK,
+# preflight records the window's end as pending, and RETRO.md's last step, retro-intake --done, makes it
+# the last run unless a source could not be read. A retro session also gets the retro-only push guard.
 #
 set -euo pipefail
 
 BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-target=${1:?Usage: preflight <repo|router|shepherd>}
+target=${1:?Usage: preflight <repo|router|shepherd|retro> [--since <ts>]}
 now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 command -v jq >/dev/null || apt-get install -y -qq jq >/dev/null
@@ -20,6 +23,27 @@ if [[ $target == router ]]; then
 	work=$("$BIN/router-intake" --limit 15)
 elif [[ $target == shepherd ]]; then
 	work=$("$BIN/shepherd-intake" --limit 4)
+elif [[ $target == retro ]]; then
+	status=0
+	work=$("$BIN/retro-intake" "${@:2}") || status=$?
+	(( status == 0 || status == 3 )) || exit "$status"
+	if (( status == 3 )) && [[ -z $work ]]; then
+		echo "ERROR: retro-intake could not read a source (see above), so this run cannot tell whether there are signals."
+		exit 1
+	fi
+	# The pre-push hook reads this: a retro session pushes only its claude/retro-* branch, to this repo.
+	touch "$HOME/.wporg-pipeline-retro"
+	# Keeps last_run, lessons, and lessons_proposed (the LESSONS.md versions a retro reviewed and proposed) until --done replaces them.
+	rec=$("$BIN/state" get runs/retro.json)
+	rec=${rec:-'{}'}
+	if [[ -z $work ]]; then
+		"$BIN/state" put runs/retro.json "$(jq -c --arg ts "$now" '{last_run: $ts} + (if .lessons then {lessons} else {} end) + (if .lessons_proposed then {lessons_proposed} else {} end)' <<<"$rec")"
+	else
+		blob=$(jq -r 'select(.signal == "lessons-changed") | .blob' <<<"$work" | head -1)
+		"$BIN/state" put runs/retro.json "$(jq -c --arg ts "$now" --arg blob "$blob" --argjson complete "$(( status == 0 ))" \
+			'{pending: $ts, complete: ($complete == 1)} + (if .last_run then {last_run} else {} end) + (if .lessons then {lessons} else {} end) + (if .lessons_proposed then {lessons_proposed} else {} end)
+			+ (if $blob == "" then {} else {pending_lessons: $blob} end)' <<<"$rec")"
+	fi
 else
 	status=0
 	work=$("$BIN/intake" "$target") || status=$?
@@ -31,7 +55,7 @@ else
 fi
 
 if [[ -z $work ]]; then
-	[[ $target == router ]] || "$BIN/state" put "runs/$target.json" "$(jq -n --arg ts "$now" '{last_run: $ts}')"
+	[[ $target == router || $target == retro ]] || "$BIN/state" put "runs/$target.json" "$(jq -n --arg ts "$now" '{last_run: $ts}')"
 	echo IDLE
 else
 	printf '%s\n' "$work"
