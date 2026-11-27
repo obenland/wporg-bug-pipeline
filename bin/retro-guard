@@ -24,10 +24,12 @@ MARKER = os.path.expanduser('~/.wporg-pipeline-retro')
 WORKTREE = '/home/user/retro'
 BODY = '/home/user/retro-pr.md'
 EDITABLE = {f'{WORKTREE}/{f}' for f in ('LESSONS.md', 'RUNBOOK.md', 'SHEPHERD.md', 'review-policy.md')} | {BODY}
-TOOLS = {'Bash', 'Read', 'Glob', 'Grep', 'Edit', 'Write', 'MultiEdit', 'TodoWrite', 'TaskCreate', 'TaskUpdate', 'TaskList', 'TaskGet', 'ToolSearch'}
+TOOLS = {'Bash', 'Read', 'Glob', 'Grep', 'Edit', 'Write', 'MultiEdit', 'TodoWrite', 'TaskCreate', 'TaskUpdate', 'TaskList', 'TaskGet', 'ToolSearch', 'PushNotification'}
 SCRIPTS = {f'{ROOT}/bin/{name}' for name in ('retro-intake', 'state', 'maintainer')}
 READ_TOOLS = {'cat', 'head', 'tail', 'grep', 'jq', 'ls', 'wc', 'sort', 'diff', 'date', 'echo', 'tr', 'cut', 'basename', 'dirname', 'pwd', 'cd', 'true'}
 # Options that make a listed tool write, run a program, or change state.
+# sed only prints a line range: `sed -n 10,20p file`. Its other commands can write files (w) or run programs (e).
+SED_PRINT = re.compile(r'^(\d+|\$)(,(\d+|\$))?p$')
 READ_TOOL_DENY = {'sort': re.compile(r'^(-o|--output|--compress-program)'), 'date': re.compile(r'^(-s|--set)')}
 # Global options are only -C and --no-pager; these are refused anywhere after them.
 GIT_DENY = re.compile(r'^(--no-verify|--output|--upload-pack|--receive-pack|--exec|--ext-diff|--textconv)(=|$)')
@@ -301,6 +303,10 @@ def check_command(words, redirects, owner):
 	prog, args = words[0].text, [w.text for w in words[1:]]
 	if words[0].var:
 		return 'the program is named literally'
+	if prog == 'sed':
+		files = args[2:]
+		ok = len(args) >= 2 and args[0] == '-n' and SED_PRINT.match(args[1]) and not any(a.startswith('-') for a in files)
+		return None if ok else 'sed runs here only as `sed -n <from>,<to>p <file>`'
 	if prog in READ_TOOLS:
 		deny = READ_TOOL_DENY.get(prog)
 		return f'{prog} {next(a for a in args if deny.match(a))} is not read-only' if deny and any(deny.match(a) for a in args) else None
@@ -310,7 +316,7 @@ def check_command(words, redirects, owner):
 		return check_git(args) if prog == 'git' else check_gh(args, owner)
 	if prog in SCRIPTS:
 		return check_script(prog, args)
-	return (f'{prog} is not on the retro allowlist: read-only tools ({", ".join(sorted(READ_TOOLS))}), '
+	return (f'{prog} is not on the retro allowlist: read-only tools ({", ".join(sorted(READ_TOOLS))}, sed -n <range>p), '
 		'the git and gh calls RETRO.md names, and bin/retro-intake, bin/state get|ls, bin/maintainer')
 
 
