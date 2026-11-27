@@ -1,0 +1,31 @@
+name: Auto-merge
+
+# Merges every non-draft pull request as soon as it is opened (or marked ready).
+# If the branch has required checks, it waits for them; otherwise it merges right away.
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge pull request
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Mergeability is computed asynchronously right after a PR opens, so retry briefly.
+          for attempt in 1 2 3 4 5; do
+            if gh pr merge --auto --squash "$PR_URL"; then
+              exit 0
+            fi
+            echo "Attempt $attempt failed; retrying in 15s."
+            sleep 15
+          done
+          exit 1
