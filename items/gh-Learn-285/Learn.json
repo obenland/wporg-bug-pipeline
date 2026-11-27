@@ -1,0 +1,6 @@
+{
+  "status": "obsolete",
+  "reason": "The homepage is no longer built from hardcoded PHP sections; the wporg-learn-2024 theme renders it from block patterns.",
+  "evidence": "wp-content/themes/pub/wporg-learn-2024/patterns/front-page-content.php builds the homepage from core and wporg-learn blocks (search, learning-pathway-cards, course query grid), so structural changes no longer need custom section code.",
+  "updated": "2026-11-27T08:29:06Z"
+}
