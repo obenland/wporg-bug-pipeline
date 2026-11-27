@@ -1,6 +1,12 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "Learn",
-  "run": "cse_01YBAW4qtLKHZbCB2tcVBi9g",
-  "updated": "2026-11-27T08:33:47Z"
+  "pr": "https://github.com/WordPress/Learn/pull/3799",
+  "risk": "low",
+  "props": [
+    "ryelle",
+    "timse201"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-27T08:36:59Z"
 }
