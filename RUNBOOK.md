@@ -171,6 +171,8 @@ If a review round, a failed check, or a dead end taught something a future run s
 <the digest output, unchanged>
 ```
 
+Before you end, save the report for the nightly retro: write it to a file and run `$P/bin/state put-report $REPO <file>`. The state branch is public, so it keeps only the heading and the PRs, Failed, and Needs a person lines.
+
 ## Later activity on your PR
 
 If this session is woken later by a review, comment, or check on a PR it opened, handle it as the shepherd would: follow `$P/SHEPHERD.md` steps 2 to 12 for that PR, with `since` as the `seen` in `$P/bin/state get items/<key>/shepherd.json` (or the PR's creation when there is none) and `until` as now. End each reply with the `<!-- wporg-bug-pipeline -->` marker, and record the pass with `$P/bin/shepherd-intake --mark`, so the shepherd does not handle the same activity again.
