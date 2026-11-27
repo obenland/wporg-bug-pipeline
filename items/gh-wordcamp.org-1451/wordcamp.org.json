@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The require-login add-on already shows an error telling the purchaser to have the attendee sign in with their own account; what remains is a permissions change.",
+  "question": "Should the purchaser of a group of tickets be allowed to edit the other attendees in that purchase after their own account is assigned to one of the tickets?",
+  "updated": "2026-11-27T07:28:01Z"
+}
