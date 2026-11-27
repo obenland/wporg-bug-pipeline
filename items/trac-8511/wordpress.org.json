@@ -1,5 +1,5 @@
 {
-  "status": "not-ready",
-  "reason": "Could not reproduce: traced every posting path in support-forums, wporg-bbp-user-moderation, mu-plugins and bbPress, and a true bbp_spectator gets only the spectate cap and is refused by the reply/topic handlers; the cause looks like the role not sticking on the support blog (wrong site, a later role change, or multiple forum roles), which needs the user’s capabilities meta and audit-log notes checked in production.",
-  "updated": "2026-11-26T19:14:26Z"
+  "status": "skip",
+  "reason": "Assigned to johnjamesjacoby, who said they will look into it as a possible bbPress bug.",
+  "updated": "2026-11-27T01:11:22Z"
 }
