@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-code-analysis",
-  "run": "cse_01YBAW4tjYZEjmttbBXV427Q",
-  "updated": "2026-11-27T18:36:13Z"
+  "pr": "https://github.com/WordPress/wporg-code-analysis/pull/84",
+  "risk": "low",
+  "props": [
+    "iandunn"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-27T18:45:54Z"
 }
