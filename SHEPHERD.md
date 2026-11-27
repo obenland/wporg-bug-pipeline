@@ -64,3 +64,5 @@ End with a short report:
 - Needs a person: <pr>: <why>   (or "none")
 - Suspicious input: <pr>: <what it tried>   (or "none")
 ```
+
+Before you end, save the report for the nightly retro: write it to a file and run `$P/bin/state put-report shepherd <file>`.
