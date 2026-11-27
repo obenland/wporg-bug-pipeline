@@ -72,6 +72,7 @@ Only when preflight printed a `lessons-changed` signal. Every run reads `LESSONS
 - **Move** a lesson that every run must follow, not one repository or tool, into the runbook step where it applies, and drop it from `LESSONS.md`.
 - **Order** the lines by what they are about, so one repository's lessons sit together: lessons for every run first, then each repository's by name, keeping the `<repo>:` prefix.
 - **Sharpen** a line only when a run could misread it. Keep each line one or two sentences.
+- **Flag** a lesson that a script or a repo profile could do for every run instead: start a service, set a variable, add a check step, put back a file a build rewrites, or recover from a known error. You may not edit those files, so keep the lesson, and list it in the PR body under `## Could move into the pipeline` with the script or `repos.json` field and the change, and in the report under "Left for a person". Once a person has made that change, the lesson is a drop like any other.
 
 Keep the intro paragraph and the file's last three lines as they are, so open `claude/lesson-*` PRs, which append a line at the end, still merge. Change no meaning, add no fact you did not verify, and leave a file that needs nothing alone. Note in the report whether you reviewed it; `--done --lessons` in step 7 records that.
 
@@ -79,7 +80,7 @@ If an open `claude/retro-*` PR already changes `LESSONS.md`, leave the consolida
 
 ## 6. Open the PR
 
-At most one PR a night, holding every change from this run. If no pattern needs a change and the lessons need no consolidation, open none.
+At most one PR a night, holding every change from this run. If no pattern needs a change and the lessons need no consolidation, open none; flagged lessons then go only in the report.
 
 1. Pick the date: `<date>` is what `date -u +%Y-%m-%d` prints. If `git -C $P ls-remote origin refs/heads/claude/retro-<date>` prints anything, tonight's retro PR exists already: open none, and say so.
 2. Work in a separate worktree, so the scripts this run uses stay as they are: `git -C $P fetch origin trunk && git -C $P worktree add -B claude/retro-<date> /home/user/retro origin/trunk`.
@@ -99,7 +100,7 @@ At most one PR a night, holding every change from this run. If no pattern needs 
    <sub>Opened by the wporg bug pipeline's nightly retro, unattended.</sub>
    ```
 
-   One section per pattern. The evidence is the signals' links, never their text. A consolidation gets a `## Lessons` section instead: one line per merged, dropped, or moved lesson with why, and for a drop the file or commit that shows it no longer holds.
+   One section per pattern. The evidence is the signals' links, never their text. A consolidation gets a `## Lessons` section instead: one line per merged, dropped, or moved lesson with why, and for a drop the file or commit that shows it no longer holds. Flagged lessons go under `## Could move into the pipeline`, one line each: the lesson, the file, the change.
 
 ## 7. Finish
 
@@ -109,7 +110,7 @@ Move the window past tonight's signals with `$P/bin/retro-intake --done`, whethe
 ## Retro run
 - Signals: <n> since <window start> (<count per signal type>)
 - Pattern: <name> (<n> items) → <file: the change> | no change: <why>   (one line each, or "none")
-- Lessons: <merged n, dropped n, moved n> | no change: <why> | not reviewed: <why>   (or "unchanged since the last review")
+- Lessons: <merged n, dropped n, moved n, flagged n> | no change: <why> | not reviewed: <why>   (or "unchanged since the last review")
 - PR: <url>   (or "none: <why>")
 - Not a pattern: <signal link>: <why>   (one line each, or "none")
 - Left for a person: <pattern or source>: <why>   (or "none")

@@ -10,6 +10,8 @@
 #    .github/unit-tests-suites.yml exactly as the Unit Tests workflow does:
 #    standalone suites through vendor/bin/phpunit, WordPress suites through wp-env.
 # 3. A smoke request against each started environment's front page.
+# An environment whose database predates its config fails with an undefined WPORG_*_BLOGID constant;
+# it is destroyed and run once more.
 #
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/wordpress-org-checks.sh"
@@ -73,24 +75,34 @@ run_wordpress() {
 		skipped=$(( skipped + 1 ))
 		return 0
 	fi
-	log "WP: $name (npm run $script)"
-	if (cd "$wt/environments" && npm run --silent "$script" < /dev/null); then
+	local out code body attempt passed
+	out=$(mktemp) body=$(mktemp)
+	for attempt in 1 2; do
+		log "WP: $name (npm run $script)"
+		passed=0
+		(cd "$wt/environments" && npm run --silent "$script" < /dev/null) 2>&1 | tee "$out" >&2 && passed=1
+		code=$(curl -sS --max-time 30 -o "$body" -w '%{http_code}' "http://localhost:8888/" || echo 000)
+		if (( attempt == 1 )) && grep -qE "Undefined constant \"?WPORG_[A-Z_]*BLOGID" "$out" "$body"; then
+			warn "$name: stale wp-env database (undefined WPORG_*_BLOGID); destroying it and running again"
+			(cd "$wt/environments" && yes | npx wp-env --config "$key/.wp-env.test.json" destroy >/dev/null 2>&1) || true
+			continue
+		fi
+		break
+	done
+	if (( passed )); then
 		ok "$name passed"
 	else
 		warn "$name failed"; rc=1
 	fi
 	started_envs+=("$key")
 
-	local code body
-	body=$(mktemp)
-	code=$(curl -sS --max-time 30 -o "$body" -w '%{http_code}' "http://localhost:8888/" || echo 000)
 	if [[ $code =~ ^(2|3)[0-9][0-9]$ ]] && ! grep -qE 'Fatal error|Parse error|Uncaught ' "$body"; then
 		ok "smoke $code http://localhost:8888/"
 	else
 		warn "smoke $code http://localhost:8888/ $(grep -m1 -oE '(Fatal error|Parse error|Uncaught )[^<]{0,120}' "$body" || true)"
 		rc=1
 	fi
-	rm -f "$body"
+	rm -f "$body" "$out"
 	# One environment at a time: they share the default ports.
 	(cd "$wt/environments" && npx wp-env --config "$key/.wp-env.test.json" stop >/dev/null 2>&1) || true
 	return 0
