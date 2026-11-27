@@ -1,0 +1,6 @@
+{
+  "status": "needs-decision",
+  "reason": "The reporter asks for agreement on the need; the Budget Tool only offers the hard-coded quantity links in budget-tool.php.",
+  "question": "Should Budget Tool line items get a free-form custom quantity (amount x N) alongside the hard-coded attendee/day/speaker multipliers?",
+  "updated": "2026-11-27T07:27:59Z"
+}
