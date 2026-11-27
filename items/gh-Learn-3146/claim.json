@@ -1,6 +1,12 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "Learn",
-  "run": "cse_01YBAW4qtLKHZbCB2tcVBi9g",
-  "updated": "2026-11-27T08:33:49Z"
+  "pr": "https://github.com/WordPress/Learn/pull/3800",
+  "risk": "needs-review",
+  "props": [
+    "dd32",
+    "paulkevan"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-27T08:41:52Z"
 }
