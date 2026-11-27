@@ -1,6 +1,6 @@
 {
-  "status": "working",
+  "status": "failed",
   "repo": "wporg-developer-blog",
-  "run": "cse_01YBAW4tjYZEjmttbBXV427Q",
-  "updated": "2026-11-27T17:53:53Z"
+  "reason": "Push to origin refused with 403: the Claude GitHub App has no write access to WordPress/wporg-developer-blog.",
+  "updated": "2026-11-27T17:57:57Z"
 }
