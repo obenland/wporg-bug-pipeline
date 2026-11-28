@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wordcamp.org",
-  "run": "cse_01YBAW4tKEKcTREKq4LXEnvS",
-  "updated": "2026-11-28T07:52:33Z"
+  "pr": "https://github.com/WordPress/wordcamp.org/pull/2473",
+  "risk": "needs-review",
+  "props": [
+    "ryelle"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-28T08:09:28Z"
 }
