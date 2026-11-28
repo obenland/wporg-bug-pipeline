@@ -1,5 +1,5 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wporg-repo-tools",
   "pr": "https://github.com/WordPress/wporg-repo-tools/pull/54",
   "risk": "needs-review",
@@ -9,5 +9,6 @@
     "iandunn"
   ],
   "props_verified": null,
-  "updated": "2026-11-27T22:06:03Z"
+  "updated": "2026-11-28T00:39:46Z",
+  "outcome": "merged"
 }
