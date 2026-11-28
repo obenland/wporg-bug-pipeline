@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "Learn",
-  "run": "cse_01YBAW4s2bBFACWsiaaJSyXx",
-  "updated": "2026-11-28T08:29:46Z"
+  "pr": "https://github.com/WordPress/Learn/pull/3803",
+  "risk": "low",
+  "props": [
+    "psykro"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-28T08:38:24Z"
 }
