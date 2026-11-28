@@ -1,6 +1,11 @@
 {
-  "status": "working",
+  "status": "pr-open",
   "repo": "wporg-two-factor",
-  "run": "cse_01YBAW4v9unoN6HKfkaEnwhc",
-  "updated": "2026-11-28T05:46:30Z"
+  "pr": "https://github.com/WordPress/wporg-two-factor/pull/362",
+  "risk": "needs-review",
+  "props": [
+    "gh:outdoor2kode"
+  ],
+  "props_verified": null,
+  "updated": "2026-11-28T05:52:55Z"
 }
