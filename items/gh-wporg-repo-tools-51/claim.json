@@ -1,9 +1,10 @@
 {
-  "status": "pr-open",
+  "status": "done",
   "repo": "wporg-repo-tools",
   "pr": "https://github.com/WordPress/wporg-repo-tools/pull/53",
   "risk": "needs-review",
   "props": [],
   "props_verified": null,
-  "updated": "2026-11-27T22:06:01Z"
+  "updated": "2026-11-28T00:39:49Z",
+  "outcome": "merged"
 }
